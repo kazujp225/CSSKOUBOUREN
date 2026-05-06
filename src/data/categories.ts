@@ -20,6 +20,7 @@ export const CATEGORIES: Category[] = [
   { slug: "empty", name: "空状態 / エラーUI", description: "情報がない時の優しい見せ方", icon: "Inbox" },
   { slug: "icon", name: "アイコン演出 / 効果", description: "電球・歯車・ロケット・花火など、目を引く小ネタ演出", icon: "Lightbulb" },
   { slug: "font", name: "フォントアレンジ", description: "見出しの文字加工・タイポグラフィ装飾の集合", icon: "Type" },
+  { slug: "fortune", name: "占い / ミスティック", description: "タロット・水晶玉・月相・占星盤・神秘系フォントなど占いサイト向け演出", icon: "Sparkles" },
 ];
 
 export const POPULAR_TAGS = [
