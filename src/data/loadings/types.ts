@@ -2,12 +2,37 @@
 // Server-safe (no React).
 
 export type ColorKey = "violet" | "blue" | "rose" | "amber" | "emerald";
-export type SizeKey = "md" | "lg";
-export type SpeedKey = "slow" | "normal" | "fast" | "vfast";
+export type SizeKey = "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | "mega";
+export type SpeedKey =
+  | "ultraSlow"
+  | "vslow"
+  | "slow"
+  | "slowish"
+  | "medium"
+  | "normal"
+  | "normalish"
+  | "fast"
+  | "vfast"
+  | "faster"
+  | "ultra"
+  | "instant";
 
 export const COLORS: ColorKey[] = ["violet", "blue", "rose", "amber", "emerald"];
-export const SIZES: SizeKey[] = ["md", "lg"];
-export const SPEEDS: SpeedKey[] = ["slow", "normal", "fast", "vfast"];
+export const SIZES: SizeKey[] = ["xs", "sm", "md", "lg", "xl", "xxl", "mega"];
+export const SPEEDS: SpeedKey[] = [
+  "ultraSlow",
+  "vslow",
+  "slow",
+  "slowish",
+  "medium",
+  "normal",
+  "normalish",
+  "fast",
+  "vfast",
+  "faster",
+  "ultra",
+  "instant",
+];
 
 export const COLOR_META: Record<ColorKey, { hex: string; tw: string; jp: string; soft: string }> = {
   violet: { hex: "#7c5cff", tw: "violet", jp: "紫", soft: "#ede9ff" },
@@ -18,15 +43,28 @@ export const COLOR_META: Record<ColorKey, { hex: string; tw: string; jp: string;
 };
 
 export const SIZE_META: Record<SizeKey, { px: number; jp: string }> = {
-  md: { px: 36, jp: "M" },
-  lg: { px: 64, jp: "L" },
+  xs: { px: 20, jp: "XS" },
+  sm: { px: 28, jp: "S" },
+  md: { px: 40, jp: "M" },
+  lg: { px: 60, jp: "L" },
+  xl: { px: 88, jp: "XL" },
+  xxl: { px: 120, jp: "XXL" },
+  mega: { px: 160, jp: "MEGA" },
 };
 
 export const SPEED_META: Record<SpeedKey, { sec: number; jp: string }> = {
-  slow: { sec: 1.6, jp: "ゆっくり" },
+  ultraSlow: { sec: 3.0, jp: "とても遅い" },
+  vslow: { sec: 2.4, jp: "ゆっくり" },
+  slow: { sec: 1.8, jp: "遅め" },
+  slowish: { sec: 1.4, jp: "やや遅" },
+  medium: { sec: 1.2, jp: "中" },
   normal: { sec: 1.0, jp: "ふつう" },
+  normalish: { sec: 0.85, jp: "やや速" },
   fast: { sec: 0.7, jp: "速い" },
   vfast: { sec: 0.4, jp: "とても速い" },
+  faster: { sec: 0.3, jp: "高速" },
+  ultra: { sec: 0.25, jp: "超高速" },
+  instant: { sec: 0.15, jp: "瞬時" },
 };
 
 export type ResolvedColor = { hex: string; tw: string; jp: string; soft: string; key: ColorKey };
@@ -65,13 +103,12 @@ export type ArchetypeMeta = {
   effect: string;
   suitableFor: string[];
   badUsage: string;
-  similar?: string[]; // archetype ids
+  similar?: string[];
   code: (p: ResolvedParams) => CodeSet;
   prompt: (p: ResolvedParams) => string;
 };
 
 // id format: ld-{archId}-{color}-{size}-{speed}
-// archId itself contains hyphens (e.g. "spinner-classic"), so we parse the last 3 known tails.
 export function parseLoadingId(
   id: string
 ): { archId: string; color: ColorKey; size: SizeKey; speed: SpeedKey } | null {

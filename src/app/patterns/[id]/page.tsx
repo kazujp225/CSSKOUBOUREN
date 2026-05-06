@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PATTERN_BY_ID } from "@/data/all";
+import { PATTERN_BY_ID, resolvePattern } from "@/data/all";
 import { CATEGORIES } from "@/data/categories";
 import { PatternPreview } from "@/components/previews";
 import { CodeBlock } from "@/components/CodeBlock";
@@ -11,7 +11,7 @@ import { ChevronLeft } from "lucide-react";
 const DIFF_LABEL = { easy: "★ かんたん", medium: "★★ ふつう", hard: "★★★ むずかしい" } as const;
 
 export default function PatternDetailPage({ params }: { params: { id: string } }) {
-  const p = PATTERN_BY_ID[params.id];
+  const p = resolvePattern(params.id);
   if (!p) notFound();
 
   const cat = CATEGORIES.find((c) => c.slug === p.category);

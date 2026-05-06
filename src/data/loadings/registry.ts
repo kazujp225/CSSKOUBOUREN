@@ -1,5 +1,6 @@
-// Generates the full LOADING_PATTERNS array from archetypes × color × size × speed.
-// 25 archetypes × 5 colors × 2 sizes × 4 speeds = 1000 patterns.
+// Lazy registry: only metadata is built up-front. Full code/prompt for each
+// pattern is resolved on demand by `resolvePattern` in `@/data/all`.
+// 25 archetypes × 5 colors × 5 sizes × 8 speeds = 5,000 patterns.
 
 import type { Pattern } from "@/data/patterns";
 import { ARCHETYPES } from "./archetypes";
@@ -7,26 +8,18 @@ import {
   COLORS,
   COLOR_META,
   SIZE_META,
+  SIZES,
   SPEED_META,
-  resolveParams,
+  SPEEDS,
   makeLoadingId,
-  type SizeKey,
-  type SpeedKey,
 } from "./types";
-
-// 5 colors × 1 size (md) × 2 speeds (slow/normal) × 25 archetypes = 250
-const USE_SIZES: SizeKey[] = ["md"];
-const USE_SPEEDS: SpeedKey[] = ["slow", "normal"];
 
 function buildPatterns(): Pattern[] {
   const out: Pattern[] = [];
   for (const arch of ARCHETYPES) {
     for (const c of COLORS) {
-      for (const s of USE_SIZES) {
-        for (const sp of USE_SPEEDS) {
-          const params = resolveParams(c, s, sp);
-          const code = arch.code(params);
-          const prompt = arch.prompt(params);
+      for (const s of SIZES) {
+        for (const sp of SPEEDS) {
           out.push({
             id: makeLoadingId(arch.id, c, s, sp),
             title: `${arch.baseTitle} / ${COLOR_META[c].jp} / ${SIZE_META[s].jp} / ${SPEED_META[sp].jp}`,
@@ -38,15 +31,13 @@ function buildPatterns(): Pattern[] {
             effect: arch.effect,
             suitableFor: arch.suitableFor,
             badUsage: arch.badUsage,
-            htmlCode: code.html,
-            cssCode: code.css,
-            tailwindCode: code.tailwind,
-            reactCode: code.react,
-            claudePrompt: prompt,
-            similar: arch.similar?.flatMap((archId) => {
-              const sameKey = makeLoadingId(archId, c, s, sp);
-              return [sameKey];
-            }),
+            // code & prompt are resolved lazily by resolvePattern() in @/data/all
+            htmlCode: "",
+            cssCode: "",
+            tailwindCode: "",
+            reactCode: "",
+            claudePrompt: "",
+            similar: arch.similar?.map((archId) => makeLoadingId(archId, c, s, sp)),
           });
         }
       }
