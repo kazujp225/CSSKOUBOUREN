@@ -31,12 +31,6 @@ export function Header() {
             <span aria-hidden>✦</span> AI で探す
           </Link>
           <Link
-            href="/fortune"
-            className="rounded-full px-3 py-1.5 text-zinc-700 transition hover:bg-zinc-100/80 hover:text-zinc-900"
-          >
-            占い特集
-          </Link>
-          <Link
             href="/patterns"
             className="rounded-full px-3 py-1.5 text-zinc-700 transition hover:bg-zinc-100/80 hover:text-zinc-900"
           >
