@@ -18,21 +18,10 @@ export type SpeedKey =
   | "instant";
 
 export const COLORS: ColorKey[] = ["violet", "blue", "rose", "amber", "emerald"];
-export const SIZES: SizeKey[] = ["xs", "sm", "md", "lg", "xl", "xxl", "mega"];
-export const SPEEDS: SpeedKey[] = [
-  "ultraSlow",
-  "vslow",
-  "slow",
-  "slowish",
-  "medium",
-  "normal",
-  "normalish",
-  "fast",
-  "vfast",
-  "faster",
-  "ultra",
-  "instant",
-];
+// Loading registry uses these arrays to expand variants.
+// Keep them small to avoid loading dominating the dictionary.
+export const SIZES: SizeKey[] = ["md", "lg"];
+export const SPEEDS: SpeedKey[] = ["slow", "normal", "fast"];
 
 export const COLOR_META: Record<ColorKey, { hex: string; tw: string; jp: string; soft: string }> = {
   violet: { hex: "#7c5cff", tw: "violet", jp: "紫", soft: "#ede9ff" },
