@@ -21,6 +21,10 @@ export const CATEGORIES: Category[] = [
   { slug: "icon", name: "アイコン演出 / 効果", description: "電球・歯車・ロケット・花火など、目を引く小ネタ演出", icon: "Lightbulb" },
   { slug: "font", name: "フォントアレンジ", description: "見出しの文字加工・タイポグラフィ装飾の集合", icon: "Type" },
   { slug: "fortune", name: "占い / ミスティック", description: "タロット・水晶玉・月相・占星盤・神秘系フォントなど占いサイト向け演出", icon: "Sparkles" },
+  { slug: "nav", name: "ナビゲーション", description: "navbar / tabs / breadcrumb / pagination", icon: "Menu" },
+  { slug: "feedback", name: "通知 / フィードバック", description: "toast / banner / modal で完了・警告を伝える", icon: "Bell" },
+  { slug: "disclosure", name: "情報開示", description: "tooltip / dropdown など段階的に情報を見せる", icon: "ChevronDown" },
+  { slug: "data", name: "データ表示", description: "badge / tag / avatar / table-row / timeline", icon: "Table" },
 ];
 
 export const POPULAR_TAGS = [

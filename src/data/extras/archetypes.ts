@@ -3954,6 +3954,914 @@ const fontMistFade: ExtraArchetype<CV> = {
 };
 
 /* ============================================================
+   NAV — primitive UI
+   ============================================================ */
+
+const navHorizontal: ExtraArchetype<CV> = {
+  id: "nav-horizontal",
+  baseTitle: "横並びナビゲーション",
+  category: "nav",
+  baseMood: ["BtoB", "ミニマル"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "コーポレート/SaaSサイトのグローバルナビ。ロゴ + メニュー + CTAの王道。",
+  effect: "ロゴ左 / メニュー中央 / 主CTA右の3分割。フォーカスやホバーで色が変わる。",
+  suitableFor: ["コーポレート", "SaaS", "メディア"],
+  badUsage: "メニューが多すぎると幅オーバー。6項目以下推奨。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<header class="nav">
+  <a href="#" class="logo">Brand</a>
+  <nav><a>Features</a><a>Pricing</a><a>Docs</a></nav>
+  <a href="#" class="cta">無料で始める</a>
+</header>`,
+    css: `.nav { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; border-bottom:1px solid #e7e7eb; background:#fff; }
+.nav .logo { font-weight:700; color:#0a0a0a; }
+.nav nav { display:flex; gap:24px; }
+.nav nav a { color:#52525b; transition:color .2s; }
+.nav nav a:hover { color:${color.hex}; }
+.nav .cta { padding:8px 18px; border-radius:9999px; background:${color.hex}; color:#fff; font-weight:600; }`,
+    tailwind: `<header className="flex items-center justify-between border-b border-zinc-200 bg-white px-7 py-3.5">
+  <a href="#" className="font-bold text-zinc-900">Brand</a>
+  <nav className="flex gap-6">
+    <a className="text-zinc-600 transition hover:text-${color.tw}-600">Features</a>
+    <a className="text-zinc-600 transition hover:text-${color.tw}-600">Pricing</a>
+    <a className="text-zinc-600 transition hover:text-${color.tw}-600">Docs</a>
+  </nav>
+  <a href="#" className="rounded-full bg-${color.tw}-500 px-5 py-2 font-semibold text-white">無料で始める</a>
+</header>`,
+    react: `export function Navbar() {
+  return (
+    <header className="flex items-center justify-between border-b border-zinc-200 bg-white px-7 py-3.5">
+      <a href="#" className="font-bold text-zinc-900">Brand</a>
+      <nav className="flex gap-6">
+        {["Features","Pricing","Docs"].map(l => (
+          <a key={l} className="text-zinc-600 transition hover:text-${color.tw}-600">{l}</a>
+        ))}
+      </nav>
+      <a href="#" className="rounded-full bg-${color.tw}-500 px-5 py-2 font-semibold text-white">無料で始める</a>
+    </header>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `グローバルナビを実装してください。flex で左ロゴ・中央メニュー(3項目)・右に主CTA。border-bottom 薄いグレー、メニューは hover で ${color.tw}-600、CTAは ${color.tw}-500 の pill。Tailwindで。`,
+};
+
+const navTabs: ExtraArchetype<CV> = {
+  id: "nav-tabs",
+  baseTitle: "タブナビゲーション（下線）",
+  category: "nav",
+  baseMood: ["ミニマル", "BtoB"],
+  baseTags: ["CSS", "Tailwind"],
+  difficulty: "easy",
+  useCase: "ダッシュボードの画面切替、設定ページのカテゴリ分け。",
+  effect: "現在のタブだけ下線が色付きで太い。クリック時のなめらかな下線移動も組める。",
+  suitableFor: ["管理画面", "設定ページ", "プロダクト詳細"],
+  badUsage: "タブが7個以上だと窮屈。4-5個まで。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<nav class="tabs">
+  <a class="active">概要</a>
+  <a>履歴</a>
+  <a>設定</a>
+</nav>`,
+    css: `.tabs { display:flex; gap:24px; border-bottom:1px solid #e7e7eb; }
+.tabs a { padding:12px 0; color:#52525b; font-weight:500; border-bottom:2px solid transparent; transition:color .2s, border-color .2s; cursor:pointer; }
+.tabs a:hover { color:#0a0a0a; }
+.tabs a.active { color:${color.hex}; border-bottom-color:${color.hex}; }`,
+    tailwind: `<nav className="flex gap-6 border-b border-zinc-200">
+  {[["概要", true], ["履歴", false], ["設定", false]].map(([l, active]) => (
+    <a key={l as string}
+      className={\`cursor-pointer border-b-2 py-3 font-medium transition \${active ? "border-${color.tw}-500 text-${color.tw}-600" : "border-transparent text-zinc-600 hover:text-zinc-900"}\`}>
+      {l}
+    </a>
+  ))}
+</nav>`,
+    react: `"use client";
+import { useState } from "react";
+export function TabsNav({ tabs = ["概要","履歴","設定"] }: { tabs?: string[] }) {
+  const [active, setActive] = useState(tabs[0]);
+  return (
+    <nav className="flex gap-6 border-b border-zinc-200">
+      {tabs.map(t => (
+        <button key={t} onClick={() => setActive(t)}
+          className={\`cursor-pointer border-b-2 py-3 font-medium transition \${active === t ? "border-${color.tw}-500 text-${color.tw}-600" : "border-transparent text-zinc-600 hover:text-zinc-900"}\`}>
+          {t}
+        </button>
+      ))}
+    </nav>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `タブナビ（下線型）を実装してください。flex gap-6、border-bottom グレー。各タブは border-b-2、active の時に ${color.tw}-500 の下線+${color.tw}-600 の文字色。clientコンポーネントで useState 使用。`,
+};
+
+const navBreadcrumb: ExtraArchetype<CV> = {
+  id: "nav-breadcrumb",
+  baseTitle: "パンくずリスト",
+  category: "nav",
+  baseMood: ["BtoB", "ミニマル"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "深い階層の管理画面、ECの商品ページ、ドキュメントサイト。",
+  effect: "現在地までのパスを区切り文字で表示。最後だけ太字+カラーで強調。",
+  suitableFor: ["管理画面", "EC", "ドキュメント"],
+  badUsage: "1階層しかないページには不要。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<nav class="breadcrumb">
+  <a>ホーム</a><span>/</span><a>サービス</a><span>/</span><a>料金</a><span>/</span><span class="current">エンタープライズ</span>
+</nav>`,
+    css: `.breadcrumb { display:flex; align-items:center; gap:8px; font-size:13px; color:#a1a1aa; }
+.breadcrumb a { color:#52525b; transition:color .2s; cursor:pointer; }
+.breadcrumb a:hover { color:${color.hex}; }
+.breadcrumb .current { color:${color.hex}; font-weight:600; }`,
+    tailwind: `<nav className="flex items-center gap-2 text-sm text-zinc-400">
+  {[
+    { label: "ホーム", current: false },
+    { label: "サービス", current: false },
+    { label: "料金", current: false },
+    { label: "エンタープライズ", current: true },
+  ].map((b, i, a) => (
+    <span key={i} className="contents">
+      {b.current
+        ? <span className="font-semibold text-${color.tw}-600">{b.label}</span>
+        : <a className="cursor-pointer text-zinc-600 transition hover:text-${color.tw}-600">{b.label}</a>}
+      {i < a.length - 1 && <span>/</span>}
+    </span>
+  ))}
+</nav>`,
+    react: `export function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
+  return (
+    <nav className="flex items-center gap-2 text-sm text-zinc-400">
+      {items.map((b, i, a) => {
+        const current = i === a.length - 1;
+        return (
+          <span key={i} className="contents">
+            {current
+              ? <span className="font-semibold text-${color.tw}-600">{b.label}</span>
+              : <a href={b.href} className="text-zinc-600 transition hover:text-${color.tw}-600">{b.label}</a>}
+            {!current && <span>/</span>}
+          </span>
+        );
+      })}
+    </nav>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `パンくずリストを items={[{label, href}]} で受け取るコンポーネントとして実装してください。区切りは / （opacity下げる）、最後の項目だけ${color.tw}-600 + bold。`,
+};
+
+const navPagination: ExtraArchetype<CV> = {
+  id: "nav-pagination",
+  baseTitle: "ページネーション",
+  category: "nav",
+  baseMood: ["BtoB", "ミニマル"],
+  baseTags: ["Tailwind", "React"],
+  difficulty: "medium",
+  useCase: "リスト・検索結果・テーブルのページ送り。",
+  effect: "前後ボタン + 数字ボタン。現在のページだけ反転。多ページ対応に … 省略表示。",
+  suitableFor: ["管理画面", "EC", "メディアの一覧"],
+  badUsage: "総件数が少ない（10件未満）なら不要。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<nav class="pagination">
+  <button>‹</button>
+  <button>1</button>
+  <button class="active">2</button>
+  <button>3</button>
+  <span>…</span>
+  <button>10</button>
+  <button>›</button>
+</nav>`,
+    css: `.pagination { display:flex; align-items:center; gap:6px; }
+.pagination button { min-width:36px; height:36px; padding:0 10px; border-radius:9999px; border:1px solid #e7e7eb; background:#fff; color:#52525b; cursor:pointer; transition:background .2s; }
+.pagination button:hover { background:#f4f4f5; }
+.pagination button.active { background:${color.hex}; border-color:${color.hex}; color:#fff; }
+.pagination span { color:#a1a1aa; padding:0 4px; }`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function Pagination({ total = 10 }: { total?: number }) {
+  const [page, setPage] = useState(2);
+  const visible = [1, 2, 3];
+  return (
+    <nav className="flex items-center gap-1.5">
+      <button onClick={() => setPage(p => Math.max(1, p - 1))}
+        className="h-9 w-9 rounded-full border border-zinc-200 bg-white text-zinc-600 transition hover:bg-zinc-100">‹</button>
+      {visible.map(n => (
+        <button key={n} onClick={() => setPage(n)}
+          className={\`h-9 min-w-9 rounded-full border px-2.5 transition \${page === n
+            ? "border-${color.tw}-500 bg-${color.tw}-500 text-white"
+            : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100"}\`}>{n}</button>
+      ))}
+      <span className="px-1 text-zinc-400">…</span>
+      <button onClick={() => setPage(total)}
+        className="h-9 min-w-9 rounded-full border border-zinc-200 bg-white px-2.5 text-zinc-600 transition hover:bg-zinc-100">{total}</button>
+      <button onClick={() => setPage(p => Math.min(total, p + 1))}
+        className="h-9 w-9 rounded-full border border-zinc-200 bg-white text-zinc-600 transition hover:bg-zinc-100">›</button>
+    </nav>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ページネーションコンポーネントを useState で実装。前後の ‹ › ボタン、現在ページ ${color.tw}-500 反転、間に … 省略、最後のページボタン。h-9 の pill ボタン。`,
+};
+
+/* ============================================================
+   FEEDBACK
+   ============================================================ */
+
+const feedbackToast: ExtraArchetype<CV> = {
+  id: "feedback-toast",
+  baseTitle: "トースト通知",
+  category: "feedback",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "保存完了・送信完了・エラー通知などの一時的なフィードバック。",
+  effect: "右下からスライドイン+フェードイン。3秒後に自動で消える。クローズボタン付き。",
+  suitableFor: ["管理画面", "SaaS", "Webアプリ"],
+  badUsage: "重要な確認は toast ではなく modal で。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="toast">
+  <span class="icon">✓</span>
+  <div><strong>保存しました</strong><p>変更が反映されました。</p></div>
+  <button class="close">×</button>
+</div>`,
+    css: `.toast { display:flex; gap:12px; padding:12px 14px; border-radius:12px; background:#fff; border:1px solid #e7e7eb; box-shadow:0 12px 30px -10px rgba(0,0,0,.18); max-width:360px; }
+.toast .icon { display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:9999px; background:${color.hex}22; color:${color.hex}; font-weight:700; flex-shrink:0; }
+.toast strong { color:#0a0a0a; font-weight:600; }
+.toast p { color:#52525b; font-size:13px; margin-top:2px; }
+.toast .close { background:none; border:0; color:#a1a1aa; cursor:pointer; }`,
+    tailwind: `<div className="flex max-w-sm gap-3 rounded-xl border border-zinc-200 bg-white p-3.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,.18)]">
+  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-${color.tw}-500/10 font-bold text-${color.tw}-600">✓</span>
+  <div className="flex-1">
+    <div className="font-semibold text-zinc-900">保存しました</div>
+    <p className="mt-0.5 text-[13px] text-zinc-600">変更が反映されました。</p>
+  </div>
+  <button className="text-zinc-400 hover:text-zinc-700">×</button>
+</div>`,
+    react: `export function Toast({ title = "保存しました", body = "変更が反映されました。" }) {
+  return (
+    <div className="flex max-w-sm gap-3 rounded-xl border border-zinc-200 bg-white p-3.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,.18)]">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-${color.tw}-500/10 font-bold text-${color.tw}-600">✓</span>
+      <div className="flex-1">
+        <div className="font-semibold text-zinc-900">{title}</div>
+        <p className="mt-0.5 text-[13px] text-zinc-600">{body}</p>
+      </div>
+      <button className="text-zinc-400 hover:text-zinc-700">×</button>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `トースト通知を実装。max-w-sm、白背景、薄い border + 大きめ shadow。左に ${color.tw}-500/10 背景の丸チェックアイコン、中央に title + body、右に × ボタン。`,
+};
+
+const feedbackBanner: ExtraArchetype<CV> = {
+  id: "feedback-banner",
+  baseTitle: "フルワイドバナー",
+  category: "feedback",
+  baseMood: ["BtoB", "告知"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "アップデート通知 / メンテナンス予告 / キャンペーン告知をページ上部で。",
+  effect: "全幅の薄い帯。アイコン + メッセージ + CTA + 閉じる。色で深刻度を切替。",
+  suitableFor: ["管理画面ヘッダー", "サービストップ", "ユーザーポータル"],
+  badUsage: "閉じれない設計はストレス。常に × を置く。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="banner">
+  <span>🎉</span>
+  <p>v2.0 をリリースしました。<a>変更点を見る →</a></p>
+  <button>×</button>
+</div>`,
+    css: `.banner { display:flex; align-items:center; gap:12px; padding:10px 16px; background:${color.hex}10; border-bottom:1px solid ${color.hex}33; color:#0a0a0a; }
+.banner p { flex:1; font-size:14px; }
+.banner a { color:${color.hex}; font-weight:600; margin-left:6px; }
+.banner button { background:none; border:0; color:#52525b; cursor:pointer; }`,
+    tailwind: `<div className="flex items-center gap-3 border-b px-4 py-2.5 text-zinc-900"
+  style={{ background:"${color.hex}10", borderColor:"${color.hex}33" }}>
+  <span>🎉</span>
+  <p className="flex-1 text-sm">v2.0 をリリースしました。<a className="ml-1.5 font-semibold" style={{ color:"${color.hex}" }}>変更点を見る →</a></p>
+  <button className="text-zinc-600 hover:text-zinc-900">×</button>
+</div>`,
+    react: `export function Banner({ message, ctaLabel, ctaHref }: { message: string; ctaLabel?: string; ctaHref?: string }) {
+  return (
+    <div className="flex items-center gap-3 border-b px-4 py-2.5 text-zinc-900"
+      style={{ background:"${color.hex}10", borderColor:"${color.hex}33" }}>
+      <span>🎉</span>
+      <p className="flex-1 text-sm">
+        {message}
+        {ctaLabel && <a href={ctaHref} className="ml-1.5 font-semibold" style={{ color:"${color.hex}" }}>{ctaLabel} →</a>}
+      </p>
+      <button className="text-zinc-600 hover:text-zinc-900" aria-label="close">×</button>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ページ最上部の通知バナー。背景 ${color.tw}-500/10、border-bottom ${color.tw}-500/33。flexで絵文字 + メッセージ + リンク + ×ボタン。closable。`,
+};
+
+const feedbackModal: ExtraArchetype<CV> = {
+  id: "feedback-modal",
+  baseTitle: "中央モーダル",
+  category: "feedback",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["Tailwind", "React"],
+  difficulty: "medium",
+  useCase: "削除確認 / 重要設定の保存 / 認証チャレンジなど、フォーカスを完全に奪いたい時。",
+  effect: "全画面オーバーレイで背景を暗くし、中央にカード状ダイアログを表示。",
+  suitableFor: ["管理画面", "EC checkout", "認証"],
+  badUsage: "情報を読ませたいだけ・通知だけなら toast / banner で十分。modalは決断を求める時のみ。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="modal-backdrop">
+  <div class="modal">
+    <h3>変更を保存しますか？</h3>
+    <p>この操作は取り消せません。</p>
+    <div class="actions">
+      <button class="cancel">キャンセル</button>
+      <button class="confirm">保存する</button>
+    </div>
+  </div>
+</div>`,
+    css: `.modal-backdrop { position:fixed; inset:0; background:rgba(10,10,15,.55); display:flex; align-items:center; justify-content:center; backdrop-filter:blur(2px); z-index:50; }
+.modal { background:#fff; border-radius:16px; padding:28px; width:100%; max-width:420px; box-shadow:0 30px 60px -20px rgba(0,0,0,.35); }
+.modal h3 { font-size:18px; font-weight:600; color:#0a0a0a; }
+.modal p { color:#52525b; margin-top:8px; font-size:14px; }
+.modal .actions { display:flex; justify-content:flex-end; gap:8px; margin-top:24px; }
+.modal .cancel { padding:8px 16px; border-radius:9999px; border:1px solid #e7e7eb; background:#fff; color:#52525b; }
+.modal .confirm { padding:8px 16px; border-radius:9999px; background:${color.hex}; color:#fff; font-weight:600; }`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function ConfirmModal() {
+  const [open, setOpen] = useState(true);
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/55 backdrop-blur-sm" onClick={() => setOpen(false)}>
+      <div className="w-full max-w-md rounded-2xl bg-white p-7 shadow-[0_30px_60px_-20px_rgba(0,0,0,.35)]" onClick={e => e.stopPropagation()}>
+        <h3 className="text-lg font-semibold text-zinc-900">変更を保存しますか？</h3>
+        <p className="mt-2 text-sm text-zinc-600">この操作は取り消せません。</p>
+        <div className="mt-6 flex justify-end gap-2">
+          <button onClick={() => setOpen(false)}
+            className="rounded-full border border-zinc-200 px-4 py-2 text-zinc-600 hover:bg-zinc-50">キャンセル</button>
+          <button className="rounded-full bg-${color.tw}-500 px-4 py-2 font-semibold text-white">保存する</button>
+        </div>
+      </div>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `中央モーダル（確認ダイアログ）を実装してください。fixed inset-0 で背景を黒/55 + backdrop-blur、中央に max-w-md の白カード。タイトル + 本文 + 右寄せキャンセル/保存(${color.tw}-500)。背景クリックで閉じる、内側クリックは伝播停止。`,
+};
+
+/* ============================================================
+   DISCLOSURE
+   ============================================================ */
+
+const disclosureTooltip: ExtraArchetype<CV> = {
+  id: "disclosure-tooltip",
+  baseTitle: "ツールチップ（ホバー）",
+  category: "disclosure",
+  baseMood: ["BtoB", "ミニマル"],
+  baseTags: ["CSS", "Tailwind"],
+  difficulty: "easy",
+  useCase: "アイコンの意味補足、フォームのヘルプテキスト、UIラベルの省略補完。",
+  effect: "ホバーで上に小さなパネルが出現。下向き矢印付き。",
+  suitableFor: ["管理画面", "アイコン群", "テーブルヘッダー"],
+  badUsage: "重要情報をtooltipに隠さない。マウス操作前提なのでモバイルでは見えない。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="tip-trigger">?
+  <span class="tip">説明テキスト</span>
+</button>`,
+    css: `.tip-trigger { position:relative; display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:9999px; background:#f4f4f5; color:#52525b; cursor:help; }
+.tip { position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(4px); white-space:nowrap; padding:6px 10px; border-radius:6px; background:#0a0a0a; color:#fff; font-size:12px; opacity:0; transition:opacity .2s, transform .2s; pointer-events:none; }
+.tip::after { content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:#0a0a0a; }
+.tip-trigger:hover .tip { opacity:1; transform:translateX(-50%) translateY(0); }
+.tip-trigger:hover { background:${color.hex}22; color:${color.hex}; }`,
+    tailwind: `<button className="group relative inline-flex h-6 w-6 cursor-help items-center justify-center rounded-full bg-zinc-100 text-zinc-600 transition hover:bg-${color.tw}-500/15 hover:text-${color.tw}-600">
+  ?
+  <span className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md bg-zinc-900 px-2.5 py-1.5 text-xs text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100
+                   after:absolute after:left-1/2 after:top-full after:-translate-x-1/2 after:border-[5px] after:border-transparent after:border-t-zinc-900">
+    説明テキスト
+  </span>
+</button>`,
+    react: `export function Tooltip({ children, label }: { children: React.ReactNode; label: string }) {
+  return (
+    <span className="group relative inline-block">
+      {children}
+      <span className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md bg-zinc-900 px-2.5 py-1.5 text-xs text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100
+                       after:absolute after:left-1/2 after:top-full after:-translate-x-1/2 after:border-[5px] after:border-transparent after:border-t-zinc-900">
+        {label}
+      </span>
+    </span>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ホバー型ツールチップを <Tooltip label=...> でラップする形で実装。group/group-hover、上方向に黒背景の小パネル + 下向き三角、translateY transitionで現れる。`,
+};
+
+const disclosureDropdown: ExtraArchetype<CV> = {
+  id: "disclosure-dropdown",
+  baseTitle: "ドロップダウンメニュー",
+  category: "disclosure",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["React", "Tailwind"],
+  difficulty: "medium",
+  useCase: "ユーザーメニュー / アクション集合 / 選択肢の多いセレクトの代替。",
+  effect: "ボタンクリックで下にメニューがフェードイン。外クリックで閉じる。",
+  suitableFor: ["管理画面ヘッダー", "テーブルの行アクション", "リッチセレクト"],
+  badUsage: "選択肢が3個以下なら radio / segmented control の方が良い。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="dropdown">
+  <button>メニュー ▾</button>
+  <ul class="menu">
+    <li>プロフィール</li>
+    <li>設定</li>
+    <li>ログアウト</li>
+  </ul>
+</div>`,
+    css: `/* React版を参照 */`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useEffect, useRef, useState } from "react";
+export function Dropdown({ label = "メニュー", items = ["プロフィール", "設定", "ログアウト"] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+  return (
+    <div ref={ref} className="relative inline-block">
+      <button onClick={() => setOpen(v => !v)}
+        className="rounded-full border border-zinc-200 bg-white px-4 py-2 font-medium text-zinc-700 transition hover:bg-zinc-50">
+        {label} <span className={\`ml-1 inline-block transition \${open ? "rotate-180" : ""}\`}>▾</span>
+      </button>
+      {open && (
+        <ul className="absolute right-0 z-30 mt-2 min-w-44 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-[0_18px_30px_-12px_rgba(0,0,0,.18)]">
+          {items.map(it => (
+            <li key={it}
+              className="cursor-pointer px-4 py-2 text-sm text-zinc-700 transition hover:bg-${color.tw}-500/10 hover:text-${color.tw}-700"
+              onClick={() => setOpen(false)}>
+              {it}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `クリック開閉のドロップダウンメニュー。useState + 外クリックで閉じる useEffect。トリガー pill ボタン + ▾ 矢印が rotate-180、メニューは absolute、各項目 hover で ${color.tw}-500/10。`,
+};
+
+/* ============================================================
+   DATA — primitive UI
+   ============================================================ */
+
+const dataBadge: ExtraArchetype<CV> = {
+  id: "data-badge",
+  baseTitle: "数字バッジ / ステータスチップ",
+  category: "data",
+  baseMood: ["BtoB", "ミニマル"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "通知件数 / ステータス表示 / カウンター。",
+  effect: "丸 or pillの小さなバッジ。色でステータス区別（success/warn/error/neutral）。",
+  suitableFor: ["管理画面", "通知アイコン", "リスト行"],
+  badUsage: "数字が3桁を超えたら99+表記推奨。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<span class="badge">12</span>
+<span class="badge dot"></span>
+<span class="badge pill">新着</span>`,
+    css: `.badge { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; padding:0 6px; border-radius:9999px; background:${color.hex}; color:#fff; font-size:11px; font-weight:700; line-height:1; }
+.badge.dot { width:10px; height:10px; min-width:0; padding:0; }
+.badge.pill { background:${color.hex}22; color:${color.hex}; }`,
+    tailwind: `{/* 数字 */}
+<span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-${color.tw}-500 px-1.5 text-[11px] font-bold text-white">12</span>
+{/* ドット */}
+<span className="inline-block h-2.5 w-2.5 rounded-full bg-${color.tw}-500" />
+{/* ステータス pill */}
+<span className="inline-flex h-5 items-center rounded-full bg-${color.tw}-500/15 px-2 text-[11px] font-bold text-${color.tw}-700">新着</span>`,
+    react: `export function Badge({ children, variant = "solid" }: { children?: React.ReactNode; variant?: "solid" | "soft" | "dot" }) {
+  if (variant === "dot") return <span className="inline-block h-2.5 w-2.5 rounded-full bg-${color.tw}-500" />;
+  if (variant === "soft") return <span className="inline-flex h-5 items-center rounded-full bg-${color.tw}-500/15 px-2 text-[11px] font-bold text-${color.tw}-700">{children}</span>;
+  return <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-${color.tw}-500 px-1.5 text-[11px] font-bold text-white">{children}</span>;
+}`,
+  }),
+  prompt: ({ color }) =>
+    `バッジコンポーネント（solid / soft / dot の3種）を実装。color は ${color.tw}-500 ベース、softは bg-${color.tw}-500/15 + text-${color.tw}-700。`,
+};
+
+const dataTag: ExtraArchetype<CV> = {
+  id: "data-tag",
+  baseTitle: "タグ（×で削除可能）",
+  category: "data",
+  baseMood: ["BtoB", "ミニマル"],
+  baseTags: ["Tailwind", "React"],
+  difficulty: "easy",
+  useCase: "選択中のフィルタ / 入力済みのキーワード / 添付ファイル一覧。",
+  effect: "薄い背景の pill に × ボタン。クリックで削除。",
+  suitableFor: ["フィルタUI", "tag-input", "添付一覧"],
+  badUsage: "削除できないタグなら × は出さない。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<span class="tag">React<button class="x">×</button></span>`,
+    css: `.tag { display:inline-flex; align-items:center; gap:6px; padding:4px 4px 4px 10px; border-radius:9999px; background:${color.hex}15; color:${color.hex}; font-size:12px; font-weight:600; }
+.tag .x { background:none; border:0; cursor:pointer; color:${color.hex}; opacity:.6; padding:0 6px; border-radius:9999px; }
+.tag .x:hover { opacity:1; background:${color.hex}33; }`,
+    tailwind: `<span className="inline-flex items-center gap-1.5 rounded-full bg-${color.tw}-500/15 py-1 pl-3 pr-1 text-xs font-semibold text-${color.tw}-700">
+  React
+  <button className="rounded-full px-1.5 text-${color.tw}-700/60 transition hover:bg-${color.tw}-500/30 hover:text-${color.tw}-700">×</button>
+</span>`,
+    react: `export function Tag({ label, onRemove }: { label: string; onRemove?: () => void }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-${color.tw}-500/15 py-1 pl-3 pr-1 text-xs font-semibold text-${color.tw}-700">
+      {label}
+      {onRemove && (
+        <button onClick={onRemove}
+          className="rounded-full px-1.5 text-${color.tw}-700/60 transition hover:bg-${color.tw}-500/30 hover:text-${color.tw}-700"
+          aria-label="remove">×</button>
+      )}
+    </span>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `削除可能なタグコンポーネント。pill 形、bg-${color.tw}-500/15 + text-${color.tw}-700、右に × ボタン（hover で背景濃く）。onRemove省略可。`,
+};
+
+const dataAvatar: ExtraArchetype<CV> = {
+  id: "data-avatar",
+  baseTitle: "アバター（オンライン状態付き）",
+  category: "data",
+  baseMood: ["BtoC", "アプリ"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "ユーザー一覧、コメント欄、チャット、ヘッダーのプロフィール表示。",
+  effect: "丸い画像 + 右下の小さなドット (online/away/offline) + ホバーで枠が色付き。",
+  suitableFor: ["SNS/メッセージング", "管理画面のユーザーリスト", "チームページ"],
+  badUsage: "画像が無いユーザーには initials フォールバックを必ず用意。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="avatar">
+  <img src="/u.jpg" alt="" />
+  <span class="status"></span>
+</div>`,
+    css: `.avatar { position:relative; width:40px; height:40px; }
+.avatar img { width:100%; height:100%; border-radius:9999px; object-fit:cover; border:2px solid #fff; transition:border-color .2s; }
+.avatar:hover img { border-color:${color.hex}; }
+.avatar .status { position:absolute; right:-2px; bottom:-2px; width:12px; height:12px; border-radius:9999px; background:${color.hex}; border:2px solid #fff; }`,
+    tailwind: `<div className="group relative h-10 w-10">
+  <img src="/u.jpg" alt="" className="h-full w-full rounded-full border-2 border-white object-cover transition group-hover:border-${color.tw}-500" />
+  <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-${color.tw}-500" />
+</div>`,
+    react: `export function Avatar({ src, alt, status = "online" }: { src?: string; alt?: string; status?: "online" | "away" | "offline" }) {
+  const dot = status === "online" ? "${color.hex}" : status === "away" ? "#fbbf24" : "#a1a1aa";
+  return (
+    <div className="group relative h-10 w-10">
+      {src
+        ? <img src={src} alt={alt} className="h-full w-full rounded-full border-2 border-white object-cover transition group-hover:border-${color.tw}-500" />
+        : <div className="flex h-full w-full items-center justify-center rounded-full bg-zinc-200 text-sm font-semibold text-zinc-600 border-2 border-white">{alt?.slice(0,2)}</div>}
+      <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white" style={{ background: dot }} />
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `アバター（40px）+ 右下にステータスドット。online=${color.tw}-500、away=amber-400、offline=zinc-400。画像なしの場合は initials フォールバック。group-hover で border-${color.tw}-500。`,
+};
+
+const dataTableRow: ExtraArchetype<CV> = {
+  id: "data-table-row",
+  baseTitle: "テーブル行（hover/selected）",
+  category: "data",
+  baseMood: ["BtoB", "管理画面"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "管理画面のレコード一覧、ダッシュボード、検索結果の表形式。",
+  effect: "ホバー時に背景がハイライト、選択時はアクセント色帯+ボーダー。",
+  suitableFor: ["管理画面", "ダッシュボード", "DBクライアントUI"],
+  badUsage: "行が密すぎると視線追跡が難しい。padding y-3 以上推奨。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<table class="table">
+  <thead><tr><th>名前</th><th>メール</th><th>権限</th></tr></thead>
+  <tbody>
+    <tr><td>田中</td><td>tanaka@…</td><td>Admin</td></tr>
+    <tr class="selected"><td>佐藤</td><td>sato@…</td><td>Member</td></tr>
+    <tr><td>鈴木</td><td>suzuki@…</td><td>Member</td></tr>
+  </tbody>
+</table>`,
+    css: `.table { width:100%; border-collapse:collapse; font-size:14px; }
+.table th { text-align:left; padding:10px 12px; color:#71717a; border-bottom:1px solid #e7e7eb; font-weight:600; }
+.table td { padding:12px; color:#0a0a0a; border-bottom:1px solid #f4f4f5; }
+.table tbody tr { transition:background .15s; }
+.table tbody tr:hover { background:#fafafa; }
+.table tbody tr.selected { background:${color.hex}10; box-shadow:inset 3px 0 0 ${color.hex}; }`,
+    tailwind: `<table className="w-full border-collapse text-sm">
+  <thead>
+    <tr className="border-b border-zinc-200 text-left text-zinc-500">
+      <th className="px-3 py-2.5 font-semibold">名前</th>
+      <th className="px-3 py-2.5 font-semibold">メール</th>
+      <th className="px-3 py-2.5 font-semibold">権限</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr className="border-b border-zinc-100 text-zinc-900 transition hover:bg-zinc-50">
+      <td className="px-3 py-3">田中</td><td className="px-3 py-3">tanaka@…</td><td className="px-3 py-3">Admin</td>
+    </tr>
+    <tr className="border-b border-zinc-100 bg-${color.tw}-500/10 text-zinc-900 [box-shadow:inset_3px_0_0_${color.hex}]">
+      <td className="px-3 py-3">佐藤</td><td className="px-3 py-3">sato@…</td><td className="px-3 py-3">Member</td>
+    </tr>
+    <tr className="border-b border-zinc-100 text-zinc-900 transition hover:bg-zinc-50">
+      <td className="px-3 py-3">鈴木</td><td className="px-3 py-3">suzuki@…</td><td className="px-3 py-3">Member</td>
+    </tr>
+  </tbody>
+</table>`,
+    react: `export function DataTable({ rows, selected }: { rows: { id: string | number; cells: React.ReactNode[] }[]; selected?: string | number }) {
+  return (
+    <table className="w-full border-collapse text-sm">
+      <tbody>
+        {rows.map(r => (
+          <tr key={r.id}
+            className={\`border-b border-zinc-100 text-zinc-900 transition \${selected === r.id ? "bg-${color.tw}-500/10 [box-shadow:inset_3px_0_0_${color.hex}]" : "hover:bg-zinc-50"}\`}>
+            {r.cells.map((c, i) => <td key={i} className="px-3 py-3">{c}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `テーブル行を実装。border-b zinc-100、hover で zinc-50、selected 行は bg-${color.tw}-500/10 + 左に inset 3px ${color.hex}。padding y-3 で視認性確保。`,
+};
+
+const dataTimeline: ExtraArchetype<CV> = {
+  id: "data-timeline",
+  baseTitle: "タイムライン（縦並び）",
+  category: "data",
+  baseMood: ["BtoB", "ストーリー"],
+  baseTags: ["Tailwind"],
+  difficulty: "medium",
+  useCase: "イベント履歴 / ステップ完了状況 / 注文の進行 / 監査ログ。",
+  effect: "縦線 + 各項目に丸ドット + 日時 + 内容。完了/現在/未完で色を変える。",
+  suitableFor: ["管理画面", "EC注文ステータス", "プロセス可視化"],
+  badUsage: "10件以上だと長すぎる。最近の数件 + 「全て見る」リンクに。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<ol class="timeline">
+  <li class="done"><time>05/01</time><h4>注文受付</h4></li>
+  <li class="now"><time>05/02</time><h4>発送準備中</h4></li>
+  <li><time>05/04</time><h4>到着予定</h4></li>
+</ol>`,
+    css: `.timeline { list-style:none; padding:0; margin:0; position:relative; padding-left:28px; }
+.timeline::before { content:""; position:absolute; left:9px; top:6px; bottom:6px; width:2px; background:#e7e7eb; }
+.timeline li { position:relative; padding-bottom:22px; }
+.timeline li::before { content:""; position:absolute; left:-24px; top:6px; width:14px; height:14px; border-radius:9999px; background:#fff; border:2px solid #d4d4d8; }
+.timeline li.done::before { background:${color.hex}; border-color:${color.hex}; }
+.timeline li.now::before { background:#fff; border-color:${color.hex}; box-shadow:0 0 0 4px ${color.hex}33; }
+.timeline time { font-size:12px; color:#71717a; }
+.timeline h4 { color:#0a0a0a; font-weight:600; margin-top:4px; }`,
+    tailwind: `// React版を参照`,
+    react: `type Step = { date: string; title: string; status: "done" | "now" | "todo" };
+export function Timeline({ steps }: { steps: Step[] }) {
+  return (
+    <ol className="relative m-0 list-none p-0 pl-7
+                   before:absolute before:left-2.5 before:top-1.5 before:bottom-1.5 before:w-0.5 before:bg-zinc-200">
+      {steps.map((s, i) => {
+        const dot = s.status === "done"
+          ? "bg-${color.tw}-500 border-${color.tw}-500"
+          : s.status === "now"
+            ? "bg-white border-${color.tw}-500 shadow-[0_0_0_4px_${color.hex}33]"
+            : "bg-white border-zinc-300";
+        return (
+          <li key={i} className={\`relative pb-5.5 before:absolute before:-left-6 before:top-1.5 before:h-3.5 before:w-3.5 before:rounded-full before:border-2 before:\${dot.replace("bg-", "before:bg-").replace("border-", "before:border-").replace("shadow-", "before:shadow-")}\`}>
+            <time className="text-xs text-zinc-500">{s.date}</time>
+            <h4 className="mt-1 font-semibold text-zinc-900">{s.title}</h4>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `縦タイムラインを実装。pl-7 のリスト、左に before で縦線。各 li の前に丸ドット: done=${color.tw}-500塗り、now=白枠+${color.tw}-500border+ ${color.hex}33の外輪、todo=zinc-300。日時 + タイトル。`,
+};
+
+/* ============================================================
+   FORM — 入力プリミティブ
+   ============================================================ */
+
+const formCheckbox: ExtraArchetype<CV> = {
+  id: "form-checkbox",
+  baseTitle: "カスタムチェックボックス",
+  category: "form",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["CSS", "Tailwind"],
+  difficulty: "easy",
+  useCase: "利用規約同意 / 複数選択フィルタ / TODO チェック。",
+  effect: "ネイティブの代わりにスタイル可能なボックス。チェック時アクセント色 + ✓。",
+  suitableFor: ["管理画面", "フォーム", "TODOアプリ"],
+  badUsage: "入力できないなら disabled スタイルを必ず差別化。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<label class="cb"><input type="checkbox" /><span class="box"></span>同意します</label>`,
+    css: `.cb { display:inline-flex; align-items:center; gap:8px; cursor:pointer; user-select:none; color:#0a0a0a; }
+.cb input { position:absolute; opacity:0; pointer-events:none; }
+.cb .box { width:20px; height:20px; border-radius:6px; border:2px solid #d4d4d8; background:#fff; display:inline-flex; align-items:center; justify-content:center; transition:all .15s; }
+.cb input:checked + .box { background:${color.hex}; border-color:${color.hex}; }
+.cb input:checked + .box::after { content:"✓"; color:#fff; font-weight:700; font-size:13px; }
+.cb input:focus-visible + .box { box-shadow:0 0 0 3px ${color.hex}33; }`,
+    tailwind: `<label className="inline-flex cursor-pointer select-none items-center gap-2 text-zinc-900">
+  <input type="checkbox" className="peer sr-only" />
+  <span className="flex h-5 w-5 items-center justify-center rounded-md border-2 border-zinc-300 bg-white transition
+                   peer-checked:border-${color.tw}-500 peer-checked:bg-${color.tw}-500
+                   peer-focus-visible:ring-4 peer-focus-visible:ring-${color.tw}-500/30
+                   after:hidden after:font-bold after:text-white after:content-['✓']
+                   peer-checked:after:block" />
+  同意します
+</label>`,
+    react: `export function Checkbox({ label, defaultChecked }: { label: string; defaultChecked?: boolean }) {
+  return (
+    <label className="inline-flex cursor-pointer select-none items-center gap-2 text-zinc-900">
+      <input type="checkbox" defaultChecked={defaultChecked} className="peer sr-only" />
+      <span className="flex h-5 w-5 items-center justify-center rounded-md border-2 border-zinc-300 bg-white transition
+                       peer-checked:border-${color.tw}-500 peer-checked:bg-${color.tw}-500
+                       peer-focus-visible:ring-4 peer-focus-visible:ring-${color.tw}-500/30
+                       after:hidden after:font-bold after:text-white after:content-['✓']
+                       peer-checked:after:block" />
+      {label}
+    </label>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `カスタムチェックボックス（peer + sr-only input）を実装。チェック時 ${color.tw}-500、フォーカス時 ring-4 ${color.tw}-500/30、after で ✓ 表示。`,
+};
+
+const formRadio: ExtraArchetype<CV> = {
+  id: "form-radio",
+  baseTitle: "カスタムラジオグループ",
+  category: "form",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "排他的な選択肢（プラン選択 / 性別 / 言語）。",
+  effect: "丸枠 + 内側ドット。選択時はアクセント色のリング + 中央ドット。",
+  suitableFor: ["フォーム", "設定画面", "プラン選択"],
+  badUsage: "選択肢が5個以上なら radio より select が良い。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<label class="rd"><input type="radio" name="g" /><span class="dot"></span>個人プラン</label>
+<label class="rd"><input type="radio" name="g" checked /><span class="dot"></span>法人プラン</label>`,
+    css: `.rd { display:inline-flex; align-items:center; gap:8px; cursor:pointer; color:#0a0a0a; }
+.rd input { position:absolute; opacity:0; }
+.rd .dot { width:20px; height:20px; border-radius:9999px; border:2px solid #d4d4d8; background:#fff; transition:all .15s; position:relative; }
+.rd input:checked + .dot { border-color:${color.hex}; }
+.rd input:checked + .dot::after { content:""; position:absolute; inset:3px; border-radius:9999px; background:${color.hex}; }
+.rd input:focus-visible + .dot { box-shadow:0 0 0 3px ${color.hex}33; }`,
+    tailwind: `<label className="inline-flex cursor-pointer items-center gap-2 text-zinc-900">
+  <input type="radio" name="plan" className="peer sr-only" defaultChecked />
+  <span className="relative h-5 w-5 rounded-full border-2 border-zinc-300 bg-white transition
+                   peer-checked:border-${color.tw}-500
+                   peer-focus-visible:ring-4 peer-focus-visible:ring-${color.tw}-500/30
+                   after:hidden after:absolute after:inset-[3px] after:rounded-full after:bg-${color.tw}-500
+                   peer-checked:after:block" />
+  法人プラン
+</label>`,
+    react: `export function Radio({ name, label, value }: { name: string; label: string; value: string }) {
+  return (
+    <label className="inline-flex cursor-pointer items-center gap-2 text-zinc-900">
+      <input type="radio" name={name} value={value} className="peer sr-only" />
+      <span className="relative h-5 w-5 rounded-full border-2 border-zinc-300 bg-white transition
+                       peer-checked:border-${color.tw}-500
+                       peer-focus-visible:ring-4 peer-focus-visible:ring-${color.tw}-500/30
+                       after:hidden after:absolute after:inset-[3px] after:rounded-full after:bg-${color.tw}-500
+                       peer-checked:after:block" />
+      {label}
+    </label>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `カスタムラジオを peer + sr-only input + 丸枠 + after の中央ドットで実装。チェック時 border-${color.tw}-500、after を inset-[3px] で${color.tw}-500の中央ドットを出現。`,
+};
+
+const formSwitch: ExtraArchetype<CV> = {
+  id: "form-switch",
+  baseTitle: "トグルスイッチ",
+  category: "form",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "ON/OFF設定 / 通知有効化 / ダークモード切替。",
+  effect: "track + thumb の丸スライド。ON時アクセント色、OFF時グレー。",
+  suitableFor: ["設定画面", "ダッシュボード", "プロフィール編集"],
+  badUsage: "即時に反映されない設定には switch ではなく checkbox + 保存ボタンが安全。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<label class="sw"><input type="checkbox" /><span class="track"><span class="thumb"></span></span></label>`,
+    css: `.sw { display:inline-block; cursor:pointer; }
+.sw input { position:absolute; opacity:0; }
+.sw .track { display:inline-block; width:44px; height:24px; border-radius:9999px; background:#d4d4d8; position:relative; transition:background .2s; }
+.sw .thumb { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:9999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.18); transition:transform .2s; }
+.sw input:checked + .track { background:${color.hex}; }
+.sw input:checked + .track .thumb { transform:translateX(20px); }`,
+    tailwind: `<label className="inline-flex cursor-pointer items-center">
+  <input type="checkbox" className="peer sr-only" />
+  <span className="relative h-6 w-11 rounded-full bg-zinc-300 transition peer-checked:bg-${color.tw}-500
+                   peer-focus-visible:ring-4 peer-focus-visible:ring-${color.tw}-500/30
+                   after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white
+                   after:shadow after:transition peer-checked:after:translate-x-5" />
+</label>`,
+    react: `"use client";
+import { useState } from "react";
+export function Switch({ defaultOn = false, onChange }: { defaultOn?: boolean; onChange?: (v: boolean) => void }) {
+  const [on, setOn] = useState(defaultOn);
+  return (
+    <label className="inline-flex cursor-pointer items-center">
+      <input type="checkbox" checked={on}
+        onChange={e => { setOn(e.target.checked); onChange?.(e.target.checked); }}
+        className="peer sr-only" />
+      <span className="relative h-6 w-11 rounded-full bg-zinc-300 transition peer-checked:bg-${color.tw}-500
+                       peer-focus-visible:ring-4 peer-focus-visible:ring-${color.tw}-500/30
+                       after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white
+                       after:shadow after:transition peer-checked:after:translate-x-5" />
+    </label>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `トグルスイッチを peer + sr-only input + after の thumb で実装。track 44x24 zinc-300、ON で ${color.tw}-500、thumb は after で 20px 白円、translate-x-5 で右へスライド。`,
+};
+
+/* ============================================================
+   STATS expansion
+   ============================================================ */
+
+const statsRingProgress: ExtraArchetype<CV> = {
+  id: "stats-ring-progress",
+  baseTitle: "円形進捗（リング）",
+  category: "stats",
+  baseMood: ["BtoB", "ダッシュボード"],
+  baseTags: ["SVG", "React"],
+  difficulty: "medium",
+  useCase: "達成率 / 目標進捗 / システムリソース使用率の可視化。",
+  effect: "薄いリング + 進捗分だけ色付きストロークを描画。中央に % 表示。",
+  suitableFor: ["ダッシュボード", "プロフィール", "学習プラットフォーム"],
+  badUsage: "100% を超える値は別ビューに。マイナスは扱わない。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<svg viewBox="0 0 100 100" class="ring">
+  <circle cx="50" cy="50" r="44" fill="none" stroke="#e7e7eb" stroke-width="8"/>
+  <circle cx="50" cy="50" r="44" fill="none" stroke="${color.hex}" stroke-width="8"
+    stroke-dasharray="276" stroke-dashoffset="69" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+  <text x="50" y="56" text-anchor="middle" font-size="22" font-weight="700" fill="#0a0a0a">75%</text>
+</svg>`,
+    css: `.ring { width:128px; height:128px; }`,
+    tailwind: `// React版を参照`,
+    react: `export function RingProgress({ value = 75, size = 128 }: { value?: number; size?: number }) {
+  const r = 44;
+  const C = 2 * Math.PI * r;
+  const offset = C - (C * Math.min(100, Math.max(0, value))) / 100;
+  return (
+    <svg viewBox="0 0 100 100" style={{ width: size, height: size }}>
+      <circle cx="50" cy="50" r={r} fill="none" stroke="#e7e7eb" strokeWidth="8" />
+      <circle cx="50" cy="50" r={r} fill="none" stroke="${color.hex}" strokeWidth="8"
+        strokeDasharray={C} strokeDashoffset={offset}
+        strokeLinecap="round" transform="rotate(-90 50 50)"
+        style={{ transition: "stroke-dashoffset 1s ease" }} />
+      <text x="50" y="56" textAnchor="middle" fontSize="22" fontWeight="700" fill="#0a0a0a">
+        {value}%
+      </text>
+    </svg>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `円形進捗リングを SVG で実装。半径44, stroke-dasharray=2πr=276, stroke-dashoffset で進捗表現。色は ${color.tw}-500、背景リング zinc-200、中央に % テキスト。transition を効かせてアニメーション可能に。`,
+};
+
+/* ============================================================
    集約
    ============================================================ */
 
@@ -4029,6 +4937,30 @@ export const EXTRA_ARCHETYPES: ExtraArchetype<any>[] = [
   heroMockup,
   heroDiagonal,
   heroVideoBg,
+  // Nav
+  navHorizontal,
+  navTabs,
+  navBreadcrumb,
+  navPagination,
+  // Feedback
+  feedbackToast,
+  feedbackBanner,
+  feedbackModal,
+  // Disclosure
+  disclosureTooltip,
+  disclosureDropdown,
+  // Data
+  dataBadge,
+  dataTag,
+  dataAvatar,
+  dataTableRow,
+  dataTimeline,
+  // Form (additional)
+  formCheckbox,
+  formRadio,
+  formSwitch,
+  // Stats (additional)
+  statsRingProgress,
   // Icon
   iconLightbulb,
   iconGears,

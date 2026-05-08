@@ -2517,6 +2517,528 @@ export function PFontMistFade({ color }: CV) {
   );
 }
 
+/* ============================================================
+   NAV
+   ============================================================ */
+
+export function PNavHorizontal({ color }: CV) {
+  return (
+    <Stage>
+      <header className="flex w-full max-w-md items-center justify-between rounded-md border border-zinc-200 bg-white px-3 py-2 shadow-sm">
+        <span className="text-xs font-bold text-zinc-900">Brand</span>
+        <nav className="flex gap-3 text-[10px] text-zinc-600">
+          <span className="cursor-pointer hover:text-zinc-900">Features</span>
+          <span className="cursor-pointer hover:text-zinc-900">Pricing</span>
+          <span className="cursor-pointer hover:text-zinc-900">Docs</span>
+        </nav>
+        <span
+          role="button"
+          className="cursor-pointer rounded-full px-2.5 py-1 text-[10px] font-semibold text-white"
+          style={{ background: color.hex }}
+        >
+          始める
+        </span>
+      </header>
+    </Stage>
+  );
+}
+
+export function PNavTabs({ color }: CV) {
+  return (
+    <Stage>
+      <nav className="flex w-full max-w-xs gap-4 border-b border-zinc-200">
+        {[
+          { l: "概要", a: true },
+          { l: "履歴", a: false },
+          { l: "設定", a: false },
+        ].map((t) => (
+          <span
+            key={t.l}
+            className="cursor-pointer border-b-2 py-2 text-xs font-medium transition"
+            style={{
+              borderColor: t.a ? color.hex : "transparent",
+              color: t.a ? color.hex : "#52525b",
+            }}
+          >
+            {t.l}
+          </span>
+        ))}
+      </nav>
+    </Stage>
+  );
+}
+
+export function PNavBreadcrumb({ color }: CV) {
+  return (
+    <Stage>
+      <nav className="flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-400">
+        <span className="cursor-pointer text-zinc-600">ホーム</span>
+        <span>/</span>
+        <span className="cursor-pointer text-zinc-600">サービス</span>
+        <span>/</span>
+        <span className="cursor-pointer text-zinc-600">料金</span>
+        <span>/</span>
+        <span className="font-semibold" style={{ color: color.hex }}>
+          エンタープライズ
+        </span>
+      </nav>
+    </Stage>
+  );
+}
+
+export function PNavPagination({ color }: CV) {
+  return (
+    <Stage>
+      <nav className="flex items-center gap-1">
+        <span
+          role="button"
+          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-zinc-200 bg-white text-xs text-zinc-600"
+        >
+          ‹
+        </span>
+        {[1, 2, 3].map((n) => (
+          <span
+            key={n}
+            role="button"
+            className="flex h-7 min-w-7 cursor-pointer items-center justify-center rounded-full border px-1.5 text-[11px] font-medium"
+            style={{
+              borderColor: n === 2 ? color.hex : "#e7e7eb",
+              background: n === 2 ? color.hex : "#fff",
+              color: n === 2 ? "#fff" : "#52525b",
+            }}
+          >
+            {n}
+          </span>
+        ))}
+        <span className="px-1 text-[10px] text-zinc-400">…</span>
+        <span
+          role="button"
+          className="flex h-7 min-w-7 cursor-pointer items-center justify-center rounded-full border border-zinc-200 bg-white px-1.5 text-[11px] text-zinc-600"
+        >
+          10
+        </span>
+        <span
+          role="button"
+          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-zinc-200 bg-white text-xs text-zinc-600"
+        >
+          ›
+        </span>
+      </nav>
+    </Stage>
+  );
+}
+
+/* ============================================================
+   FEEDBACK
+   ============================================================ */
+
+export function PFeedbackToast({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <div className="flex max-w-[300px] gap-2.5 rounded-xl border border-zinc-200 bg-white p-3 shadow-[0_12px_30px_-10px_rgba(0,0,0,.18)]">
+        <span
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+          style={{ background: color.hex + "1a", color: color.hex }}
+        >
+          ✓
+        </span>
+        <div className="flex-1">
+          <div className="text-xs font-semibold text-zinc-900">保存しました</div>
+          <p className="mt-0.5 text-[10px] leading-snug text-zinc-600">変更が反映されました。</p>
+        </div>
+        <span className="cursor-pointer text-xs text-zinc-400">×</span>
+      </div>
+    </Stage>
+  );
+}
+
+export function PFeedbackBanner({ color }: CV) {
+  return (
+    <Stage>
+      <div
+        className="flex w-full max-w-md items-center gap-2 border-b px-3 py-2"
+        style={{ background: color.hex + "10", borderColor: color.hex + "33" }}
+      >
+        <span className="text-sm">🎉</span>
+        <p className="flex-1 text-[11px] text-zinc-900">
+          v2.0 をリリースしました。
+          <span className="ml-1 font-semibold" style={{ color: color.hex }}>
+            変更点を見る →
+          </span>
+        </p>
+        <span className="cursor-pointer text-xs text-zinc-600">×</span>
+      </div>
+    </Stage>
+  );
+}
+
+export function PFeedbackModal({ color }: CV) {
+  return (
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-zinc-200/40 p-3">
+      <div className="absolute inset-0 bg-zinc-900/40 backdrop-blur-[1px]" />
+      <div className="relative w-full max-w-[280px] rounded-2xl bg-white p-5 shadow-[0_30px_60px_-20px_rgba(0,0,0,.35)]">
+        <h3 className="text-sm font-semibold text-zinc-900">変更を保存しますか？</h3>
+        <p className="mt-1.5 text-[11px] text-zinc-600">この操作は取り消せません。</p>
+        <div className="mt-4 flex justify-end gap-2">
+          <span
+            role="button"
+            className="cursor-pointer rounded-full border border-zinc-200 px-3 py-1 text-[11px] text-zinc-600"
+          >
+            キャンセル
+          </span>
+          <span
+            role="button"
+            className="cursor-pointer rounded-full px-3 py-1 text-[11px] font-semibold text-white"
+            style={{ background: color.hex }}
+          >
+            保存する
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   DISCLOSURE
+   ============================================================ */
+
+export function PDisclosureTooltip({ color }: CV) {
+  return (
+    <Stage>
+      <div className="relative inline-flex items-center gap-2 text-xs text-zinc-700">
+        <span>有料プランの内容</span>
+        <span
+          className="relative inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full bg-zinc-100 text-[11px] font-bold text-zinc-600"
+          style={{ background: color.hex + "1a", color: color.hex }}
+        >
+          ?
+          <span className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-zinc-900 px-2 py-1 text-[10px] text-white">
+            月額1,200円から
+          </span>
+          <span className="absolute -top-4 left-1/2 -translate-x-1/2 border-[4px] border-transparent border-t-zinc-900" />
+        </span>
+      </div>
+    </Stage>
+  );
+}
+
+export function PDisclosureDropdown({ color }: CV) {
+  return (
+    <Stage>
+      <div className="relative inline-block">
+        <span
+          role="button"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-medium text-zinc-700"
+        >
+          メニュー <span className="rotate-180 text-[8px]">▾</span>
+        </span>
+        <ul className="absolute left-0 z-10 mt-1.5 min-w-[140px] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-[0_18px_30px_-12px_rgba(0,0,0,.18)]">
+          {[
+            { l: "プロフィール", h: false },
+            { l: "設定", h: true },
+            { l: "ログアウト", h: false },
+          ].map((it) => (
+            <li
+              key={it.l}
+              className="cursor-pointer px-3 py-1.5 text-[11px]"
+              style={{
+                background: it.h ? color.hex + "1a" : undefined,
+                color: it.h ? color.hex : "#52525b",
+              }}
+            >
+              {it.l}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Stage>
+  );
+}
+
+/* ============================================================
+   DATA
+   ============================================================ */
+
+export function PDataBadge({ color }: CV) {
+  return (
+    <Stage>
+      <div className="flex items-center gap-3">
+        <span
+          className="inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white"
+          style={{ background: color.hex }}
+        >
+          12
+        </span>
+        <span
+          className="inline-block h-2.5 w-2.5 rounded-full"
+          style={{ background: color.hex }}
+        />
+        <span
+          className="inline-flex h-5 items-center rounded-full px-2 text-[11px] font-bold"
+          style={{ background: color.hex + "26", color: color.hex }}
+        >
+          新着
+        </span>
+      </div>
+    </Stage>
+  );
+}
+
+export function PDataTag({ color }: CV) {
+  return (
+    <Stage>
+      <div className="flex flex-wrap items-center gap-2">
+        {["React", "Tailwind", "TypeScript"].map((t) => (
+          <span
+            key={t}
+            className="inline-flex items-center gap-1 rounded-full py-0.5 pl-2.5 pr-1 text-[10px] font-semibold"
+            style={{ background: color.hex + "26", color: color.hex }}
+          >
+            {t}
+            <span
+              className="cursor-pointer rounded-full px-1.5 leading-none opacity-60 hover:opacity-100"
+            >
+              ×
+            </span>
+          </span>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+export function PDataAvatar({ color }: CV) {
+  const a = SAMPLE_IMG;
+  return (
+    <Stage theme="soft">
+      <div className="flex items-center gap-2">
+        {[
+          { online: true },
+          { online: true },
+          { online: false },
+        ].map((u, i) => (
+          <div key={i} className="relative h-9 w-9">
+            <img
+              src={a}
+              alt=""
+              className="h-full w-full rounded-full border-2 border-white object-cover"
+            />
+            <span
+              className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white"
+              style={{ background: u.online ? color.hex : "#a1a1aa" }}
+            />
+          </div>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+export function PDataTableRow({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <table className="w-full max-w-[300px] border-collapse text-[11px]">
+        <thead>
+          <tr className="border-b border-zinc-200 text-left text-zinc-500">
+            <th className="px-2 py-1.5 font-semibold">名前</th>
+            <th className="px-2 py-1.5 font-semibold">権限</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            { n: "田中", r: "Admin", sel: false },
+            { n: "佐藤", r: "Member", sel: true },
+            { n: "鈴木", r: "Member", sel: false },
+          ].map((row, i) => (
+            <tr
+              key={i}
+              className="border-b border-zinc-100 text-zinc-900"
+              style={{
+                background: row.sel ? color.hex + "1a" : undefined,
+                boxShadow: row.sel ? `inset 3px 0 0 ${color.hex}` : undefined,
+              }}
+            >
+              <td className="px-2 py-1.5">{row.n}</td>
+              <td className="px-2 py-1.5">{row.r}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Stage>
+  );
+}
+
+export function PDataTimeline({ color }: CV) {
+  const steps = [
+    { d: "05/01", t: "注文受付", s: "done" },
+    { d: "05/02", t: "発送準備中", s: "now" },
+    { d: "05/04", t: "到着予定", s: "todo" },
+  ];
+  return (
+    <Stage theme="soft">
+      <ol className="relative m-0 max-w-[260px] list-none p-0 pl-7">
+        <span
+          aria-hidden
+          className="absolute left-2.5 top-1.5 bottom-1.5 w-0.5"
+          style={{ background: "#e4e4e7" }}
+        />
+        {steps.map((s, i) => {
+          const dotStyle =
+            s.s === "done"
+              ? { background: color.hex, borderColor: color.hex }
+              : s.s === "now"
+              ? { background: "#fff", borderColor: color.hex, boxShadow: `0 0 0 4px ${color.hex}33` }
+              : { background: "#fff", borderColor: "#d4d4d8" };
+          return (
+            <li key={i} className="relative pb-3">
+              <span
+                aria-hidden
+                className="absolute -left-[24px] top-1.5 h-3 w-3 rounded-full border-2"
+                style={dotStyle}
+              />
+              <time className="text-[10px] text-zinc-500">{s.d}</time>
+              <h4 className="text-[11px] font-semibold text-zinc-900">{s.t}</h4>
+            </li>
+          );
+        })}
+      </ol>
+    </Stage>
+  );
+}
+
+/* ============================================================
+   FORM (additional)
+   ============================================================ */
+
+export function PFormCheckbox({ color }: CV) {
+  return (
+    <Stage>
+      <div className="space-y-2">
+        {[
+          { l: "同意します", checked: true },
+          { l: "ニュースレター登録", checked: false },
+          { l: "個人情報の利用に同意", checked: true },
+        ].map((c) => (
+          <label
+            key={c.l}
+            className="flex cursor-pointer select-none items-center gap-2 text-xs text-zinc-900"
+          >
+            <span
+              className="flex h-4 w-4 items-center justify-center rounded-md border-2 text-[10px] font-bold text-white"
+              style={{
+                borderColor: c.checked ? color.hex : "#d4d4d8",
+                background: c.checked ? color.hex : "#fff",
+              }}
+            >
+              {c.checked ? "✓" : ""}
+            </span>
+            {c.l}
+          </label>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+export function PFormRadio({ color }: CV) {
+  return (
+    <Stage>
+      <div className="space-y-2">
+        {[
+          { l: "個人プラン", checked: false },
+          { l: "法人プラン", checked: true },
+        ].map((r) => (
+          <label
+            key={r.l}
+            className="flex cursor-pointer items-center gap-2 text-xs text-zinc-900"
+          >
+            <span
+              className="relative h-4 w-4 rounded-full border-2"
+              style={{
+                borderColor: r.checked ? color.hex : "#d4d4d8",
+                background: "#fff",
+              }}
+            >
+              {r.checked && (
+                <span
+                  className="absolute inset-[2px] rounded-full"
+                  style={{ background: color.hex }}
+                />
+              )}
+            </span>
+            {r.l}
+          </label>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+export function PFormSwitch({ color }: CV) {
+  return (
+    <Stage>
+      <div className="flex items-center gap-4">
+        {[true, false].map((on, i) => (
+          <span
+            key={i}
+            className="relative inline-block h-6 w-11 rounded-full transition"
+            style={{ background: on ? color.hex : "#d4d4d8" }}
+          >
+            <span
+              className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow"
+              style={{
+                left: on ? "calc(100% - 22px)" : "2px",
+                transition: "left 0.2s",
+              }}
+            />
+          </span>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+/* ============================================================
+   STATS — ring progress
+   ============================================================ */
+
+export function PStatsRingProgress({ color }: CV) {
+  const value = 75;
+  const r = 44;
+  const C = 2 * Math.PI * r;
+  const offset = C - (C * value) / 100;
+  return (
+    <Stage theme="soft">
+      <svg viewBox="0 0 100 100" className="h-28 w-28">
+        <circle cx="50" cy="50" r={r} fill="none" stroke="#e7e7eb" strokeWidth="8" />
+        <circle
+          cx="50"
+          cy="50"
+          r={r}
+          fill="none"
+          stroke={color.hex}
+          strokeWidth="8"
+          strokeDasharray={C}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform="rotate(-90 50 50)"
+        />
+        <text
+          x="50"
+          y="56"
+          textAnchor="middle"
+          fontSize="22"
+          fontWeight="700"
+          fill="#0a0a0a"
+        >
+          {value}%
+        </text>
+      </svg>
+    </Stage>
+  );
+}
+
 /* shimmer keyframe used by ctaShimmer preview - included once via this style block */
 function ShimmerKeyframes() {
   return null;
@@ -2582,6 +3104,24 @@ export const EXTRA_PREVIEW_FNS: Record<string, (v: CV) => JSX.Element> = {
   "hero-mockup": PHeroMockup,
   "hero-diagonal": PHeroDiagonal,
   "hero-video-bg": PHeroVideoBg,
+  "nav-horizontal": PNavHorizontal,
+  "nav-tabs": PNavTabs,
+  "nav-breadcrumb": PNavBreadcrumb,
+  "nav-pagination": PNavPagination,
+  "feedback-toast": PFeedbackToast,
+  "feedback-banner": PFeedbackBanner,
+  "feedback-modal": PFeedbackModal,
+  "disclosure-tooltip": PDisclosureTooltip,
+  "disclosure-dropdown": PDisclosureDropdown,
+  "data-badge": PDataBadge,
+  "data-tag": PDataTag,
+  "data-avatar": PDataAvatar,
+  "data-table-row": PDataTableRow,
+  "data-timeline": PDataTimeline,
+  "form-checkbox": PFormCheckbox,
+  "form-radio": PFormRadio,
+  "form-switch": PFormSwitch,
+  "stats-ring-progress": PStatsRingProgress,
   "icon-lightbulb": PIconLightbulb,
   "icon-gears": PIconGears,
   "icon-rocket": PIconRocket,
