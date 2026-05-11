@@ -25,6 +25,7 @@ export const CATEGORIES: Category[] = [
   { slug: "feedback", name: "通知 / フィードバック", description: "toast / banner / modal で完了・警告を伝える", icon: "Bell" },
   { slug: "disclosure", name: "情報開示", description: "tooltip / dropdown など段階的に情報を見せる", icon: "ChevronDown" },
   { slug: "data", name: "データ表示", description: "badge / tag / avatar / table-row / timeline", icon: "Table" },
+  { slug: "motion", name: "マイクロモーション", description: "数字・文字・アイコン・図形が動く小さなモーションサンプル集", icon: "Move" },
 ];
 
 export const POPULAR_TAGS = [

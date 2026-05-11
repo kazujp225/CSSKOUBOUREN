@@ -4862,6 +4862,447 @@ const statsRingProgress: ExtraArchetype<CV> = {
 };
 
 /* ============================================================
+   MOTION — マイクロモーション
+   ============================================================ */
+
+const motionDigitFlip: ExtraArchetype<CV> = {
+  id: "motion-digit-flip",
+  baseTitle: "数字フリップ（Y軸回転）",
+  category: "motion",
+  baseMood: ["ミニマル", "アプリ"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "カウンタ / 残り時間 / 順位の数字が切り替わる瞬間。",
+  effect: "数字が Y軸を中心に半回転して次の数字に切り替わる。プリントカード風。",
+  suitableFor: ["カウントダウン", "スコアボード", "ストップウォッチ"],
+  badUsage: "桁が頻繁に変わるとチカチカする。1秒以上の間隔で。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="digit-flip">7</div>`,
+    css: `.digit-flip {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:80px; height:96px; border-radius:14px;
+  background:#f4f4f5; color:${color.hex};
+  font-family: ui-monospace, monospace; font-weight:700; font-size:64px;
+  animation: digitFlipY 2.4s ease-in-out infinite;
+  transform-style: preserve-3d; perspective: 600px;
+}
+@keyframes digitFlipY { 0%{transform:rotateX(0)} 45%{transform:rotateX(-90deg)} 55%{transform:rotateX(90deg)} 100%{transform:rotateX(0)} }`,
+    tailwind: `<div className="inline-flex h-24 w-20 items-center justify-center rounded-2xl bg-zinc-100 font-mono text-6xl font-bold [transform-style:preserve-3d] [perspective:600px]"
+  style={{ color:"${color.hex}", animation:"digitFlipY 2.4s ease-in-out infinite" }}>
+  7
+</div>`,
+    react: `"use client";
+import { useEffect, useState } from "react";
+export function DigitFlip({ start = 0 }: { start?: number }) {
+  const [n, setN] = useState(start);
+  useEffect(() => { const id = setInterval(() => setN(v => (v + 1) % 10), 1200); return () => clearInterval(id); }, []);
+  return (
+    <div className="inline-flex h-24 w-20 items-center justify-center rounded-2xl bg-zinc-100 font-mono text-6xl font-bold"
+      style={{ color: "${color.hex}", animation: "digitFlipY 1.2s ease-in-out infinite", perspective: 600 }}>
+      {n}
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `数字が Y軸回転で次の数字に切り替わるフリップカウンタを実装してください。80×96 の角丸タイル、bg-zinc-100、数字色は ${color.tw}-500、monospace bold、keyframe で rotateX(0→-90→90→0) を 2.4秒で。`,
+};
+
+const motionDigitRoll: ExtraArchetype<CV> = {
+  id: "motion-digit-roll",
+  baseTitle: "数字ロール（縦スクロール）",
+  category: "motion",
+  baseMood: ["ミニマル", "アプリ"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "カウンタ・ホテル時計風表示・スロット風数字。",
+  effect: "1列に並んだ数字を `translateY` で順に上にスクロール。常に2桁見えて切替の瞬間が美しい。",
+  suitableFor: ["ストップウォッチ", "ポイント獲得演出", "値段カウンタ"],
+  badUsage: "高速で回し続けるとうるさい。3秒以上のサイクル推奨。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="digit-roll">
+  <div class="track"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div>
+</div>`,
+    css: `.digit-roll { width:64px; height:80px; border-radius:14px; background:#f4f4f5; overflow:hidden; }
+.digit-roll .track { display:flex; flex-direction:column; animation: digitRoll 4s steps(1) infinite; }
+.digit-roll .track span { height:80px; display:flex; align-items:center; justify-content:center; font-family:ui-monospace,monospace; font-size:52px; font-weight:700; color:${color.hex}; }
+@keyframes digitRoll { 0%,12%{transform:translateY(0)} 25%,37%{transform:translateY(-100%)} 50%,62%{transform:translateY(-200%)} 75%,87%{transform:translateY(-300%)} 100%{transform:translateY(-400%)} }`,
+    tailwind: `<div className="h-20 w-16 overflow-hidden rounded-2xl bg-zinc-100">
+  <div className="flex flex-col" style={{ animation:"digitRoll 4s steps(1) infinite" }}>
+    {[0,1,2,3,4].map(n => (
+      <span key={n} className="flex h-20 items-center justify-center font-mono text-5xl font-bold" style={{ color:"${color.hex}" }}>{n}</span>
+    ))}
+  </div>
+</div>`,
+    react: `export function DigitRoll() {
+  return (
+    <div className="h-20 w-16 overflow-hidden rounded-2xl bg-zinc-100">
+      <div className="flex flex-col" style={{ animation:"digitRoll 4s steps(1) infinite" }}>
+        {[0,1,2,3,4].map(n => (
+          <span key={n} className="flex h-20 items-center justify-center font-mono text-5xl font-bold" style={{ color:"${color.hex}" }}>{n}</span>
+        ))}
+      </div>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `5つの数字を縦に並べたコンテナを translateY で 4秒・5ステップでスクロールするロールカウンタ。各セルは 80px、overflow-hidden で1桁だけ見える。色 ${color.tw}-500、monospace bold。`,
+};
+
+const motionLetterFall: ExtraArchetype<CV> = {
+  id: "motion-letter-fall",
+  baseTitle: "文字 1文字ずつ降ってくる",
+  category: "motion",
+  baseMood: ["ミニマル", "BtoB"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "ヒーローの見出し登場、ストーリー系のオープニング。",
+  effect: "見出しの各文字が上から落ちて指定位置で止まる。delay を文字ごとにずらして波風に。",
+  suitableFor: ["ブランドサイト", "プロダクトのリリース予告", "ティザー"],
+  badUsage: "長文では遅延が重なって冗長。タイトル限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="letter-fall">
+  <span>L</span><span>O</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span>
+</h2>`,
+    css: `.letter-fall { display:inline-flex; font-family:ui-sans-serif; font-weight:800; font-size:48px; color:${color.hex}; letter-spacing:.05em; }
+.letter-fall span { display:inline-block; opacity:0; animation: letterFall .7s cubic-bezier(.6,.05,.18,1.2) forwards; }
+.letter-fall span:nth-child(1){ animation-delay:0s }
+.letter-fall span:nth-child(2){ animation-delay:.08s }
+.letter-fall span:nth-child(3){ animation-delay:.16s }
+.letter-fall span:nth-child(4){ animation-delay:.24s }
+.letter-fall span:nth-child(5){ animation-delay:.32s }
+.letter-fall span:nth-child(6){ animation-delay:.40s }
+.letter-fall span:nth-child(7){ animation-delay:.48s }
+@keyframes letterFall { 0%{transform:translateY(-1.4em); opacity:0} 60%,100%{transform:translateY(0); opacity:1} }`,
+    tailwind: `<h2 className="inline-flex text-5xl font-extrabold tracking-wider" style={{ color:"${color.hex}" }}>
+  {"LOADING".split("").map((c,i) => (
+    <span key={i} className="inline-block opacity-0"
+      style={{ animation:\`letterFall .7s cubic-bezier(.6,.05,.18,1.2) \${i*0.08}s forwards\` }}>{c}</span>
+  ))}
+</h2>`,
+    react: `"use client";
+import { useState } from "react";
+export function LetterFall({ text = "LOADING" }: { text?: string }) {
+  const [k, setK] = useState(0);
+  return (
+    <h2 onClick={() => setK(v=>v+1)} className="inline-flex cursor-pointer text-5xl font-extrabold tracking-wider"
+      style={{ color: "${color.hex}" }}>
+      {text.split("").map((c, i) => (
+        <span key={\`\${k}-\${i}\`} className="inline-block opacity-0"
+          style={{ animation: \`letterFall .7s cubic-bezier(.6,.05,.18,1.2) \${i * 0.08}s forwards\` }}>{c}</span>
+      ))}
+    </h2>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `見出しテキストを1文字ずつ <span> に分け、translateY(-1.4em) → 0 + opacity 0 → 1 で上から降ってくる演出を実装してください。各文字 delay を0.08秒ずつずらす。色は ${color.tw}-500、font-extrabold。`,
+};
+
+const motionLetterBlurIn: ExtraArchetype<CV> = {
+  id: "motion-letter-blur-in",
+  baseTitle: "文字 1文字ずつ blur から焦点合わせ",
+  category: "motion",
+  baseMood: ["上品", "シネマ"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "オープニング・ロゴ登場・タイトルバック。",
+  effect: "ぼやけた状態から1文字ずつフォーカスが合っていく。映画オープニングのような上品さ。",
+  suitableFor: ["ブランドサイト", "プロダクト紹介の冒頭", "ストーリー型LP"],
+  badUsage: "本文では読みづらい。短い見出し限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="blur-in"><span>F</span><span>O</span><span>C</span><span>U</span><span>S</span></h2>`,
+    css: `.blur-in { display:inline-flex; font-weight:700; font-size:56px; color:${color.hex}; letter-spacing:.04em; }
+.blur-in span { display:inline-block; filter:blur(14px); opacity:0; transform:scale(1.15); animation: letterBlurIn .9s ease-out forwards; }
+.blur-in span:nth-child(2){ animation-delay:.15s }
+.blur-in span:nth-child(3){ animation-delay:.30s }
+.blur-in span:nth-child(4){ animation-delay:.45s }
+.blur-in span:nth-child(5){ animation-delay:.60s }
+@keyframes letterBlurIn { 0%{filter:blur(14px); opacity:0; transform:scale(1.15)} 60%,100%{filter:blur(0); opacity:1; transform:scale(1)} }`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function LetterBlurIn({ text = "FOCUS" }: { text?: string }) {
+  const [k, setK] = useState(0);
+  return (
+    <h2 onClick={() => setK(v=>v+1)} className="inline-flex cursor-pointer text-6xl font-bold tracking-wide"
+      style={{ color:"${color.hex}" }}>
+      {text.split("").map((c, i) => (
+        <span key={\`\${k}-\${i}\`} className="inline-block"
+          style={{ filter:"blur(14px)", opacity:0, transform:"scale(1.15)", animation:\`letterBlurIn .9s ease-out \${i*0.15}s forwards\` }}>{c}</span>
+      ))}
+    </h2>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `見出しを1文字ずつ <span> に分け、blur(14px) opacity 0 scale(1.15) → blur(0) opacity 1 scale(1) のフォーカスインを実装してください。各文字 delay 0.15秒、color ${color.tw}-500、font-bold。`,
+};
+
+const motionLetterScramble: ExtraArchetype<CV> = {
+  id: "motion-letter-scramble",
+  baseTitle: "ランダム文字スクランブル → 正解",
+  category: "motion",
+  baseMood: ["テック", "AI"],
+  baseTags: ["React"],
+  difficulty: "medium",
+  useCase: "AI処理表示、ハッカー風UI、解析完了の演出。",
+  effect: "各位置のランダム文字が高速で入れ替わり、左から順に正解文字に確定していく。",
+  suitableFor: ["AIプロダクト", "セキュリティ系", "ゲーミング"],
+  badUsage: "長すぎる文字列は不快。10文字以内推奨。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="scramble">DECODING</div>`,
+    css: `/* React版を参照 */`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useEffect, useState } from "react";
+export function Scramble({ target = "DECODING", speed = 40, lockStep = 4 }: { target?: string; speed?: number; lockStep?: number }) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%";
+  const [text, setText] = useState(target);
+  const [lockedAt, setLocked] = useState(0);
+
+  useEffect(() => {
+    setText(Array.from(target, () => chars[Math.floor(Math.random()*chars.length)]).join(""));
+    setLocked(0);
+  }, [target]);
+
+  useEffect(() => {
+    let tick = 0;
+    const id = setInterval(() => {
+      tick++;
+      if (tick % lockStep === 0 && lockedAt < target.length) {
+        setLocked(l => l + 1);
+      }
+      setText(prev => target.split("").map((c, i) => i < lockedAt ? c : chars[Math.floor(Math.random()*chars.length)]).join(""));
+      if (lockedAt >= target.length) clearInterval(id);
+    }, speed);
+    return () => clearInterval(id);
+  }, [lockedAt, target, speed, lockStep]);
+
+  return (
+    <span className="font-mono text-3xl font-bold tracking-wider" style={{ color: "${color.hex}" }}>
+      {text}
+    </span>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `テキストスクランブル演出を React + useState で実装してください。各位置のランダム文字を 40ms ごとに入れ替えながら、4 tick ごとに左から1文字ずつ正解文字に確定。色は ${color.tw}-500、monospace bold。`,
+};
+
+const motionShapeMorph: ExtraArchetype<CV> = {
+  id: "motion-shape-morph",
+  baseTitle: "図形モーフ（四角→丸→楕円）",
+  category: "motion",
+  baseMood: ["ミニマル", "テック"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "ローディング・アイドル時のフィラー・装飾アイコン。",
+  effect: "border-radius を keyframe で動かして 四角 → 丸 → スクエア の連続変形。",
+  suitableFor: ["待機表示", "アプリのフィラー", "アンビエント装飾"],
+  badUsage: "BtoB業務システムでは派手すぎる。控えめに使う。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="shape-morph"></div>`,
+    css: `.shape-morph { width:72px; height:72px; background:${color.hex}; animation: shapeMorph 4s ease-in-out infinite; }
+@keyframes shapeMorph { 0%,100%{border-radius:8%} 33%{border-radius:48%} 66%{border-radius:0%} }`,
+    tailwind: `<div className="h-[72px] w-[72px]" style={{ background:"${color.hex}", animation:"shapeMorph 4s ease-in-out infinite" }} />`,
+    react: `export function ShapeMorph() {
+  return <div className="h-[72px] w-[72px]" style={{ background:"${color.hex}", animation:"shapeMorph 4s ease-in-out infinite" }} />;
+}`,
+  }),
+  prompt: ({ color }) =>
+    `${color.tw}-500 の 72px の四角を、border-radius を 8% → 48% → 0% → 8% と 4秒 ease-in-out で変形させる演出を実装してください。`,
+};
+
+const motionShapeCycle: ExtraArchetype<CV> = {
+  id: "motion-shape-cycle",
+  baseTitle: "記号サイクル（＋ × ○ □）",
+  category: "motion",
+  baseMood: ["ミニマル", "テック"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "ステータスインジケータ・ヘルスチェック・小さい装飾。",
+  effect: "4つの記号 (＋・×・○・□) を時間差で表示し、1つだけ見えるサイクル。",
+  suitableFor: ["小型ウィジェット", "ステータスバッジ", "システムログ"],
+  badUsage: "周期が速すぎるとちらつく。3秒以上に。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="sym-cycle">
+  <span>+</span><span>×</span><span>○</span><span>□</span>
+</div>`,
+    css: `.sym-cycle { position:relative; width:48px; height:48px; display:flex; align-items:center; justify-content:center; background:#f4f4f5; border-radius:10px; }
+.sym-cycle span { position:absolute; font-size:28px; font-weight:700; color:${color.hex}; opacity:0; animation: shapeSymbolFade 4s linear infinite; }
+.sym-cycle span:nth-child(1){ animation-delay:0s }
+.sym-cycle span:nth-child(2){ animation-delay:1s }
+.sym-cycle span:nth-child(3){ animation-delay:2s }
+.sym-cycle span:nth-child(4){ animation-delay:3s }
+@keyframes shapeSymbolFade { 0%,20%{opacity:1} 25%,100%{opacity:0} }`,
+    tailwind: `<div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100">
+  {["+", "×", "○", "□"].map((s,i) => (
+    <span key={s} className="absolute text-2xl font-bold opacity-0"
+      style={{ color:"${color.hex}", animation:\`shapeSymbolFade 4s linear \${i}s infinite\` }}>{s}</span>
+  ))}
+</div>`,
+    react: `export function SymbolCycle() {
+  return (
+    <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100">
+      {["+", "×", "○", "□"].map((s,i) => (
+        <span key={s} className="absolute text-2xl font-bold opacity-0"
+          style={{ color: "${color.hex}", animation: \`shapeSymbolFade 4s linear \${i}s infinite\` }}>{s}</span>
+      ))}
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `4つの記号 (＋ × ○ □) を absolute で重ね、各 1秒間だけ表示される 4秒サイクルを実装してください。色は ${color.tw}-500、48pxのタイル、bg zinc-100。`,
+};
+
+const motionBookmarkFill: ExtraArchetype<CV> = {
+  id: "motion-bookmark-fill",
+  baseTitle: "ブックマーク アウトライン→塗り",
+  category: "motion",
+  baseMood: ["アプリ", "ミニマル"],
+  baseTags: ["SVG", "CSS"],
+  difficulty: "easy",
+  useCase: "保存・お気に入り・しおりタップ時のフィードバック。",
+  effect: "アウトラインのブックマーク内に塗りが下から上に立ち上がる。",
+  suitableFor: ["記事保存", "お気に入り追加", "プレイリストへ追加"],
+  badUsage: "状態変化と関連しないアニメに使うと意味不明。タップ時のリアクション専用。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="bm-fill" aria-pressed="true">
+  <svg viewBox="0 0 24 24" class="outline"><path d="M6 3h12v18l-6-4-6 4z" fill="none" stroke="${color.hex}" stroke-width="2"/></svg>
+  <svg viewBox="0 0 24 24" class="fill"><path d="M6 3h12v18l-6-4-6 4z" fill="${color.hex}"/></svg>
+</button>`,
+    css: `.bm-fill { position:relative; width:40px; height:48px; background:none; border:0; cursor:pointer; }
+.bm-fill svg { position:absolute; inset:0; width:100%; height:100%; }
+.bm-fill .fill { animation: bookmarkFill 1.4s ease-out forwards; }
+@keyframes bookmarkFill { 0%,30%{clip-path:inset(100% 0 0 0)} 60%,100%{clip-path:inset(0% 0 0 0)} }`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function BookmarkFill() {
+  const [on, setOn] = useState(true);
+  return (
+    <button onClick={() => setOn(v=>!v)} className="relative h-12 w-10 cursor-pointer bg-transparent" aria-pressed={on}>
+      <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full">
+        <path d="M6 3h12v18l-6-4-6 4z" fill="none" stroke="${color.hex}" strokeWidth="2"/>
+      </svg>
+      {on && (
+        <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full" key={String(on)}
+          style={{ animation: "bookmarkFill 1.2s ease-out forwards" }}>
+          <path d="M6 3h12v18l-6-4-6 4z" fill="${color.hex}"/>
+        </svg>
+      )}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ブックマークアイコンを、アウトラインと塗りの2つのSVGを重ね、塗りSVGに clip-path: inset(100% 0 0 0) → inset(0 0 0 0) のkeyframeを当てて下から上に塗りが立ち上がる演出を実装。色 ${color.tw}-500、ボタン化して useState で on/off 切替。`,
+};
+
+const motionHeartFill: ExtraArchetype<CV> = {
+  id: "motion-heart-fill",
+  baseTitle: "ハート塗り＋拍動",
+  category: "motion",
+  baseMood: ["BtoC", "SNS"],
+  baseTags: ["SVG", "CSS"],
+  difficulty: "easy",
+  useCase: "いいねボタンのフィードバック。",
+  effect: "タップ時にアウトラインのハートが塗られ、scale 1→1.25→.95→1.1→1 の脈動。",
+  suitableFor: ["SNS", "メッセンジャー", "音楽プラットフォーム"],
+  badUsage: "ボタンを押していないのにアニメするのは意味不明。state 変化に紐付ける。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="heart-fill">
+  <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9-9c-1-3 1-7 5-7 2 0 3 1 4 2 1-1 2-2 4-2 4 0 6 4 5 7-2 4.5-9 9-9 9z" fill="${color.hex}"/></svg>
+</button>`,
+    css: `.heart-fill { background:none; border:0; cursor:pointer; padding:0; }
+.heart-fill svg { width:40px; height:40px; animation: heartPopBeat .8s cubic-bezier(.4,1.6,.6,.9); }
+@keyframes heartPopBeat { 0%,40%,100%{transform:scale(1)} 12%{transform:scale(1.25)} 22%{transform:scale(.95)} 32%{transform:scale(1.1)} }`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function HeartFill() {
+  const [on, setOn] = useState(false);
+  return (
+    <button onClick={() => setOn(v=>!v)} className="cursor-pointer bg-transparent p-0">
+      <svg viewBox="0 0 24 24" className="h-10 w-10"
+        style={{ animation: on ? "heartPopBeat .8s cubic-bezier(.4,1.6,.6,.9)" : undefined }}
+        key={String(on)}>
+        <path d="M12 21s-7-4.5-9-9c-1-3 1-7 5-7 2 0 3 1 4 2 1-1 2-2 4-2 4 0 6 4 5 7-2 4.5-9 9-9 9z"
+          fill={on ? "${color.hex}" : "none"} stroke="${color.hex}" strokeWidth="2"/>
+      </svg>
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `いいねボタンを実装。SVGハートが outline (stroke ${color.hex}) と塗り (fill ${color.hex}) を on/off で切り替え、ON時に scale 1→1.25→.95→1.1→1 の脈動 keyframe を .8秒で。bouncy easing。`,
+};
+
+const motionCheckDraw: ExtraArchetype<CV> = {
+  id: "motion-check-draw",
+  baseTitle: "チェックマーク描画＋ボックス染色",
+  category: "motion",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["SVG", "CSS"],
+  difficulty: "medium",
+  useCase: "チェックボックスON、ステップ完了、フォーム送信完了。",
+  effect: "チェック線が左下→右上→右下に描かれてから、ボックス背景がフェードイン。",
+  suitableFor: ["フォーム", "オンボーディング", "ステップウィザード"],
+  badUsage: "誤って同時アニメすると失敗の印象。順序を守って描画→染色。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="check-draw">
+  <svg viewBox="0 0 32 32">
+    <rect x="2" y="2" width="28" height="28" rx="6" class="box"/>
+    <path d="M9 17 L14 22 L24 11" class="tick" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>`,
+    css: `.check-draw svg { width:64px; height:64px; }
+.check-draw .box { fill:${color.hex}; opacity:0; animation: checkBoxFade .3s ease .35s forwards; }
+.check-draw .tick { stroke-dasharray:24; stroke-dashoffset:24; animation: checkDraw .55s cubic-bezier(.7,.05,.3,1) .35s forwards; }
+@keyframes checkBoxFade { to { opacity: 1; } }
+@keyframes checkDraw { to { stroke-dashoffset: 0; } }`,
+    tailwind: `<svg viewBox="0 0 32 32" className="h-16 w-16">
+  <rect x="2" y="2" width="28" height="28" rx="6"
+    style={{ fill:"${color.hex}", opacity:0, animation:"checkBoxFade .3s ease .35s forwards" }} />
+  <path d="M9 17 L14 22 L24 11" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+    style={{ strokeDasharray:24, strokeDashoffset:24, animation:"checkDraw .55s cubic-bezier(.7,.05,.3,1) .35s forwards" }} />
+  <style jsx global>{\`
+    @keyframes checkBoxFade { to { opacity: 1; } }
+    @keyframes checkDraw { to { stroke-dashoffset: 0; } }
+  \`}</style>
+</svg>`,
+    react: `"use client";
+import { useState } from "react";
+export function CheckDraw() {
+  const [k, setK] = useState(0);
+  return (
+    <svg viewBox="0 0 32 32" className="h-16 w-16 cursor-pointer" onClick={() => setK(v=>v+1)} key={k}>
+      <rect x="2" y="2" width="28" height="28" rx="6"
+        style={{ fill:"${color.hex}", opacity:0, animation:"checkBoxFade .3s ease .35s forwards" }} />
+      <path d="M9 17 L14 22 L24 11" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+        style={{ strokeDasharray:24, strokeDashoffset:24, animation:"checkDraw .55s cubic-bezier(.7,.05,.3,1) .35s forwards" }} />
+    </svg>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `チェックマーク完了演出を実装してください。SVG の rect が ${color.tw}-500 で 0.35秒遅延後にフェードイン、path のチェック線が stroke-dasharray=24, stroke-dashoffset 24 → 0 で 0.55秒で描かれる。順序: 線描画スタート→ box フェードイン同時 が綺麗。`,
+};
+
+/* ============================================================
    集約
    ============================================================ */
 
@@ -4961,6 +5402,17 @@ export const EXTRA_ARCHETYPES: ExtraArchetype<any>[] = [
   formSwitch,
   // Stats (additional)
   statsRingProgress,
+  // Motion
+  motionDigitFlip,
+  motionDigitRoll,
+  motionLetterFall,
+  motionLetterBlurIn,
+  motionLetterScramble,
+  motionShapeMorph,
+  motionShapeCycle,
+  motionBookmarkFill,
+  motionHeartFill,
+  motionCheckDraw,
   // Icon
   iconLightbulb,
   iconGears,

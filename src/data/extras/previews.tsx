@@ -3039,6 +3039,284 @@ export function PStatsRingProgress({ color }: CV) {
   );
 }
 
+/* ============================================================
+   MOTION — small monochrome bento previews
+   ============================================================ */
+
+function MotionStage({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative flex h-full w-full items-center justify-center bg-zinc-50 p-4">
+      {children}
+    </div>
+  );
+}
+
+export function PMotionDigitFlip({ color }: CV) {
+  const [n, setN] = useStateOnce(7);
+  useIntervalSafe(() => setN((v) => (v + 1) % 10), 1200);
+  return (
+    <MotionStage>
+      <div
+        className="inline-flex h-24 w-20 items-center justify-center rounded-2xl bg-zinc-100 font-mono text-6xl font-bold"
+        style={{
+          color: color.hex,
+          animation: "digitFlipY 1.2s ease-in-out infinite",
+          perspective: 600,
+        }}
+      >
+        {n}
+      </div>
+    </MotionStage>
+  );
+}
+
+export function PMotionDigitRoll({ color }: CV) {
+  return (
+    <MotionStage>
+      <div className="h-20 w-16 overflow-hidden rounded-2xl bg-zinc-100">
+        <div className="flex flex-col" style={{ animation: "digitRoll 4s steps(1) infinite" }}>
+          {[0, 1, 2, 3, 4].map((n) => (
+            <span
+              key={n}
+              className="flex h-20 items-center justify-center font-mono text-5xl font-bold"
+              style={{ color: color.hex }}
+            >
+              {n}
+            </span>
+          ))}
+        </div>
+      </div>
+    </MotionStage>
+  );
+}
+
+export function PMotionLetterFall({ color }: CV) {
+  const [k, setK] = useStateOnce(0);
+  useIntervalSafe(() => setK((v) => v + 1), 2500);
+  return (
+    <MotionStage>
+      <h2
+        className="inline-flex text-4xl font-extrabold tracking-wider"
+        style={{ color: color.hex }}
+      >
+        {"LOADING".split("").map((c, i) => (
+          <span
+            key={`${k}-${i}`}
+            className="inline-block opacity-0"
+            style={{
+              animation: `letterFall .7s cubic-bezier(.6,.05,.18,1.2) ${i * 0.08}s forwards`,
+            }}
+          >
+            {c}
+          </span>
+        ))}
+      </h2>
+    </MotionStage>
+  );
+}
+
+export function PMotionLetterBlurIn({ color }: CV) {
+  const [k, setK] = useStateOnce(0);
+  useIntervalSafe(() => setK((v) => v + 1), 2800);
+  return (
+    <MotionStage>
+      <h2 className="inline-flex text-4xl font-bold tracking-wide" style={{ color: color.hex }}>
+        {"FOCUS".split("").map((c, i) => (
+          <span
+            key={`${k}-${i}`}
+            className="inline-block"
+            style={{
+              filter: "blur(14px)",
+              opacity: 0,
+              transform: "scale(1.15)",
+              animation: `letterBlurIn .9s ease-out ${i * 0.15}s forwards`,
+            }}
+          >
+            {c}
+          </span>
+        ))}
+      </h2>
+    </MotionStage>
+  );
+}
+
+export function PMotionLetterScramble({ color }: CV) {
+  const target = "DECODING";
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@$%";
+  const [text, setText] = useStateOnce(target);
+  const [lockedAt, setLocked] = useStateOnce(0);
+
+  useEffectOnce(() => {
+    let tick = 0;
+    const lockStep = 4;
+    let locked = 0;
+    let lastReset = Date.now();
+    const id = setInterval(() => {
+      tick++;
+      const elapsed = Date.now() - lastReset;
+      if (elapsed > 3000) {
+        locked = 0;
+        lastReset = Date.now();
+      } else if (tick % lockStep === 0 && locked < target.length) {
+        locked++;
+      }
+      setLocked(locked);
+      setText(
+        target
+          .split("")
+          .map((c, i) => (i < locked ? c : chars[Math.floor(Math.random() * chars.length)]))
+          .join("")
+      );
+    }, 50);
+    return () => clearInterval(id);
+  });
+
+  return (
+    <MotionStage>
+      <span className="font-mono text-3xl font-bold tracking-wider" style={{ color: color.hex }}>
+        {text}
+      </span>
+    </MotionStage>
+  );
+}
+
+export function PMotionShapeMorph({ color }: CV) {
+  return (
+    <MotionStage>
+      <div
+        className="h-[72px] w-[72px]"
+        style={{ background: color.hex, animation: "shapeMorph 4s ease-in-out infinite" }}
+      />
+    </MotionStage>
+  );
+}
+
+export function PMotionShapeCycle({ color }: CV) {
+  return (
+    <MotionStage>
+      <div className="relative flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
+        {["+", "×", "○", "□"].map((s, i) => (
+          <span
+            key={s}
+            className="absolute text-2xl font-bold opacity-0"
+            style={{
+              color: color.hex,
+              animation: `shapeSymbolFade 4s linear ${i}s infinite`,
+            }}
+          >
+            {s}
+          </span>
+        ))}
+      </div>
+    </MotionStage>
+  );
+}
+
+export function PMotionBookmarkFill({ color }: CV) {
+  const [on, setOn] = useStateOnce(true);
+  useIntervalSafe(() => setOn((v) => !v), 2200);
+  return (
+    <MotionStage>
+      <button
+        onClick={() => setOn((v) => !v)}
+        className="relative h-12 w-10 cursor-pointer bg-transparent"
+        aria-pressed={on}
+      >
+        <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full">
+          <path d="M6 3h12v18l-6-4-6 4z" fill="none" stroke={color.hex} strokeWidth="2" />
+        </svg>
+        {on && (
+          <svg
+            viewBox="0 0 24 24"
+            className="absolute inset-0 h-full w-full"
+            key={String(on)}
+            style={{ animation: "bookmarkFill 1.2s ease-out forwards" }}
+          >
+            <path d="M6 3h12v18l-6-4-6 4z" fill={color.hex} />
+          </svg>
+        )}
+      </button>
+    </MotionStage>
+  );
+}
+
+export function PMotionHeartFill({ color }: CV) {
+  const [on, setOn] = useStateOnce(false);
+  useIntervalSafe(() => setOn((v) => !v), 1800);
+  return (
+    <MotionStage>
+      <button onClick={() => setOn((v) => !v)} className="cursor-pointer bg-transparent p-0">
+        <svg
+          viewBox="0 0 24 24"
+          className="h-10 w-10"
+          style={{
+            animation: on ? "heartPopBeat .8s cubic-bezier(.4,1.6,.6,.9)" : undefined,
+          }}
+          key={String(on)}
+        >
+          <path
+            d="M12 21s-7-4.5-9-9c-1-3 1-7 5-7 2 0 3 1 4 2 1-1 2-2 4-2 4 0 6 4 5 7-2 4.5-9 9-9 9z"
+            fill={on ? color.hex : "none"}
+            stroke={color.hex}
+            strokeWidth="2"
+          />
+        </svg>
+      </button>
+    </MotionStage>
+  );
+}
+
+export function PMotionCheckDraw({ color }: CV) {
+  const [k, setK] = useStateOnce(0);
+  useIntervalSafe(() => setK((v) => v + 1), 1800);
+  return (
+    <MotionStage>
+      <svg viewBox="0 0 32 32" className="h-16 w-16" key={k}>
+        <rect
+          x="2"
+          y="2"
+          width="28"
+          height="28"
+          rx="6"
+          style={{
+            fill: color.hex,
+            opacity: 0,
+            animation: "checkBoxFade .3s ease .35s forwards",
+          }}
+        />
+        <path
+          d="M9 17 L14 22 L24 11"
+          fill="none"
+          stroke="#fff"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            strokeDasharray: 24,
+            strokeDashoffset: 24,
+            animation: "checkDraw .55s cubic-bezier(.7,.05,.3,1) .35s forwards",
+          }}
+        />
+      </svg>
+    </MotionStage>
+  );
+}
+
+/* tiny preview helpers (avoid duplicating imports - re-export hooks here lazily) */
+import { useEffect as _ue, useState as _us } from "react";
+function useStateOnce<T>(init: T): [T, (v: T | ((prev: T) => T)) => void] {
+  return _us(init) as any;
+}
+function useIntervalSafe(fn: () => void, ms: number) {
+  _ue(() => {
+    const id = setInterval(fn, ms);
+    return () => clearInterval(id);
+  }, [fn, ms]);
+}
+function useEffectOnce(fn: () => void | (() => void)) {
+  _ue(() => fn(), []);
+}
+
 /* shimmer keyframe used by ctaShimmer preview - included once via this style block */
 function ShimmerKeyframes() {
   return null;
@@ -3122,6 +3400,16 @@ export const EXTRA_PREVIEW_FNS: Record<string, (v: CV) => JSX.Element> = {
   "form-radio": PFormRadio,
   "form-switch": PFormSwitch,
   "stats-ring-progress": PStatsRingProgress,
+  "motion-digit-flip": PMotionDigitFlip,
+  "motion-digit-roll": PMotionDigitRoll,
+  "motion-letter-fall": PMotionLetterFall,
+  "motion-letter-blur-in": PMotionLetterBlurIn,
+  "motion-letter-scramble": PMotionLetterScramble,
+  "motion-shape-morph": PMotionShapeMorph,
+  "motion-shape-cycle": PMotionShapeCycle,
+  "motion-bookmark-fill": PMotionBookmarkFill,
+  "motion-heart-fill": PMotionHeartFill,
+  "motion-check-draw": PMotionCheckDraw,
   "icon-lightbulb": PIconLightbulb,
   "icon-gears": PIconGears,
   "icon-rocket": PIconRocket,
