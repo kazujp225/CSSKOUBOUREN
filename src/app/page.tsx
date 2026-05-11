@@ -4,7 +4,22 @@ import { PopularTags } from "@/components/PopularTags";
 import { CategoryGrid } from "@/components/CategoryGrid";
 import { PatternCard } from "@/components/PatternCard";
 import { PATTERNS } from "@/data/patterns";
-import { ALL_PATTERNS } from "@/data/all";
+import { ALL_PATTERNS, PATTERN_BY_ID } from "@/data/all";
+
+const LATEST_IDS = [
+  "ex-form-date-picker-violet-md-solid",
+  "ex-form-file-upload-blue-md-solid",
+  "ex-form-otp-input-violet-md-solid",
+  "ex-form-password-strength-emerald-md-solid",
+  "ex-card-feature-icon-top-violet-md-solid",
+  "ex-card-profile-rose-md-solid",
+  "ex-card-stat-trend-emerald-md-solid",
+  "ex-data-sparkline-violet-md-solid",
+  "ex-data-stepper-blue-md-solid",
+  "ex-data-status-pill-amber-md-solid",
+  "ex-motion-letter-wobble-rose-md-solid",
+  "ex-motion-confetti-burst-amber-md-solid",
+];
 
 export default function Home() {
   const featured = PATTERNS.slice(0, 6);
@@ -89,6 +104,30 @@ export default function Home() {
         <CategoryGrid />
       </section>
 
+      {/* 新着 archetype */}
+      <section className="space-y-7">
+        <div className="flex items-end justify-between gap-4">
+          <SectionHead
+            eyebrow="Latest"
+            title="最近追加された演出"
+            desc="form / data / motion を中心に直近で増えた archetype。"
+          />
+          <Link
+            href="/patterns"
+            className="shrink-0 text-sm text-zinc-700 underline-offset-4 hover:text-zinc-900 hover:underline"
+          >
+            全 {ALL_PATTERNS.length.toLocaleString()} 件を見る →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {LATEST_IDS.map((id) => {
+            const p = PATTERN_BY_ID[id];
+            if (!p) return null;
+            return <PatternCard key={id} pattern={p} />;
+          })}
+        </div>
+      </section>
+
       {/* 注目演出 */}
       <section className="space-y-7">
         <div className="flex items-end justify-between gap-4">
@@ -97,12 +136,6 @@ export default function Home() {
             title="まずはこれ"
             desc="迷ったら使い回せる定番演出から。"
           />
-          <Link
-            href="/patterns"
-            className="shrink-0 text-sm text-zinc-700 underline-offset-4 hover:text-zinc-900 hover:underline"
-          >
-            全 {ALL_PATTERNS.length.toLocaleString()} 件を見る →
-          </Link>
         </div>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {featured.map((p) => (
