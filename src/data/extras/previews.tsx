@@ -3302,6 +3302,244 @@ export function PMotionCheckDraw({ color }: CV) {
   );
 }
 
+export function PMotionProgressFill({ color }: CV) {
+  const [k, setK] = useStateOnce(0);
+  useIntervalSafe(() => setK((v) => v + 1), 3200);
+  return (
+    <MotionStage>
+      <div className="h-2 w-56 overflow-hidden rounded-full bg-zinc-200">
+        <span
+          key={k}
+          className="block h-full rounded-full"
+          style={{ background: color.hex, animation: "progressFill 2.4s ease-out forwards", width: 0 }}
+        />
+      </div>
+    </MotionStage>
+  );
+}
+
+export function PMotionRingFill({ color }: CV) {
+  const [k, setK] = useStateOnce(0);
+  useIntervalSafe(() => setK((v) => v + 1), 2800);
+  return (
+    <MotionStage>
+      <svg viewBox="0 0 100 100" className="h-24 w-24" key={k}>
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#e7e7eb" strokeWidth="8" />
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke={color.hex}
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray="282"
+          transform="rotate(-90 50 50)"
+          style={{ animation: "ringFill 2s ease-out forwards" }}
+        />
+      </svg>
+    </MotionStage>
+  );
+}
+
+export function PMotionTypewriter({ color }: CV) {
+  const [k, setK] = useStateOnce(0);
+  useIntervalSafe(() => setK((v) => v + 1), 3500);
+  const text = "Generating…";
+  return (
+    <MotionStage>
+      <div className="inline-flex items-baseline font-mono text-lg" style={{ color: color.hex }} key={k}>
+        <span
+          className="inline-block overflow-hidden whitespace-nowrap"
+          style={{ width: 0, animation: `typewriterReveal 2.4s steps(${text.length}) forwards` }}
+        >
+          {text}
+        </span>
+        <span className="ml-0.5 inline-block" style={{ animation: "typewriterCaret 1s steps(2) infinite" }}>
+          |
+        </span>
+      </div>
+    </MotionStage>
+  );
+}
+
+export function PMotionLineReveal({ color }: CV) {
+  const [k, setK] = useStateOnce(0);
+  useIntervalSafe(() => setK((v) => v + 1), 3200);
+  const lines = ["あなたの仕事を、", "最短に。"];
+  return (
+    <MotionStage>
+      <h2 className="text-2xl font-extrabold leading-tight" style={{ color: color.hex }} key={k}>
+        {lines.map((l, i) => (
+          <span key={i} className="block overflow-hidden">
+            <span
+              className="inline-block translate-y-full"
+              style={{ animation: `lineRevealUp .8s cubic-bezier(.6,.05,.18,1.2) ${i * 0.25}s forwards` }}
+            >
+              {l}
+            </span>
+          </span>
+        ))}
+      </h2>
+    </MotionStage>
+  );
+}
+
+export function PMotionCardFlip({ color }: CV) {
+  const [flipped, setFlipped] = useStateOnce(false);
+  useIntervalSafe(() => setFlipped((v) => !v), 2800);
+  return (
+    <MotionStage>
+      <div className="h-24 w-40 [perspective:800px]">
+        <div
+          className="relative h-full w-full transition-transform duration-700 [transform-style:preserve-3d]"
+          style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0)" }}
+        >
+          <div
+            className="absolute inset-0 flex items-center justify-center rounded-xl text-lg font-bold text-white [backface-visibility:hidden]"
+            style={{ background: color.hex }}
+          >
+            FRONT
+          </div>
+          <div
+            className="absolute inset-0 flex items-center justify-center rounded-xl bg-zinc-900 text-lg font-bold text-white [transform:rotateY(180deg)] [backface-visibility:hidden]"
+          >
+            BACK
+          </div>
+        </div>
+      </div>
+    </MotionStage>
+  );
+}
+
+export function PCardPricing({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <article
+        className="relative w-full max-w-[240px] rounded-2xl border-2 bg-white p-5 shadow-[0_22px_50px_-20px_rgba(0,0,0,.18)]"
+        style={{ borderColor: color.hex }}
+      >
+        <span
+          className="absolute -top-2.5 right-4 rounded-full px-2 py-0.5 text-[9px] font-bold text-white"
+          style={{ background: color.hex }}
+        >
+          人気
+        </span>
+        <h3 className="text-base font-bold text-zinc-900">Pro</h3>
+        <div className="mt-1 mb-3 flex items-baseline gap-1">
+          <span className="text-2xl font-extrabold text-zinc-900">¥1,200</span>
+          <span className="text-[10px] text-zinc-500">/月</span>
+        </div>
+        <ul className="m-0 mb-3 list-none p-0">
+          {["無制限プロジェクト", "優先サポート", "API"].map((f) => (
+            <li key={f} className="border-t border-zinc-100 py-1 text-[10px] text-zinc-600">
+              ✓ {f}
+            </li>
+          ))}
+        </ul>
+        <span
+          role="button"
+          className="block w-full cursor-pointer rounded-full py-1.5 text-center text-[10px] font-semibold text-white"
+          style={{ background: color.hex }}
+        >
+          このプランで始める
+        </span>
+      </article>
+    </Stage>
+  );
+}
+
+export function PCardTestimonial({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <article className="relative w-full max-w-[280px] rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <span
+          aria-hidden
+          className="absolute left-3 top-0 font-serif leading-none"
+          style={{ color: color.hex + "33", fontSize: 56 }}
+        >
+          &ldquo;
+        </span>
+        <p className="relative pt-2 text-xs leading-relaxed text-zinc-900">
+          導入してから業務時間が30%減りました。
+        </p>
+        <div className="mt-3 flex items-center gap-2 border-t border-zinc-100 pt-2.5">
+          <div
+            className="h-8 w-8 rounded-full"
+            style={{ background: `linear-gradient(135deg, ${color.hex}, #5b8cff)` }}
+          />
+          <div>
+            <div className="text-[11px] font-semibold text-zinc-900">山田 太郎</div>
+            <div className="text-[9px] text-zinc-500">株式会社XYZ / マネージャー</div>
+          </div>
+        </div>
+      </article>
+    </Stage>
+  );
+}
+
+export function PBgMeshSoft({ color }: CV) {
+  return (
+    <div
+      className="relative flex h-full w-full items-center justify-center"
+      style={{
+        backgroundColor: "#fafafa",
+        backgroundImage: `radial-gradient(at 15% 20%, ${color.hex}55, transparent 50%), radial-gradient(at 80% 30%, #3b82f655, transparent 50%), radial-gradient(at 60% 80%, ${color.hex}33, transparent 50%), radial-gradient(at 25% 75%, #c084fc44, transparent 50%)`,
+        backgroundSize: "200% 200%",
+        animation: "meshDrift 18s ease-in-out infinite",
+      }}
+    >
+      <div className="text-center">
+        <div className="text-xs uppercase tracking-[0.2em] text-zinc-700">mesh</div>
+        <div className="mt-1 text-lg font-semibold text-zinc-900">Background</div>
+      </div>
+    </div>
+  );
+}
+
+export function PHoverTilt3D({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <div
+        className="group relative w-56 overflow-hidden rounded-2xl p-6 text-white shadow-[0_12px_24px_-10px_rgba(0,0,0,.4)] transition duration-500 hover:[transform:perspective(800px)_rotateX(8deg)_rotateY(-8deg)_translateZ(20px)]"
+        style={{
+          background: `linear-gradient(135deg, ${color.hex}, #0a0a14)`,
+          perspective: 1200,
+          transformStyle: "preserve-3d",
+        }}
+      >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -inset-[20%] -translate-x-full transition duration-700 ease-out group-hover:translate-x-[60%]"
+          style={{
+            background:
+              "linear-gradient(120deg, transparent 30%, rgba(255,255,255,.18) 50%, transparent 70%)",
+          }}
+        />
+        <h3 className="relative text-base font-bold">Premium</h3>
+        <p className="relative mt-1 text-[11px] text-white/80">ホバーで傾きと光のスイープ。</p>
+      </div>
+    </Stage>
+  );
+}
+
+export function PTextChromeReflective({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <h2
+        className="bg-clip-text text-5xl font-black tracking-tighter text-transparent"
+        style={{
+          backgroundImage: `linear-gradient(90deg, #c0c0c0, #fff 40%, ${color.hex} 50%, #fff 60%, #c0c0c0)`,
+          backgroundSize: "200% 100%",
+          animation: "chromeShimmer 6s linear infinite",
+        }}
+      >
+        REFLECT
+      </h2>
+    </Stage>
+  );
+}
+
 /* tiny preview helpers (avoid duplicating imports - re-export hooks here lazily) */
 import { useEffect as _ue, useState as _us } from "react";
 function useStateOnce<T>(init: T): [T, (v: T | ((prev: T) => T)) => void] {
@@ -3410,6 +3648,16 @@ export const EXTRA_PREVIEW_FNS: Record<string, (v: CV) => JSX.Element> = {
   "motion-bookmark-fill": PMotionBookmarkFill,
   "motion-heart-fill": PMotionHeartFill,
   "motion-check-draw": PMotionCheckDraw,
+  "motion-progress-fill": PMotionProgressFill,
+  "motion-ring-fill": PMotionRingFill,
+  "motion-text-typewriter": PMotionTypewriter,
+  "motion-text-line-reveal": PMotionLineReveal,
+  "motion-card-flip": PMotionCardFlip,
+  "card-pricing": PCardPricing,
+  "card-testimonial": PCardTestimonial,
+  "bg-mesh-soft": PBgMeshSoft,
+  "hover-tilt-3d-deep": PHoverTilt3D,
+  "text-chrome-shimmer": PTextChromeReflective,
   "icon-lightbulb": PIconLightbulb,
   "icon-gears": PIconGears,
   "icon-rocket": PIconRocket,

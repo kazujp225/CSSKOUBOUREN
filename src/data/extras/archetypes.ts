@@ -5303,6 +5303,503 @@ export function CheckDraw() {
 };
 
 /* ============================================================
+   MOTION (追加バッチ)
+   ============================================================ */
+
+const motionProgressFill: ExtraArchetype<CV> = {
+  id: "motion-progress-fill",
+  baseTitle: "プログレスバー（左→右に塗り）",
+  category: "motion",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "アップロード/ダウンロード進捗、ステップ完了、達成率の可視化。",
+  effect: "track の上の bar が 0% → 100% へリニアに伸びる。完了時のテキスト切替もしやすい。",
+  suitableFor: ["管理画面", "オンボーディング", "学習プラットフォーム"],
+  badUsage: "不確定処理には不適切。確定的に増えていく時のみ。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="prog"><span></span></div>`,
+    css: `.prog { width:240px; height:8px; border-radius:9999px; background:#e7e7eb; overflow:hidden; }
+.prog span { display:block; height:100%; background:${color.hex}; border-radius:inherit; animation: progressFill 2.4s ease-out forwards; }
+@keyframes progressFill { from { width: 0% } to { width: 100% } }`,
+    tailwind: `<div className="h-2 w-60 overflow-hidden rounded-full bg-zinc-200">
+  <span className="block h-full rounded-full"
+    style={{ background:"${color.hex}", animation:"progressFill 2.4s ease-out forwards" }} />
+</div>`,
+    react: `export function ProgressFill({ value = 100, duration = 2.4 }: { value?: number; duration?: number }) {
+  return (
+    <div className="h-2 w-60 overflow-hidden rounded-full bg-zinc-200">
+      <span className="block h-full rounded-full" style={{ width: \`\${value}%\`, background:"${color.hex}", transition: \`width \${duration}s ease-out\` }} />
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `プログレスバー演出。track 8px zinc-200、bar ${color.tw}-500、width 0→100% を 2.4秒 ease-out で。`,
+};
+
+const motionRingFill: ExtraArchetype<CV> = {
+  id: "motion-ring-fill",
+  baseTitle: "円形プログレス（描画）",
+  category: "motion",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["SVG", "CSS"],
+  difficulty: "medium",
+  useCase: "達成率・進捗・残りバッテリーの可視化。",
+  effect: "リングが時計回りに 0% → 100% で描かれていく。中央に数値表示。",
+  suitableFor: ["ダッシュボード", "学習プラットフォーム", "プロフィール画面"],
+  badUsage: "高頻度の更新には不向き。1回限りの reveal に。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<svg viewBox="0 0 100 100" class="ring-fill">
+  <circle cx="50" cy="50" r="45" fill="none" stroke="#e7e7eb" stroke-width="8"/>
+  <circle cx="50" cy="50" r="45" fill="none" stroke="${color.hex}" stroke-width="8" stroke-linecap="round" stroke-dasharray="282" transform="rotate(-90 50 50)"/>
+</svg>`,
+    css: `.ring-fill { width:120px; height:120px; }
+.ring-fill circle:last-child { animation: ringFill 2s ease-out forwards; }
+@keyframes ringFill { from { stroke-dashoffset: 282 } to { stroke-dashoffset: 0 } }`,
+    tailwind: `<svg viewBox="0 0 100 100" className="h-28 w-28">
+  <circle cx="50" cy="50" r="45" fill="none" stroke="#e7e7eb" strokeWidth="8" />
+  <circle cx="50" cy="50" r="45" fill="none" stroke="${color.hex}" strokeWidth="8" strokeLinecap="round"
+    strokeDasharray="282" transform="rotate(-90 50 50)"
+    style={{ animation: "ringFill 2s ease-out forwards" }} />
+</svg>`,
+    react: `export function RingFill({ value = 100, size = 120 }: { value?: number; size?: number }) {
+  const r = 45, C = 2 * Math.PI * r;
+  const offset = C - (C * value) / 100;
+  return (
+    <svg viewBox="0 0 100 100" style={{ width: size, height: size }}>
+      <circle cx="50" cy="50" r={r} fill="none" stroke="#e7e7eb" strokeWidth="8" />
+      <circle cx="50" cy="50" r={r} fill="none" stroke="${color.hex}" strokeWidth="8" strokeLinecap="round"
+        strokeDasharray={C} strokeDashoffset={offset} transform="rotate(-90 50 50)"
+        style={{ transition: "stroke-dashoffset 1.6s ease-out" }} />
+    </svg>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `円形プログレス（リング）を SVG で実装。半径45, stroke-dasharray=2πr=282, stroke-dashoffset を 282 → 0 で 2秒 ease-out。色 ${color.tw}-500、背景リング zinc-200。`,
+};
+
+const motionTypewriter: ExtraArchetype<CV> = {
+  id: "motion-text-typewriter",
+  baseTitle: "タイプライター（カーソル付き）",
+  category: "motion",
+  baseMood: ["AI", "テック"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "AIチャット応答、ターミナル風UI、ヒーローのキャッチコピー。",
+  effect: "monospace テキストが 1文字ずつタイプされる + 末尾のカーソル点滅。",
+  suitableFor: ["AIアシスタント", "ターミナルUI", "テック企業の Hero"],
+  badUsage: "長文をタイプするのは読みづらい。重要短文限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="tw">
+  <span class="text">Generating response…</span>
+  <span class="caret">|</span>
+</div>`,
+    css: `.tw { font-family:ui-monospace,monospace; font-size:22px; color:${color.hex}; display:inline-flex; align-items:baseline; }
+.tw .text { display:inline-block; overflow:hidden; white-space:nowrap; width:0; animation: typewriterReveal 2.4s steps(20) forwards; }
+.tw .caret { display:inline-block; margin-left:2px; animation: typewriterCaret 1s steps(2) infinite; }
+@keyframes typewriterReveal { from { width: 0 } to { width: 20ch } }
+@keyframes typewriterCaret { 50% { opacity: 0; } }`,
+    tailwind: `<div className="inline-flex items-baseline font-mono text-xl" style={{ color:"${color.hex}" }}>
+  <span className="inline-block overflow-hidden whitespace-nowrap"
+    style={{ width: 0, animation: "typewriterReveal 2.4s steps(20) forwards" }}>
+    Generating response…
+  </span>
+  <span className="ml-0.5 inline-block" style={{ animation:"typewriterCaret 1s steps(2) infinite" }}>|</span>
+</div>`,
+    react: `export function Typewriter({ text = "Generating response…" }: { text?: string }) {
+  return (
+    <div className="inline-flex items-baseline font-mono text-xl" style={{ color: "${color.hex}" }}>
+      <span className="inline-block overflow-hidden whitespace-nowrap"
+        style={{ width: 0, animation: \`typewriterReveal 2.4s steps(\${text.length}) forwards\` }}>
+        {text}
+      </span>
+      <span className="ml-0.5 inline-block" style={{ animation:"typewriterCaret 1s steps(2) infinite" }}>|</span>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `monospace の文字列をタイプライター風に 1文字ずつ表示。width 0 → 20ch を steps(20) で 2.4秒、末尾カーソルは 1s steps(2) で点滅。色 ${color.tw}-500。`,
+};
+
+const motionLineReveal: ExtraArchetype<CV> = {
+  id: "motion-text-line-reveal",
+  baseTitle: "テキスト行 下からマスクで現れる",
+  category: "motion",
+  baseMood: ["上品", "シネマ"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "ヒーローの見出しを行単位で順番に出す、ティザー、ブランドサイト。",
+  effect: "各行を overflow-hidden の枠に入れ、中の text を translateY(110%) → 0 で下から押し上げる。",
+  suitableFor: ["ブランドサイト", "プロダクトティザー", "ストーリー型LP"],
+  badUsage: "段落本文には合わない。見出しの 2〜3行限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="line-reveal">
+  <span class="wrap"><span class="inner">あなたの仕事を、</span></span>
+  <span class="wrap"><span class="inner">最短に。</span></span>
+</h2>`,
+    css: `.line-reveal { font-size:44px; font-weight:800; color:${color.hex}; line-height:1.1; }
+.line-reveal .wrap { display:block; overflow:hidden; }
+.line-reveal .inner { display:inline-block; transform: translateY(110%); animation: lineRevealUp .8s cubic-bezier(.6,.05,.18,1.2) forwards; }
+.line-reveal .wrap:nth-child(2) .inner { animation-delay: .25s; }
+@keyframes lineRevealUp { from { transform: translateY(110%) } to { transform: translateY(0) } }`,
+    tailwind: `<h2 className="text-5xl font-extrabold leading-tight" style={{ color:"${color.hex}" }}>
+  <span className="block overflow-hidden">
+    <span className="inline-block translate-y-full" style={{ animation: "lineRevealUp .8s cubic-bezier(.6,.05,.18,1.2) forwards" }}>
+      あなたの仕事を、
+    </span>
+  </span>
+  <span className="block overflow-hidden">
+    <span className="inline-block translate-y-full" style={{ animation: "lineRevealUp .8s cubic-bezier(.6,.05,.18,1.2) .25s forwards" }}>
+      最短に。
+    </span>
+  </span>
+</h2>`,
+    react: `export function LineReveal({ lines = ["あなたの仕事を、", "最短に。"] }: { lines?: string[] }) {
+  return (
+    <h2 className="text-5xl font-extrabold leading-tight" style={{ color: "${color.hex}" }}>
+      {lines.map((l, i) => (
+        <span key={i} className="block overflow-hidden">
+          <span className="inline-block translate-y-full"
+            style={{ animation: \`lineRevealUp .8s cubic-bezier(.6,.05,.18,1.2) \${i * 0.25}s forwards\` }}>
+            {l}
+          </span>
+        </span>
+      ))}
+    </h2>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `見出しの各行を overflow-hidden の <span> でラップ、中の inner を translateY(110%) → 0 で 0.8秒 cubic-bezier(.6,.05,.18,1.2) で押し上げる。行ごとに 0.25s delay。色 ${color.tw}-500。`,
+};
+
+const motionCardFlip: ExtraArchetype<CV> = {
+  id: "motion-card-flip",
+  baseTitle: "カード裏返り（3D Y軸）",
+  category: "motion",
+  baseMood: ["アプリ", "ゲーム"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "クレジットカードの番号→裏面の確認、答えを隠して表示、トランプUI。",
+  effect: "Y軸 180度回転で front と back が切り替わる。3D perspective で奥行き。",
+  suitableFor: ["教育/暗記アプリ", "EC（商品の裏面情報）", "ゲーム"],
+  badUsage: "情報が常時必要なところで使うとストレス。意図的な切替に限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="flip-card">
+  <div class="flip-inner">
+    <div class="face front">FRONT</div>
+    <div class="face back">BACK</div>
+  </div>
+</div>`,
+    css: `.flip-card { width:200px; height:120px; perspective: 800px; }
+.flip-inner { position:relative; width:100%; height:100%; transform-style:preserve-3d; animation: cardFlip 4s ease-in-out infinite; }
+.face { position:absolute; inset:0; backface-visibility:hidden; display:flex; align-items:center; justify-content:center; border-radius:14px; color:#fff; font-weight:700; font-size:24px; }
+.face.front { background:${color.hex}; }
+.face.back { background:#0a0a0a; transform: rotateY(180deg); }
+@keyframes cardFlip { 0%,40%,100% { transform: rotateY(0) } 50%,90% { transform: rotateY(180deg) } }`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function FlipCard() {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div className="h-32 w-52 cursor-pointer [perspective:800px]" onClick={() => setFlipped(v => !v)}>
+      <div className="relative h-full w-full transition-transform duration-700 [transform-style:preserve-3d]"
+        style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0)" }}>
+        <div className="absolute inset-0 flex items-center justify-center rounded-2xl text-2xl font-bold text-white [backface-visibility:hidden]"
+          style={{ background:"${color.hex}" }}>
+          FRONT
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-zinc-900 text-2xl font-bold text-white [transform:rotateY(180deg)] [backface-visibility:hidden]">
+          BACK
+        </div>
+      </div>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `カード裏返りを実装。親に perspective: 800px、子に transform-style: preserve-3d、front/back を absolute で重ねて backface-visibility: hidden。クリックで rotateY 0↔180、transition 700ms。front ${color.tw}-500、back zinc-900。`,
+};
+
+/* ============================================================
+   UI primitive 追加バッチ
+   ============================================================ */
+
+const cardPricing: ExtraArchetype<CV> = {
+  id: "card-pricing",
+  baseTitle: "料金プランカード",
+  category: "card",
+  baseMood: ["BtoB", "セールス"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "サービスの料金ページ、サブスク選択。",
+  effect: "プラン名 + 価格 + 含まれる機能のリスト + CTA。「人気」プランは強調枠。",
+  suitableFor: ["SaaS LP", "サブスクサービス", "コース販売"],
+  badUsage: "プランを 4個以上並べると比較が辛い。3つ推奨。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<article class="pricing-card">
+  <span class="badge">人気</span>
+  <h3>Pro</h3>
+  <div class="price"><span class="num">¥1,200</span><span class="unit">/月</span></div>
+  <ul>
+    <li>✓ 無制限プロジェクト</li>
+    <li>✓ 優先サポート</li>
+    <li>✓ APIアクセス</li>
+  </ul>
+  <button>このプランで始める</button>
+</article>`,
+    css: `.pricing-card { position:relative; padding:28px; border-radius:18px; background:#fff; border:2px solid ${color.hex}; box-shadow:0 22px 50px -20px ${color.hex}55; max-width:300px; }
+.pricing-card .badge { position:absolute; top:-12px; right:20px; padding:4px 12px; border-radius:9999px; background:${color.hex}; color:#fff; font-size:11px; font-weight:700; }
+.pricing-card h3 { font-size:22px; font-weight:700; color:#0a0a0a; }
+.pricing-card .price { margin:10px 0 18px; display:flex; align-items:baseline; gap:4px; }
+.pricing-card .num { font-size:36px; font-weight:800; color:#0a0a0a; }
+.pricing-card .unit { color:#71717a; font-size:14px; }
+.pricing-card ul { list-style:none; padding:0; margin:0 0 22px; }
+.pricing-card li { color:#52525b; font-size:14px; padding:6px 0; border-top:1px solid #f4f4f5; }
+.pricing-card button { width:100%; padding:12px; border-radius:9999px; background:${color.hex}; color:#fff; font-weight:600; border:0; cursor:pointer; }`,
+    tailwind: `<article className="relative max-w-xs rounded-2xl border-2 bg-white p-7 shadow-[0_22px_50px_-20px_rgba(0,0,0,.18)]" style={{ borderColor:"${color.hex}" }}>
+  <span className="absolute -top-3 right-5 rounded-full px-3 py-1 text-[11px] font-bold text-white" style={{ background:"${color.hex}" }}>人気</span>
+  <h3 className="text-xl font-bold text-zinc-900">Pro</h3>
+  <div className="mt-2 mb-4 flex items-baseline gap-1">
+    <span className="text-4xl font-extrabold text-zinc-900">¥1,200</span>
+    <span className="text-sm text-zinc-500">/月</span>
+  </div>
+  <ul className="m-0 mb-5 list-none p-0">
+    {["無制限プロジェクト","優先サポート","APIアクセス"].map(f => (
+      <li key={f} className="border-t border-zinc-100 py-1.5 text-sm text-zinc-600">✓ {f}</li>
+    ))}
+  </ul>
+  <button className="w-full rounded-full py-3 font-semibold text-white" style={{ background:"${color.hex}" }}>このプランで始める</button>
+</article>`,
+    react: `export function PricingCard({
+  name = "Pro",
+  price = "¥1,200",
+  unit = "/月",
+  features = ["無制限プロジェクト","優先サポート","APIアクセス"],
+  popular = true,
+}: { name?: string; price?: string; unit?: string; features?: string[]; popular?: boolean }) {
+  return (
+    <article className="relative max-w-xs rounded-2xl border-2 bg-white p-7 shadow-[0_22px_50px_-20px_rgba(0,0,0,.18)]" style={{ borderColor:"${color.hex}" }}>
+      {popular && <span className="absolute -top-3 right-5 rounded-full px-3 py-1 text-[11px] font-bold text-white" style={{ background:"${color.hex}" }}>人気</span>}
+      <h3 className="text-xl font-bold text-zinc-900">{name}</h3>
+      <div className="mt-2 mb-4 flex items-baseline gap-1">
+        <span className="text-4xl font-extrabold text-zinc-900">{price}</span>
+        <span className="text-sm text-zinc-500">{unit}</span>
+      </div>
+      <ul className="m-0 mb-5 list-none p-0">
+        {features.map(f => <li key={f} className="border-t border-zinc-100 py-1.5 text-sm text-zinc-600">✓ {f}</li>)}
+      </ul>
+      <button className="w-full rounded-full py-3 font-semibold text-white" style={{ background:"${color.hex}" }}>このプランで始める</button>
+    </article>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `料金プランカード。border-2 ${color.tw}-500、上右に「人気」バッジ、価格36pxで強調、機能リスト ✓ で、フル幅の ${color.tw}-500 CTA。`,
+};
+
+const cardTestimonial: ExtraArchetype<CV> = {
+  id: "card-testimonial",
+  baseTitle: "お客様の声カード",
+  category: "card",
+  baseMood: ["BtoB", "信頼"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "コーポレートサイトの実績、SaaS LP の社会的証明。",
+  effect: "大きな引用符 + コメント + アバター + 名前/役職。控えめな影で信頼感を演出。",
+  suitableFor: ["BtoB LP", "コーポレート", "SaaS"],
+  badUsage: "架空の声を載せると逆効果。実名 or 仮名+承認を取った場合のみ。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<article class="testimonial">
+  <div class="quote">"導入してから業務時間が30%減りました。"</div>
+  <div class="person">
+    <img src="/avatar.jpg" alt=""/>
+    <div>
+      <div class="name">山田 太郎</div>
+      <div class="role">株式会社XYZ / マネージャー</div>
+    </div>
+  </div>
+</article>`,
+    css: `.testimonial { position:relative; padding:28px; border-radius:16px; background:#fff; border:1px solid #e7e7eb; box-shadow:0 8px 18px -6px rgba(0,0,0,.06); max-width:380px; }
+.testimonial::before { content:"\\201C"; position:absolute; top:6px; left:18px; font-size:64px; color:${color.hex}33; line-height:1; font-family:'Cormorant Garamond',serif; }
+.testimonial .quote { position:relative; color:#0a0a0a; font-size:16px; line-height:1.7; padding-top:14px; }
+.testimonial .person { display:flex; align-items:center; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #f4f4f5; }
+.testimonial .person img { width:40px; height:40px; border-radius:9999px; object-fit:cover; }
+.testimonial .name { font-weight:600; color:#0a0a0a; font-size:14px; }
+.testimonial .role { color:#71717a; font-size:12px; }`,
+    tailwind: `<article className="relative max-w-md rounded-2xl border border-zinc-200 bg-white p-7 shadow-[0_8px_18px_-6px_rgba(0,0,0,.06)]">
+  <span aria-hidden className="absolute left-4 top-1 font-serif text-6xl leading-none" style={{ color:"${color.hex}33" }}>"</span>
+  <p className="relative pt-3 text-base leading-relaxed text-zinc-900">導入してから業務時間が30%減りました。</p>
+  <div className="mt-4 flex items-center gap-3 border-t border-zinc-100 pt-3.5">
+    <img src="/avatar.jpg" alt="" className="h-10 w-10 rounded-full object-cover" />
+    <div>
+      <div className="text-sm font-semibold text-zinc-900">山田 太郎</div>
+      <div className="text-xs text-zinc-500">株式会社XYZ / マネージャー</div>
+    </div>
+  </div>
+</article>`,
+    react: `export function TestimonialCard({
+  quote, name, role, avatarSrc,
+}: { quote: string; name: string; role: string; avatarSrc?: string }) {
+  return (
+    <article className="relative max-w-md rounded-2xl border border-zinc-200 bg-white p-7 shadow-[0_8px_18px_-6px_rgba(0,0,0,.06)]">
+      <span aria-hidden className="absolute left-4 top-1 font-serif text-6xl leading-none" style={{ color:"${color.hex}33" }}>"</span>
+      <p className="relative pt-3 text-base leading-relaxed text-zinc-900">{quote}</p>
+      <div className="mt-4 flex items-center gap-3 border-t border-zinc-100 pt-3.5">
+        {avatarSrc && <img src={avatarSrc} alt="" className="h-10 w-10 rounded-full object-cover" />}
+        <div>
+          <div className="text-sm font-semibold text-zinc-900">{name}</div>
+          <div className="text-xs text-zinc-500">{role}</div>
+        </div>
+      </div>
+    </article>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `お客様の声カード。左上に巨大な引用符（serif、${color.tw}-500/33）、本文、下にアバター+名前+役職、border-top で区切り。`,
+};
+
+const bgMeshSoft: ExtraArchetype<CV> = {
+  id: "bg-mesh-soft",
+  baseTitle: "メッシュグラデ背景（柔らか）",
+  category: "background",
+  baseMood: ["モダン", "AI"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "AI/SaaS/モダンプロダクトの Hero 背景、写真なしの世界観形成。",
+  effect: "複数の radial-gradient を重ねて、有機的な色面のメッシュを作る。background-position をゆっくり動かして呼吸感。",
+  suitableFor: ["AI LP", "SaaS Hero", "モダンコーポレート"],
+  badUsage: "上に乗せる文字とのコントラストが弱いと読めない。文字背景に半透明オーバーレイを併用。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<section class="mesh-bg">…</section>`,
+    css: `.mesh-bg { background-color:#fafafa; background-image:
+  radial-gradient(at 15% 20%, ${color.hex}55, transparent 50%),
+  radial-gradient(at 80% 30%, #3b82f655, transparent 50%),
+  radial-gradient(at 60% 80%, ${color.hex}33, transparent 50%),
+  radial-gradient(at 25% 75%, #c084fc44, transparent 50%);
+  background-size: 200% 200%; animation: meshDrift 18s ease-in-out infinite; }
+@keyframes meshDrift { 0%,100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }`,
+    tailwind: `<section className="min-h-[400px]"
+  style={{
+    backgroundColor:"#fafafa",
+    backgroundImage:"radial-gradient(at 15% 20%, ${color.hex}55, transparent 50%), radial-gradient(at 80% 30%, #3b82f655, transparent 50%), radial-gradient(at 60% 80%, ${color.hex}33, transparent 50%), radial-gradient(at 25% 75%, #c084fc44, transparent 50%)",
+    backgroundSize:"200% 200%",
+    animation:"meshDrift 18s ease-in-out infinite",
+  }}>
+  …
+</section>`,
+    react: `export function MeshBg({ children }: { children?: React.ReactNode }) {
+  return (
+    <section className="min-h-[400px]"
+      style={{
+        backgroundColor:"#fafafa",
+        backgroundImage:"radial-gradient(at 15% 20%, ${color.hex}55, transparent 50%), radial-gradient(at 80% 30%, #3b82f655, transparent 50%), radial-gradient(at 60% 80%, ${color.hex}33, transparent 50%), radial-gradient(at 25% 75%, #c084fc44, transparent 50%)",
+        backgroundSize:"200% 200%",
+        animation:"meshDrift 18s ease-in-out infinite",
+      }}>
+      {children}
+    </section>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `メッシュグラデ背景を radial-gradient 4枚（${color.hex}55、blue-500/33、${color.hex}33、purple-300/44）を異なる位置に重ねて作成。background-size 200%、meshDrift で 18秒 ゆっくり呼吸。`,
+};
+
+const hoverTilt3D: ExtraArchetype<CV> = {
+  id: "hover-tilt-3d-deep",
+  baseTitle: "深い3Dティルト＋シーン",
+  category: "hover",
+  baseMood: ["モダン", "プロダクト"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "プロダクトカード、特集記事、ポートフォリオ作品。",
+  effect: "ホバー時に深い perspective で 3D 傾き + 表面に光のスイープ。",
+  suitableFor: ["プロダクト紹介", "ポートフォリオ", "プレミアム会員カード"],
+  badUsage: "情報量の多いカードに使うとテキスト読みづらい。装飾系限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="tilt-3d">
+  <span class="sheen"></span>
+  <h3>Premium</h3>
+  <p>ホバーで傾きと光のスイープ。</p>
+</div>`,
+    css: `.tilt-3d { position:relative; width:280px; padding:32px; border-radius:18px; background:linear-gradient(135deg, ${color.hex}, #0a0a14); color:#fff; transition:transform .5s cubic-bezier(.2,.7,.2,1.1), box-shadow .5s; transform-style:preserve-3d; perspective:1200px; box-shadow:0 12px 24px -10px rgba(0,0,0,.4); overflow:hidden; }
+.tilt-3d:hover { transform:perspective(800px) rotateX(8deg) rotateY(-8deg) translateZ(20px); box-shadow:0 26px 50px -10px ${color.hex}88; }
+.tilt-3d .sheen { position:absolute; inset:-20%; background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.18) 50%, transparent 70%); transform:translateX(-100%); transition:transform .8s ease; }
+.tilt-3d:hover .sheen { transform:translateX(60%); }
+.tilt-3d h3 { font-size:24px; font-weight:700; }
+.tilt-3d p { margin-top:6px; color:rgba(255,255,255,.8); font-size:14px; }`,
+    tailwind: `// React版を参照`,
+    react: `export function Tilt3DCard({ title = "Premium", body = "ホバーで傾きと光のスイープ。" }) {
+  return (
+    <div className="group relative w-72 overflow-hidden rounded-2xl p-8 text-white shadow-[0_12px_24px_-10px_rgba(0,0,0,.4)] transition duration-500
+                    hover:[transform:perspective(800px)_rotateX(8deg)_rotateY(-8deg)_translateZ(20px)]
+                    hover:shadow-[0_26px_50px_-10px_${color.hex}88]"
+      style={{ background:"linear-gradient(135deg, ${color.hex}, #0a0a14)", perspective:1200, transformStyle:"preserve-3d" }}>
+      <span aria-hidden className="pointer-events-none absolute -inset-[20%] -translate-x-full transition duration-700 ease-out group-hover:translate-x-[60%]"
+        style={{ background:"linear-gradient(120deg, transparent 30%, rgba(255,255,255,.18) 50%, transparent 70%)" }} />
+      <h3 className="relative text-2xl font-bold">{title}</h3>
+      <p className="relative mt-1.5 text-sm text-white/80">{body}</p>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `深い3Dティルトカードを実装。bg は ${color.tw}-500 → 黒紫の135度グラデ、ホバーで perspective(800px) rotateX(8) rotateY(-8) translateZ(20) で立体傾き。同時に光のスイープが左→右に translateX。`,
+};
+
+const textChromeReflective: ExtraArchetype<CV> = {
+  id: "text-chrome-shimmer",
+  baseTitle: "クロームシマー文字",
+  category: "text",
+  baseMood: ["モダン", "プレミアム"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "ヒーローの大見出し、プロダクト名、特別な発表。",
+  effect: "テキスト自体にメタリックなグラデを敷き、background-position を流して光の反射に見せる。",
+  suitableFor: ["ハイエンドプロダクト", "限定アナウンス", "イベントタイトル"],
+  badUsage: "本文では読みにくい。短い見出し限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="chrome">REFLECT</h2>`,
+    css: `.chrome { font-size:80px; font-weight:900; background:linear-gradient(90deg, #c0c0c0, #fff 40%, ${color.hex} 50%, #fff 60%, #c0c0c0); background-size:200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation: chromeShimmer 6s linear infinite; letter-spacing:-.03em; }
+@keyframes chromeShimmer { 0% { background-position:0% 50% } 100% { background-position:200% 50% } }`,
+    tailwind: `<h2 className="bg-clip-text text-7xl font-black tracking-tighter text-transparent"
+  style={{
+    backgroundImage:"linear-gradient(90deg, #c0c0c0, #fff 40%, ${color.hex} 50%, #fff 60%, #c0c0c0)",
+    backgroundSize:"200% 100%",
+    animation:"chromeShimmer 6s linear infinite",
+  }}>REFLECT</h2>`,
+    react: `export function ChromeText({ children = "REFLECT" }) {
+  return (
+    <h2 className="bg-clip-text text-7xl font-black tracking-tighter text-transparent"
+      style={{
+        backgroundImage:"linear-gradient(90deg, #c0c0c0, #fff 40%, ${color.hex} 50%, #fff 60%, #c0c0c0)",
+        backgroundSize:"200% 100%",
+        animation:"chromeShimmer 6s linear infinite",
+      }}>{children}</h2>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `見出しに クロームシマー演出を適用してください。linear-gradient(90deg, silver, white 40%, ${color.hex} 50%, white 60%, silver) を background-clip: text で文字に当て、size 200% で背景位置を 6秒で流す。`,
+};
+
+/* ============================================================
    集約
    ============================================================ */
 
@@ -5413,6 +5910,17 @@ export const EXTRA_ARCHETYPES: ExtraArchetype<any>[] = [
   motionBookmarkFill,
   motionHeartFill,
   motionCheckDraw,
+  motionProgressFill,
+  motionRingFill,
+  motionTypewriter,
+  motionLineReveal,
+  motionCardFlip,
+  // Misc additions
+  cardPricing,
+  cardTestimonial,
+  bgMeshSoft,
+  hoverTilt3D,
+  textChromeReflective,
   // Icon
   iconLightbulb,
   iconGears,
