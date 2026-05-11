@@ -6364,6 +6364,520 @@ const bgGrid3D: ExtraArchetype<CV> = {
 };
 
 /* ============================================================
+   CARD 第3バッチ (5 new)
+   ============================================================ */
+
+const cardFeatureIconTop: ExtraArchetype<CV> = {
+  id: "card-feature-icon-top",
+  baseTitle: "機能紹介カード（上部アイコン）",
+  category: "card",
+  baseMood: ["BtoB", "クリーン"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "サービスの主要機能を 3〜4 個並べる定番セクション。",
+  effect: "上部のカラーアクセント円アイコン → タイトル → 短い説明 の縦並び。視線が下に流れる。",
+  suitableFor: ["BtoB SaaS LP", "コーポレート", "プロダクト紹介"],
+  badUsage: "テキスト量がバラバラだとカード高さ揃わず崩れる。固定高 or align-self で揃える。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<article class="feat">
+  <div class="ic"><span>⚡</span></div>
+  <h3>高速処理</h3>
+  <p>大量データも 100ms 以内に処理します。</p>
+</article>`,
+    css: `.feat { padding:24px; border-radius:16px; background:#fff; border:1px solid #e7e7eb; transition:transform .3s, box-shadow .3s; max-width:280px; }
+.feat:hover { transform:translateY(-2px); box-shadow:0 12px 24px -10px rgba(0,0,0,.1); }
+.feat .ic { width:48px; height:48px; border-radius:12px; background:${color.hex}1a; display:flex; align-items:center; justify-content:center; color:${color.hex}; font-size:24px; }
+.feat h3 { margin-top:14px; font-size:16px; font-weight:600; color:#0a0a0a; }
+.feat p { color:#52525b; font-size:13px; line-height:1.6; margin-top:6px; }`,
+    tailwind: `<article className="max-w-xs rounded-2xl border border-zinc-200 bg-white p-6 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-10px_rgba(0,0,0,.1)]">
+  <div className="flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
+    style={{ background:"${color.hex}1a", color:"${color.hex}" }}>⚡</div>
+  <h3 className="mt-3.5 text-base font-semibold text-zinc-900">高速処理</h3>
+  <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">大量データも 100ms 以内に処理します。</p>
+</article>`,
+    react: `export function FeatureIconCard({ icon = "⚡", title = "高速処理", body }: { icon?: string; title?: string; body?: string }) {
+  return (
+    <article className="max-w-xs rounded-2xl border border-zinc-200 bg-white p-6 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-10px_rgba(0,0,0,.1)]">
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
+        style={{ background: "${color.hex}1a", color: "${color.hex}" }}>{icon}</div>
+      <h3 className="mt-3.5 text-base font-semibold text-zinc-900">{title}</h3>
+      <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">{body}</p>
+    </article>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `機能紹介カード。上部に 48px角丸アイコン枠（bg-${color.tw}-500/10, text-${color.tw}-600）、下に見出し + 説明。ホバーで -2px 浮上 + 影。`,
+};
+
+const cardProfile: ExtraArchetype<CV> = {
+  id: "card-profile",
+  baseTitle: "プロフィールカード",
+  category: "card",
+  baseMood: ["BtoC", "上品"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "チームメンバー紹介、講師ページ、SNSプロフィール。",
+  effect: "中央に丸アバター + 名前 + 役職 + 短文 bio + ソーシャルリンク。",
+  suitableFor: ["コーポレートの会社情報", "アカデミー/講座サイト", "ポートフォリオチーム"],
+  badUsage: "bio が長すぎると窮屈。max 2行で。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<article class="profile">
+  <div class="avatar"></div>
+  <h3>山田 太郎</h3>
+  <p class="role">プロダクトデザイナー</p>
+  <p class="bio">UIを「呼吸」させることに情熱を注ぐ 10年。</p>
+  <div class="social"><a>X</a><a>GH</a></div>
+</article>`,
+    css: `.profile { text-align:center; padding:28px 24px; border-radius:18px; background:#fff; border:1px solid #e7e7eb; max-width:280px; }
+.profile .avatar { width:84px; height:84px; border-radius:9999px; margin:0 auto; background:linear-gradient(135deg, ${color.hex}, #5b8cff); border:4px solid #fff; box-shadow:0 8px 18px -6px ${color.hex}66; }
+.profile h3 { margin-top:14px; font-size:18px; font-weight:600; color:#0a0a0a; }
+.profile .role { color:${color.hex}; font-size:12px; font-weight:600; letter-spacing:.05em; margin-top:2px; }
+.profile .bio { color:#52525b; font-size:13px; margin-top:10px; }
+.profile .social { display:flex; justify-content:center; gap:8px; margin-top:14px; }
+.profile .social a { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:9999px; background:#f4f4f5; color:#52525b; font-size:11px; font-weight:600; }`,
+    tailwind: `<article className="max-w-xs rounded-2xl border border-zinc-200 bg-white px-6 py-7 text-center">
+  <div className="mx-auto h-20 w-20 rounded-full border-4 border-white"
+    style={{ background:"linear-gradient(135deg, ${color.hex}, #5b8cff)", boxShadow:"0 8px 18px -6px ${color.hex}66" }} />
+  <h3 className="mt-3.5 text-lg font-semibold text-zinc-900">山田 太郎</h3>
+  <p className="mt-0.5 text-xs font-semibold tracking-wide" style={{ color:"${color.hex}" }}>プロダクトデザイナー</p>
+  <p className="mt-2.5 text-sm text-zinc-600">UIを「呼吸」させることに情熱を注ぐ 10年。</p>
+  <div className="mt-3.5 flex justify-center gap-2">
+    <a className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600">X</a>
+    <a className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600">GH</a>
+  </div>
+</article>`,
+    react: `export function ProfileCard({ name = "山田 太郎", role = "プロダクトデザイナー", bio = "...", avatarSrc }: { name?: string; role?: string; bio?: string; avatarSrc?: string }) {
+  return (
+    <article className="max-w-xs rounded-2xl border border-zinc-200 bg-white px-6 py-7 text-center">
+      {avatarSrc
+        ? <img src={avatarSrc} alt="" className="mx-auto h-20 w-20 rounded-full border-4 border-white object-cover" />
+        : <div className="mx-auto h-20 w-20 rounded-full border-4 border-white"
+            style={{ background:"linear-gradient(135deg, ${color.hex}, #5b8cff)", boxShadow:"0 8px 18px -6px ${color.hex}66" }} />}
+      <h3 className="mt-3.5 text-lg font-semibold text-zinc-900">{name}</h3>
+      <p className="mt-0.5 text-xs font-semibold tracking-wide" style={{ color: "${color.hex}" }}>{role}</p>
+      <p className="mt-2.5 text-sm text-zinc-600">{bio}</p>
+    </article>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `プロフィールカード。中央寄せ、丸アバター（80px、${color.tw}-500 → blue-500 グラデ、白border 4px、shadow ${color.hex}66）、見出し名 + 役職（${color.tw}-500、letter-spacing .05em）+ bio + ソーシャル丸ボタン。`,
+};
+
+const cardStatTrend: ExtraArchetype<CV> = {
+  id: "card-stat-trend",
+  baseTitle: "KPIカード（数字 + トレンド矢印）",
+  category: "card",
+  baseMood: ["BtoB", "ダッシュボード"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "ダッシュボードのKPI、月次レポート、分析画面。",
+  effect: "ラベル + 大きな数値 + 前期比トレンド（▲ ▼）。色で上下を区別。",
+  suitableFor: ["管理画面", "BIツール", "プロダクトの分析画面"],
+  badUsage: "コンテキストなしの「+12%」だけだと意味不明。「前月比」等の単位を必ず添える。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<article class="kpi">
+  <div class="label">月間アクティブ</div>
+  <div class="num">12,438</div>
+  <div class="trend up"><span>▲</span> 8.4% <span class="sub">前月比</span></div>
+</article>`,
+    css: `.kpi { padding:22px; border-radius:14px; background:#fff; border:1px solid #e7e7eb; max-width:240px; }
+.kpi .label { color:#71717a; font-size:12px; font-weight:600; letter-spacing:.04em; }
+.kpi .num { font-size:36px; font-weight:800; color:#0a0a0a; margin-top:4px; letter-spacing:-.02em; }
+.kpi .trend { display:flex; align-items:center; gap:6px; margin-top:8px; font-size:13px; font-weight:600; }
+.kpi .trend.up { color:${color.hex}; }
+.kpi .trend .sub { color:#a1a1aa; font-weight:500; font-size:11px; margin-left:4px; }`,
+    tailwind: `<article className="max-w-[240px] rounded-2xl border border-zinc-200 bg-white p-5.5">
+  <div className="text-xs font-semibold tracking-wide text-zinc-500">月間アクティブ</div>
+  <div className="mt-1 text-4xl font-extrabold tracking-tight text-zinc-900">12,438</div>
+  <div className="mt-2 flex items-center gap-1.5 text-sm font-semibold" style={{ color:"${color.hex}" }}>
+    <span>▲</span> 8.4%
+    <span className="ml-1 text-[11px] font-medium text-zinc-400">前月比</span>
+  </div>
+</article>`,
+    react: `export function KpiCard({ label, value, deltaPct, period = "前月比" }: { label: string; value: string; deltaPct: number; period?: string }) {
+  const up = deltaPct >= 0;
+  return (
+    <article className="max-w-[240px] rounded-2xl border border-zinc-200 bg-white p-5">
+      <div className="text-xs font-semibold tracking-wide text-zinc-500">{label}</div>
+      <div className="mt-1 text-4xl font-extrabold tracking-tight text-zinc-900">{value}</div>
+      <div className="mt-2 flex items-center gap-1.5 text-sm font-semibold" style={{ color: up ? "${color.hex}" : "#dc2626" }}>
+        <span>{up ? "▲" : "▼"}</span> {Math.abs(deltaPct)}%
+        <span className="ml-1 text-[11px] font-medium text-zinc-400">{period}</span>
+      </div>
+    </article>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `KPIカード。240px、ラベル（zinc-500 12px）+ 大数値（4xl extrabold）+ トレンド（${color.tw}-500 で▲、または #dc2626 で▼）+ 期間サフィックス（zinc-400 11px）。`,
+};
+
+const cardLinkPreview: ExtraArchetype<CV> = {
+  id: "card-link-preview",
+  baseTitle: "URL プレビューカード",
+  category: "card",
+  baseMood: ["BtoC", "メディア"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "チャット内の URL 展開、ブログのリンク埋め込み、SNS シェア表示。",
+  effect: "OG画像 + タイトル + 説明 + ドメイン名。視覚的にリンク先を一瞥で伝える。",
+  suitableFor: ["メッセンジャー", "ブログCMS", "SNS"],
+  badUsage: "OG画像取得失敗時の fallback を用意しないと崩れる。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<a class="lp" href="#">
+  <div class="img"></div>
+  <div class="body">
+    <h3>タイトル: 機械学習で UI を生成する</h3>
+    <p>機械学習モデルを使い、UIコンポーネントを動的に生成する手法を解説。</p>
+    <div class="domain"><span class="dot"></span>example.com</div>
+  </div>
+</a>`,
+    css: `.lp { display:flex; gap:14px; padding:12px; border-radius:14px; background:#fff; border:1px solid #e7e7eb; text-decoration:none; max-width:480px; transition:border-color .2s; }
+.lp:hover { border-color:${color.hex}66; }
+.lp .img { width:120px; height:90px; flex-shrink:0; border-radius:8px; background:linear-gradient(135deg, ${color.hex}, #c084fc); }
+.lp .body { display:flex; flex-direction:column; justify-content:center; min-width:0; }
+.lp h3 { color:#0a0a0a; font-size:14px; font-weight:600; line-height:1.4; margin:0; }
+.lp p { color:#52525b; font-size:12px; line-height:1.5; margin-top:4px; }
+.lp .domain { display:flex; align-items:center; gap:6px; margin-top:8px; color:#a1a1aa; font-size:11px; }
+.lp .dot { width:6px; height:6px; border-radius:9999px; background:${color.hex}; }`,
+    tailwind: `<a href="#" className="group flex max-w-md gap-3.5 rounded-2xl border border-zinc-200 bg-white p-3 no-underline transition hover:border-${color.tw}-300">
+  <div className="h-[90px] w-[120px] shrink-0 rounded-lg"
+    style={{ background:"linear-gradient(135deg, ${color.hex}, #c084fc)" }} />
+  <div className="flex min-w-0 flex-col justify-center">
+    <h3 className="m-0 text-sm font-semibold leading-snug text-zinc-900">タイトル: 機械学習で UI を生成する</h3>
+    <p className="mt-1 text-xs leading-relaxed text-zinc-600">機械学習モデルを使い、UIコンポーネントを動的に生成する手法を解説。</p>
+    <div className="mt-2 flex items-center gap-1.5 text-[11px] text-zinc-400">
+      <span className="h-1.5 w-1.5 rounded-full" style={{ background:"${color.hex}" }} />
+      example.com
+    </div>
+  </div>
+</a>`,
+    react: `export function LinkPreviewCard({ title, description, domain, imgSrc, href = "#" }: { title: string; description?: string; domain: string; imgSrc?: string; href?: string }) {
+  return (
+    <a href={href} className="flex max-w-md gap-3.5 rounded-2xl border border-zinc-200 bg-white p-3 transition hover:border-${color.tw}-300">
+      {imgSrc
+        ? <img src={imgSrc} alt="" className="h-[90px] w-[120px] shrink-0 rounded-lg object-cover" />
+        : <div className="h-[90px] w-[120px] shrink-0 rounded-lg" style={{ background:"linear-gradient(135deg, ${color.hex}, #c084fc)" }} />}
+      <div className="flex min-w-0 flex-col justify-center">
+        <h3 className="m-0 text-sm font-semibold leading-snug text-zinc-900">{title}</h3>
+        {description && <p className="mt-1 text-xs leading-relaxed text-zinc-600">{description}</p>}
+        <div className="mt-2 flex items-center gap-1.5 text-[11px] text-zinc-400">
+          <span className="h-1.5 w-1.5 rounded-full" style={{ background:"${color.hex}" }} />
+          {domain}
+        </div>
+      </div>
+    </a>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `URL プレビューカード。flex 左に 120x90 のOG画像、右に title + description + domain。ホバーで border が ${color.tw}-300 に変色。`,
+};
+
+const cardEvent: ExtraArchetype<CV> = {
+  id: "card-event",
+  baseTitle: "イベントカード（日付＋詳細）",
+  category: "card",
+  baseMood: ["BtoC", "アプリ"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "セミナー・ウェビナー一覧、カレンダーUI、コミュニティ告知。",
+  effect: "左側に日付ブロック（月/日大表示）+ 右側に詳細（タイトル/時刻/会場）。",
+  suitableFor: ["イベントサイト", "カレンダーアプリ", "コミュニティ"],
+  badUsage: "「今後のイベントなし」状態を考慮した空ステートも用意する。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<article class="event">
+  <div class="date">
+    <div class="m">05</div>
+    <div class="d">28</div>
+  </div>
+  <div class="body">
+    <span class="tag">WORKSHOP</span>
+    <h3>UI設計の基本を1日で</h3>
+    <p>19:00 - 21:00 / オンライン</p>
+  </div>
+</article>`,
+    css: `.event { display:flex; gap:16px; padding:16px; border-radius:14px; background:#fff; border:1px solid #e7e7eb; max-width:400px; align-items:center; }
+.event .date { display:flex; flex-direction:column; align-items:center; padding:10px 14px; border-radius:10px; background:${color.hex}; color:#fff; flex-shrink:0; }
+.event .date .m { font-size:11px; font-weight:600; letter-spacing:.05em; opacity:.85; }
+.event .date .d { font-size:24px; font-weight:800; line-height:1; margin-top:2px; }
+.event .body { flex:1; min-width:0; }
+.event .tag { display:inline-block; padding:2px 8px; border-radius:9999px; background:${color.hex}1a; color:${color.hex}; font-size:10px; font-weight:700; letter-spacing:.1em; }
+.event h3 { margin-top:6px; font-size:15px; font-weight:600; color:#0a0a0a; }
+.event p { color:#71717a; font-size:12px; margin-top:4px; }`,
+    tailwind: `<article className="flex max-w-md items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4">
+  <div className="flex shrink-0 flex-col items-center rounded-xl px-3.5 py-2.5 text-white"
+    style={{ background:"${color.hex}" }}>
+    <div className="text-[11px] font-semibold tracking-wide opacity-85">05</div>
+    <div className="text-2xl font-extrabold leading-none">28</div>
+  </div>
+  <div className="min-w-0 flex-1">
+    <span className="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold tracking-widest"
+      style={{ background:"${color.hex}1a", color:"${color.hex}" }}>WORKSHOP</span>
+    <h3 className="mt-1.5 text-[15px] font-semibold text-zinc-900">UI設計の基本を1日で</h3>
+    <p className="mt-1 text-xs text-zinc-500">19:00 - 21:00 / オンライン</p>
+  </div>
+</article>`,
+    react: `export function EventCard({ month, day, tag = "WORKSHOP", title, when }: { month: string; day: string; tag?: string; title: string; when: string }) {
+  return (
+    <article className="flex max-w-md items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-4">
+      <div className="flex shrink-0 flex-col items-center rounded-xl px-3.5 py-2.5 text-white" style={{ background:"${color.hex}" }}>
+        <div className="text-[11px] font-semibold tracking-wide opacity-85">{month}</div>
+        <div className="text-2xl font-extrabold leading-none">{day}</div>
+      </div>
+      <div className="min-w-0 flex-1">
+        <span className="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold tracking-widest"
+          style={{ background:"${color.hex}1a", color:"${color.hex}" }}>{tag}</span>
+        <h3 className="mt-1.5 text-[15px] font-semibold text-zinc-900">{title}</h3>
+        <p className="mt-1 text-xs text-zinc-500">{when}</p>
+      </div>
+    </article>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `イベントカード。左に日付タイル（${color.tw}-500、月+日 2行）、右に WORKSHOP バッジ + タイトル + 時刻/会場。`,
+};
+
+/* ============================================================
+   DATA 第2バッチ (5 new)
+   ============================================================ */
+
+const dataSparkline: ExtraArchetype<CV> = {
+  id: "data-sparkline",
+  baseTitle: "スパークライン（小型トレンド線）",
+  category: "data",
+  baseMood: ["BtoB", "ダッシュボード"],
+  baseTags: ["SVG"],
+  difficulty: "medium",
+  useCase: "KPIカード内、テーブル行のミニチャート、トレンドプレビュー。",
+  effect: "数値の推移を 1 本の細い線で表す。最終点に小さなドットでハイライト。",
+  suitableFor: ["管理画面", "BIツール", "プロダクト分析"],
+  badUsage: "ラベルなしで使うと文脈不明。「過去30日」等を必ず添える。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<svg viewBox="0 0 100 30" class="spark">
+  <path d="M0,20 L10,18 L20,22 L30,15 L40,18 L50,10 L60,14 L70,8 L80,12 L90,5 L100,7"
+    fill="none" stroke="${color.hex}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="100" cy="7" r="2" fill="${color.hex}"/>
+</svg>`,
+    css: `.spark { width:120px; height:36px; display:block; }`,
+    tailwind: `<svg viewBox="0 0 100 30" className="block h-9 w-32">
+  <path d="M0,20 L10,18 L20,22 L30,15 L40,18 L50,10 L60,14 L70,8 L80,12 L90,5 L100,7"
+    fill="none" stroke="${color.hex}" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  <circle cx="100" cy="7" r="2" fill="${color.hex}" />
+</svg>`,
+    react: `export function Sparkline({ points = [20,18,22,15,18,10,14,8,12,5,7] }: { points?: number[] }) {
+  const path = points.map((y, i) => \`\${i === 0 ? "M" : "L"}\${(i / (points.length - 1)) * 100},\${y}\`).join(" ");
+  const last = { x: 100, y: points[points.length - 1] };
+  return (
+    <svg viewBox="0 0 100 30" className="block h-9 w-32">
+      <path d={path} fill="none" stroke="${color.hex}" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={last.x} cy={last.y} r="2" fill="${color.hex}" />
+    </svg>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `スパークラインを SVG で実装。points 配列を受け取り、viewBox 100x30 内で path を生成。線色 ${color.tw}-500、stroke 1.5px、最終点に半径2のドット。`,
+};
+
+const dataProgressSegments: ExtraArchetype<CV> = {
+  id: "data-progress-segments",
+  baseTitle: "セグメント進捗（3/5 等）",
+  category: "data",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "ステップ完了状況 (3/5)、スキル評価、レベル表示。",
+  effect: "ドットまたはバーが N 個並び、達成数だけ色付き。離散的な進捗を視覚化。",
+  suitableFor: ["オンボーディング", "学習プラットフォーム", "プロフィールのスキル"],
+  badUsage: "全部塗りつぶれた状態（5/5）で固定するなら数字 + ✓ アイコンの方が良い。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="seg">
+  <span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span>
+  <span class="label">3 / 5</span>
+</div>`,
+    css: `.seg { display:inline-flex; align-items:center; gap:6px; }
+.seg span { width:24px; height:6px; border-radius:3px; background:#e7e7eb; }
+.seg span.on { background:${color.hex}; }
+.seg .label { width:auto; height:auto; background:none; margin-left:6px; color:#52525b; font-size:12px; font-weight:600; }`,
+    tailwind: `<div className="inline-flex items-center gap-1.5">
+  {[true,true,true,false,false].map((on,i) => (
+    <span key={i} className="h-1.5 w-6 rounded-full" style={{ background: on ? "${color.hex}" : "#e7e7eb" }} />
+  ))}
+  <span className="ml-1.5 text-xs font-semibold text-zinc-600">3 / 5</span>
+</div>`,
+    react: `export function SegmentProgress({ value = 3, total = 5, showLabel = true }: { value?: number; total?: number; showLabel?: boolean }) {
+  return (
+    <div className="inline-flex items-center gap-1.5">
+      {Array.from({ length: total }).map((_, i) => (
+        <span key={i} className="h-1.5 w-6 rounded-full" style={{ background: i < value ? "${color.hex}" : "#e7e7eb" }} />
+      ))}
+      {showLabel && <span className="ml-1.5 text-xs font-semibold text-zinc-600">{value} / {total}</span>}
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `セグメント進捗。N個の小さなピル（24x6, radius 3）を横並びで、value 個だけ ${color.tw}-500 塗り、それ以外 zinc-200。右に "value / total" のラベル。`,
+};
+
+const dataStepper: ExtraArchetype<CV> = {
+  id: "data-stepper",
+  baseTitle: "ステッパー（手順インジケータ）",
+  category: "data",
+  baseMood: ["BtoB", "オンボーディング"],
+  baseTags: ["Tailwind"],
+  difficulty: "medium",
+  useCase: "申込み・チェックアウト・初期設定の進行表示。",
+  effect: "丸番号 + ラベル + 接続線。完了/現在/未完で色を切替。",
+  suitableFor: ["EC checkout", "オンボーディング", "ウィザード"],
+  badUsage: "ステップが6以上だと窮屈。3〜5に。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<ol class="stepper">
+  <li class="done"><span class="dot">1</span><span class="lbl">情報入力</span></li>
+  <li class="now"><span class="dot">2</span><span class="lbl">確認</span></li>
+  <li><span class="dot">3</span><span class="lbl">完了</span></li>
+</ol>`,
+    css: `.stepper { list-style:none; padding:0; margin:0; display:flex; gap:0; align-items:center; }
+.stepper li { display:flex; align-items:center; gap:8px; }
+.stepper li + li::before { content:""; width:32px; height:2px; background:#e7e7eb; margin:0 12px; }
+.stepper .dot { display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:9999px; background:#f4f4f5; color:#a1a1aa; font-size:12px; font-weight:700; border:2px solid #e7e7eb; }
+.stepper .lbl { font-size:12px; color:#71717a; font-weight:500; }
+.stepper .done .dot { background:${color.hex}; color:#fff; border-color:${color.hex}; }
+.stepper .now .dot { background:#fff; color:${color.hex}; border-color:${color.hex}; box-shadow:0 0 0 3px ${color.hex}33; }
+.stepper .now .lbl { color:#0a0a0a; font-weight:600; }
+.stepper li.done + li::before, .stepper li.now + li::before { background:${color.hex}; }`,
+    tailwind: `// React版を参照`,
+    react: `type Step = { label: string; status: "done" | "now" | "todo" };
+export function Stepper({ steps }: { steps: Step[] }) {
+  return (
+    <ol className="m-0 flex list-none items-center gap-0 p-0">
+      {steps.map((s, i) => {
+        const dot = s.status === "done"
+          ? "bg-${color.tw}-500 text-white border-${color.tw}-500"
+          : s.status === "now"
+            ? "bg-white text-${color.tw}-600 border-${color.tw}-500 [box-shadow:0_0_0_3px_${color.hex}33]"
+            : "bg-zinc-50 text-zinc-400 border-zinc-200";
+        return (
+          <li key={i} className="flex items-center gap-2">
+            {i > 0 && <span className="mx-3 h-0.5 w-8" style={{ background: steps[i-1].status === "done" || steps[i-1].status === "now" ? "${color.hex}" : "#e7e7eb" }} />}
+            <span className={\`flex h-7 w-7 items-center justify-center rounded-full border-2 text-xs font-bold \${dot}\`}>{i + 1}</span>
+            <span className={\`text-xs \${s.status === "now" ? "font-semibold text-zinc-900" : "text-zinc-500"}\`}>{s.label}</span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `横並びステッパー。各ステップ: 28pxの丸（done=${color.tw}-500塗り、now=白枠+${color.hex}33外輪、todo=zinc-50）+ ラベル。ステップ間の接続線は前ステップの状態で色変え。`,
+};
+
+const dataStatusPill: ExtraArchetype<CV> = {
+  id: "data-status-pill",
+  baseTitle: "ステータスピル（成功/警告/エラー等）",
+  category: "data",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "リスト行の状態表示、ログ、CIステータス、注文ステータス。",
+  effect: "色付きの小さな pill。先頭にドット + ステータス名。色で意味を即伝達。",
+  suitableFor: ["管理画面", "CI/CD ダッシュボード", "EC注文管理"],
+  badUsage: "色だけで意味区別すると色覚多様性に配慮できない。アイコン or テキストも併用。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<span class="pill"><span class="dot"></span>進行中</span>`,
+    css: `.pill { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:9999px; background:${color.hex}1a; color:${color.hex}; font-size:11px; font-weight:700; letter-spacing:.04em; }
+.pill .dot { width:6px; height:6px; border-radius:9999px; background:${color.hex}; }`,
+    tailwind: `<span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-wide"
+  style={{ background:"${color.hex}1a", color:"${color.hex}" }}>
+  <span className="h-1.5 w-1.5 rounded-full" style={{ background:"${color.hex}" }} />
+  進行中
+</span>`,
+    react: `export function StatusPill({ children, intent = "info" }: { children: React.ReactNode; intent?: "success"|"warn"|"error"|"info" }) {
+  const COLORS = { success:"#10b981", warn:"#f59e0b", error:"#ef4444", info: "${color.hex}" };
+  const c = COLORS[intent];
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-wide"
+      style={{ background: c + "1a", color: c }}>
+      <span className="h-1.5 w-1.5 rounded-full" style={{ background: c }} />
+      {children}
+    </span>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ステータスピル。pill 形、bg ${color.tw}-500/10、text ${color.tw}-500、先頭に同色6pxドット。intent=success/warn/error/info の4バリアントで色マップ切替。`,
+};
+
+const dataKeyValueList: ExtraArchetype<CV> = {
+  id: "data-key-value-list",
+  baseTitle: "キーバリュー定義リスト",
+  category: "data",
+  baseMood: ["BtoB", "ドキュメント"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "詳細属性表示、フォーム送信後の確認画面、ユーザープロパティ。",
+  effect: "左に薄いラベル、右にメインの値。複数行を border-bottom で区切る。",
+  suitableFor: ["管理画面の詳細", "ECチェックアウト確認", "アカウント設定"],
+  badUsage: "値が長すぎるとラベルが上に乗る。レスポンシブで縦並びにフォールバック。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<dl class="kv">
+  <div><dt>プラン</dt><dd>Pro / 月額</dd></div>
+  <div><dt>請求日</dt><dd>毎月 28 日</dd></div>
+  <div><dt>登録メール</dt><dd>name@example.com</dd></div>
+  <div><dt>ステータス</dt><dd class="ok">アクティブ</dd></div>
+</dl>`,
+    css: `.kv { margin:0; padding:0; }
+.kv > div { display:flex; gap:24px; padding:12px 0; border-bottom:1px solid #f4f4f5; }
+.kv > div:last-child { border-bottom:0; }
+.kv dt { color:#71717a; font-size:13px; font-weight:500; min-width:120px; }
+.kv dd { color:#0a0a0a; font-size:14px; font-weight:600; margin:0; }
+.kv .ok { color:${color.hex}; }`,
+    tailwind: `<dl className="m-0 p-0">
+  {[
+    { k:"プラン", v:"Pro / 月額" },
+    { k:"請求日", v:"毎月 28 日" },
+    { k:"登録メール", v:"name@example.com" },
+    { k:"ステータス", v:<span style={{ color:"${color.hex}" }}>アクティブ</span> },
+  ].map((row, i, a) => (
+    <div key={row.k} className={\`flex gap-6 py-3 \${i < a.length - 1 ? "border-b border-zinc-100" : ""}\`}>
+      <dt className="min-w-[120px] text-sm font-medium text-zinc-500">{row.k}</dt>
+      <dd className="m-0 text-sm font-semibold text-zinc-900">{row.v}</dd>
+    </div>
+  ))}
+</dl>`,
+    react: `export function KeyValueList({ items }: { items: { label: string; value: React.ReactNode }[] }) {
+  return (
+    <dl className="m-0 p-0">
+      {items.map((row, i, a) => (
+        <div key={row.label} className={\`flex gap-6 py-3 \${i < a.length - 1 ? "border-b border-zinc-100" : ""}\`}>
+          <dt className="min-w-[120px] text-sm font-medium text-zinc-500">{row.label}</dt>
+          <dd className="m-0 text-sm font-semibold text-zinc-900">{row.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `キーバリュー定義リスト。flex で左右並び、左dt 120px 幅 zinc-500、右dd zinc-900 semibold。各行 border-b zinc-100、最後の行はborder無し。アクティブ等の状態値は ${color.tw}-500 で。`,
+};
+
+/* ============================================================
    集約
    ============================================================ */
 
@@ -6504,6 +7018,18 @@ export const EXTRA_ARCHETYPES: ExtraArchetype<any>[] = [
   textRotateEach,
   // Batch 3: bg
   bgGrid3D,
+  // Batch 4: card
+  cardFeatureIconTop,
+  cardProfile,
+  cardStatTrend,
+  cardLinkPreview,
+  cardEvent,
+  // Batch 4: data
+  dataSparkline,
+  dataProgressSegments,
+  dataStepper,
+  dataStatusPill,
+  dataKeyValueList,
   // Icon
   iconLightbulb,
   iconGears,

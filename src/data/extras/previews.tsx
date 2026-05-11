@@ -3838,6 +3838,263 @@ export function PBgGrid3D({ color }: CV) {
   );
 }
 
+/* ============================================================
+   CARD 第3バッチ previews
+   ============================================================ */
+
+export function PCardFeatureIconTop({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <article className="w-full max-w-[220px] rounded-2xl border border-zinc-200 bg-white p-5">
+        <div
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-xl"
+          style={{ background: color.hex + "1a", color: color.hex }}
+        >
+          ⚡
+        </div>
+        <h3 className="mt-2.5 text-sm font-semibold text-zinc-900">高速処理</h3>
+        <p className="mt-1 text-[11px] leading-relaxed text-zinc-600">
+          大量データも 100ms 以内に処理します。
+        </p>
+      </article>
+    </Stage>
+  );
+}
+
+export function PCardProfile({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <article className="w-full max-w-[220px] rounded-2xl border border-zinc-200 bg-white px-5 py-5 text-center">
+        <div
+          className="mx-auto h-14 w-14 rounded-full border-2 border-white"
+          style={{
+            background: `linear-gradient(135deg, ${color.hex}, #5b8cff)`,
+            boxShadow: `0 6px 14px -4px ${color.hex}66`,
+          }}
+        />
+        <h3 className="mt-2.5 text-sm font-semibold text-zinc-900">山田 太郎</h3>
+        <p className="mt-0.5 text-[10px] font-semibold tracking-wide" style={{ color: color.hex }}>
+          プロダクトデザイナー
+        </p>
+        <p className="mt-1.5 text-[10px] text-zinc-600">UIに呼吸を吹き込む 10年。</p>
+        <div className="mt-2 flex justify-center gap-1.5">
+          {["X", "GH"].map((s) => (
+            <span
+              key={s}
+              className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-100 text-[9px] font-semibold text-zinc-600"
+            >
+              {s}
+            </span>
+          ))}
+        </div>
+      </article>
+    </Stage>
+  );
+}
+
+export function PCardStatTrend({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <article className="w-full max-w-[200px] rounded-2xl border border-zinc-200 bg-white p-4">
+        <div className="text-[10px] font-semibold tracking-wide text-zinc-500">月間アクティブ</div>
+        <div className="mt-1 text-3xl font-extrabold tracking-tight text-zinc-900">12,438</div>
+        <div className="mt-1.5 flex items-center gap-1 text-xs font-semibold" style={{ color: color.hex }}>
+          <span>▲</span> 8.4%
+          <span className="ml-1 text-[10px] font-medium text-zinc-400">前月比</span>
+        </div>
+      </article>
+    </Stage>
+  );
+}
+
+export function PCardLinkPreview({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <a
+        role="link"
+        className="group flex w-full max-w-[300px] cursor-pointer gap-2.5 rounded-xl border border-zinc-200 bg-white p-2.5"
+      >
+        <div
+          className="h-[70px] w-[90px] shrink-0 rounded-md"
+          style={{ background: `linear-gradient(135deg, ${color.hex}, #c084fc)` }}
+        />
+        <div className="flex min-w-0 flex-col justify-center">
+          <h3 className="m-0 text-[11px] font-semibold leading-snug text-zinc-900">
+            機械学習でUIを生成する
+          </h3>
+          <p className="mt-0.5 text-[9px] leading-relaxed text-zinc-600">
+            UI を動的に生成する手法を解説。
+          </p>
+          <div className="mt-1 flex items-center gap-1 text-[9px] text-zinc-400">
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: color.hex }} />
+            example.com
+          </div>
+        </div>
+      </a>
+    </Stage>
+  );
+}
+
+export function PCardEvent({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <article className="flex w-full max-w-[300px] items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3">
+        <div
+          className="flex shrink-0 flex-col items-center rounded-lg px-3 py-2 text-white"
+          style={{ background: color.hex }}
+        >
+          <div className="text-[10px] font-semibold tracking-wide opacity-85">05</div>
+          <div className="text-xl font-extrabold leading-none">28</div>
+        </div>
+        <div className="min-w-0 flex-1">
+          <span
+            className="inline-block rounded-full px-1.5 py-0 text-[8px] font-bold tracking-widest"
+            style={{ background: color.hex + "1a", color: color.hex }}
+          >
+            WORKSHOP
+          </span>
+          <h3 className="mt-1 text-[12px] font-semibold text-zinc-900">UI設計の基本を1日で</h3>
+          <p className="mt-0.5 text-[10px] text-zinc-500">19:00 - 21:00 / オンライン</p>
+        </div>
+      </article>
+    </Stage>
+  );
+}
+
+/* ============================================================
+   DATA 第2バッチ previews
+   ============================================================ */
+
+export function PDataSparkline({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <svg viewBox="0 0 100 30" className="block h-10 w-36">
+        <path
+          d="M0,20 L10,18 L20,22 L30,15 L40,18 L50,10 L60,14 L70,8 L80,12 L90,5 L100,7"
+          fill="none"
+          stroke={color.hex}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="100" cy="7" r="2" fill={color.hex} />
+      </svg>
+    </Stage>
+  );
+}
+
+export function PDataProgressSegments({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <div className="inline-flex items-center gap-1.5">
+        {[true, true, true, false, false].map((on, i) => (
+          <span
+            key={i}
+            className="h-1.5 w-6 rounded-full"
+            style={{ background: on ? color.hex : "#e7e7eb" }}
+          />
+        ))}
+        <span className="ml-1.5 text-xs font-semibold text-zinc-600">3 / 5</span>
+      </div>
+    </Stage>
+  );
+}
+
+export function PDataStepper({ color }: CV) {
+  const steps = [
+    { label: "情報", status: "done" },
+    { label: "確認", status: "now" },
+    { label: "完了", status: "todo" },
+  ] as const;
+  return (
+    <Stage theme="soft">
+      <ol className="m-0 flex list-none items-center gap-0 p-0">
+        {steps.map((s, i) => {
+          const dotBg =
+            s.status === "done" ? color.hex : s.status === "now" ? "#fff" : "#fafafa";
+          const dotColor = s.status === "done" ? "#fff" : s.status === "now" ? color.hex : "#a1a1aa";
+          const dotBorder = s.status === "done" || s.status === "now" ? color.hex : "#e7e7eb";
+          const lineBg =
+            i > 0 && (steps[i - 1].status === "done" || steps[i - 1].status === "now")
+              ? color.hex
+              : "#e7e7eb";
+          return (
+            <li key={i} className="flex items-center gap-1.5">
+              {i > 0 && <span className="mx-2 h-0.5 w-6" style={{ background: lineBg }} />}
+              <span
+                className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold"
+                style={{
+                  background: dotBg,
+                  color: dotColor,
+                  border: `2px solid ${dotBorder}`,
+                  boxShadow: s.status === "now" ? `0 0 0 3px ${color.hex}33` : undefined,
+                }}
+              >
+                {i + 1}
+              </span>
+              <span
+                className={`text-[10px] ${
+                  s.status === "now" ? "font-semibold text-zinc-900" : "text-zinc-500"
+                }`}
+              >
+                {s.label}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </Stage>
+  );
+}
+
+export function PDataStatusPill({ color }: CV) {
+  const items = [
+    { label: "進行中", c: color.hex },
+    { label: "完了", c: "#10b981" },
+    { label: "保留", c: "#f59e0b" },
+    { label: "失敗", c: "#ef4444" },
+  ];
+  return (
+    <Stage>
+      <div className="flex flex-wrap gap-2">
+        {items.map((s) => (
+          <span
+            key={s.label}
+            className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide"
+            style={{ background: s.c + "1a", color: s.c }}
+          >
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: s.c }} />
+            {s.label}
+          </span>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+export function PDataKeyValueList({ color }: CV) {
+  const items = [
+    { label: "プラン", value: "Pro / 月額" },
+    { label: "請求日", value: "毎月 28 日" },
+    { label: "ステータス", value: <span style={{ color: color.hex }}>アクティブ</span> },
+  ];
+  return (
+    <Stage theme="soft">
+      <dl className="m-0 w-full max-w-[280px] p-0">
+        {items.map((row, i, a) => (
+          <div
+            key={row.label}
+            className={`flex gap-4 py-2 ${i < a.length - 1 ? "border-b border-zinc-100" : ""}`}
+          >
+            <dt className="min-w-[80px] text-[11px] font-medium text-zinc-500">{row.label}</dt>
+            <dd className="m-0 text-[11px] font-semibold text-zinc-900">{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </Stage>
+  );
+}
+
 /* tiny preview helpers (avoid duplicating imports - re-export hooks here lazily) */
 import { useEffect as _ue, useState as _us } from "react";
 function useStateOnce<T>(init: T): [T, (v: T | ((prev: T) => T)) => void] {
@@ -3971,6 +4228,16 @@ export const EXTRA_PREVIEW_FNS: Record<string, (v: CV) => JSX.Element> = {
   "text-fire-glow": PTextFireGlow,
   "text-rotate-each": PTextRotateEach,
   "bg-grid-3d": PBgGrid3D,
+  "card-feature-icon-top": PCardFeatureIconTop,
+  "card-profile": PCardProfile,
+  "card-stat-trend": PCardStatTrend,
+  "card-link-preview": PCardLinkPreview,
+  "card-event": PCardEvent,
+  "data-sparkline": PDataSparkline,
+  "data-progress-segments": PDataProgressSegments,
+  "data-stepper": PDataStepper,
+  "data-status-pill": PDataStatusPill,
+  "data-key-value-list": PDataKeyValueList,
   "icon-lightbulb": PIconLightbulb,
   "icon-gears": PIconGears,
   "icon-rocket": PIconRocket,
