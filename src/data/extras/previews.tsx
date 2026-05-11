@@ -3540,6 +3540,304 @@ export function PTextChromeReflective({ color }: CV) {
   );
 }
 
+/* ============================================================
+   MOTION 第3バッチ previews
+   ============================================================ */
+
+export function PMotionLetterWobble({ color }: CV) {
+  return (
+    <MotionStage>
+      <h2 className="inline-flex text-4xl font-extrabold" style={{ color: color.hex }}>
+        {"PLAY".split("").map((c, i) => (
+          <span
+            key={i}
+            className="inline-block"
+            style={{ animation: `letterWobble 1.6s ease-in-out ${i * 0.15}s infinite` }}
+          >
+            {c}
+          </span>
+        ))}
+      </h2>
+    </MotionStage>
+  );
+}
+
+export function PMotionTextStretchWave({ color }: CV) {
+  return (
+    <MotionStage>
+      <h2 className="inline-flex gap-0.5 text-5xl font-black" style={{ color: color.hex }}>
+        {"WAVE".split("").map((c, i) => (
+          <span
+            key={i}
+            className="inline-block origin-bottom"
+            style={{ animation: `letterStretchWave 1.4s ease-in-out ${i * 0.1}s infinite` }}
+          >
+            {c}
+          </span>
+        ))}
+      </h2>
+    </MotionStage>
+  );
+}
+
+export function PMotionGlitchRgb({ color }: CV) {
+  return (
+    <MotionStage>
+      <h2
+        className="text-4xl font-black"
+        style={{ color: color.hex, animation: "glitchRgb 1.4s steps(5) infinite" }}
+      >
+        GLITCH
+      </h2>
+    </MotionStage>
+  );
+}
+
+export function PMotionStarSpin({ color }: CV) {
+  return (
+    <MotionStage>
+      <span
+        className="inline-block text-6xl"
+        style={{ color: color.hex, animation: "starSpinGrow 2.4s ease-in-out infinite" }}
+      >
+        ★
+      </span>
+    </MotionStage>
+  );
+}
+
+export function PMotionConfettiBurst({ color }: CV) {
+  const [k, setK] = useStateOnce(0);
+  useIntervalSafe(() => setK((v) => v + 1), 1800);
+  const particles = [
+    { cx: "60px", cy: "-40px", cr: "80deg" },
+    { cx: "-60px", cy: "-30px", cr: "-60deg" },
+    { cx: "70px", cy: "40px", cr: "140deg" },
+    { cx: "-50px", cy: "50px", cr: "-100deg" },
+    { cx: "0px", cy: "-70px", cr: "30deg" },
+    { cx: "-70px", cy: "-10px", cr: "-30deg" },
+    { cx: "40px", cy: "-60px", cr: "60deg" },
+    { cx: "30px", cy: "50px", cr: "-90deg" },
+  ];
+  return (
+    <MotionStage>
+      <div className="relative h-20 w-20" key={k}>
+        {particles.map((p, i) => (
+          <span
+            key={i}
+            className="absolute left-1/2 top-1/2 h-2 w-2 rounded-sm"
+            style={
+              {
+                background: color.hex,
+                animation: "confettiFly 1.4s ease-out forwards",
+                ["--cx" as string]: p.cx,
+                ["--cy" as string]: p.cy,
+                ["--cr" as string]: p.cr,
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </div>
+    </MotionStage>
+  );
+}
+
+export function PMotionDotRain({ color }: CV) {
+  return (
+    <MotionStage>
+      <div className="relative h-28 w-40 overflow-hidden">
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <span
+            key={i}
+            className="absolute top-0 h-1.5 w-1.5 rounded-full"
+            style={{
+              background: color.hex,
+              left: `${i * 24 + 8}px`,
+              animation: `dotRainFall 2s linear ${i * 0.25}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+    </MotionStage>
+  );
+}
+
+export function PMotionToggleFlip3D({ color }: CV) {
+  return (
+    <MotionStage>
+      <div
+        className="h-16 w-16 rounded-2xl"
+        style={{
+          background: `linear-gradient(135deg, ${color.hex}, #0a0a0a)`,
+          animation: "toggleFlip3D 3.2s ease-in-out infinite",
+          transformStyle: "preserve-3d",
+          perspective: 600,
+        }}
+      />
+    </MotionStage>
+  );
+}
+
+export function PMotionIconWiggle({ color }: CV) {
+  return (
+    <MotionStage>
+      <span
+        className="inline-block text-5xl origin-top"
+        style={{ color: color.hex, animation: "iconWiggle 1.2s ease-in-out infinite" }}
+      >
+        🔔
+      </span>
+    </MotionStage>
+  );
+}
+
+/* ============================================================
+   HOVER 第2バッチ previews
+   ============================================================ */
+
+export function PHoverMagnetic({ color }: CV) {
+  const ref = _us<HTMLSpanElement | null>(null) as any;
+  const [t, setT] = useStateOnce({ x: 0, y: 0 });
+  return (
+    <Stage theme="soft">
+      <span
+        ref={ref}
+        role="button"
+        onMouseMove={(e: React.MouseEvent<HTMLSpanElement>) => {
+          const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          setT({ x: (e.clientX - cx) * 0.3, y: (e.clientY - cy) * 0.3 });
+        }}
+        onMouseLeave={() => setT({ x: 0, y: 0 })}
+        className="inline-flex cursor-pointer rounded-full px-6 py-3 font-semibold text-white shadow-lg transition-transform"
+        style={{
+          background: color.hex,
+          transform: `translate(${t.x}px, ${t.y}px)`,
+        }}
+      >
+        Get Started
+      </span>
+    </Stage>
+  );
+}
+
+export function PHoverUnderlineDraw({ color }: CV) {
+  return (
+    <Stage>
+      <span role="link" className="group relative inline-block cursor-pointer font-semibold text-zinc-900">
+        採用情報
+        <span
+          aria-hidden
+          className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+          style={{ background: color.hex }}
+        />
+      </span>
+    </Stage>
+  );
+}
+
+export function PHoverColorFill({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="group relative isolate inline-flex cursor-pointer overflow-hidden rounded-xl border border-zinc-200 bg-white px-6 py-3 font-semibold text-zinc-900 transition-colors duration-300 hover:text-white"
+      >
+        <span className="relative z-10">Hover me</span>
+        <span
+          aria-hidden
+          className="absolute inset-0 -z-10 transition-[clip-path] duration-500 [clip-path:polygon(0_0,0_0,0_0,0_0)] group-hover:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]"
+          style={{ background: color.hex }}
+        />
+      </span>
+    </Stage>
+  );
+}
+
+export function PHoverShadowGrow({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <div
+        className="w-56 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = `0 28px 50px -16px ${color.hex}55`;
+          e.currentTarget.style.borderColor = color.hex + "55";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = "";
+          e.currentTarget.style.borderColor = "";
+        }}
+      >
+        <h3 className="text-sm font-semibold text-zinc-900">タイトル</h3>
+        <p className="mt-1 text-xs text-zinc-600">ホバーで影が深くなる。</p>
+      </div>
+    </Stage>
+  );
+}
+
+/* ============================================================
+   TEXT 追加 previews
+   ============================================================ */
+
+export function PTextFireGlow(_: CV) {
+  return (
+    <div className="relative flex h-full w-full items-center justify-center bg-[#0a0a14] p-4">
+      <h2
+        className="text-5xl font-black"
+        style={{ color: "#fff8e7", animation: "fireGlowText 1.8s ease-in-out infinite" }}
+      >
+        SALE
+      </h2>
+    </div>
+  );
+}
+
+export function PTextRotateEach({ color }: CV) {
+  return (
+    <Stage>
+      <h2 className="inline-flex gap-1 text-5xl font-black" style={{ color: color.hex }}>
+        {"HELLO".split("").map((c, i) => (
+          <span
+            key={i}
+            className="inline-block"
+            style={{ animation: `letterRotatePerLetter 1.6s ease-in-out ${i * 0.12}s infinite` }}
+          >
+            {c}
+          </span>
+        ))}
+      </h2>
+    </Stage>
+  );
+}
+
+/* ============================================================
+   BG 追加 previews
+   ============================================================ */
+
+export function PBgGrid3D({ color }: CV) {
+  return (
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#0a0a14] p-4">
+      <div
+        aria-hidden
+        className="absolute -bottom-1/2 -left-[20%] -right-[20%] top-1/2"
+        style={{
+          backgroundImage: `linear-gradient(${color.hex}33 1px, transparent 1px), linear-gradient(90deg, ${color.hex}33 1px, transparent 1px)`,
+          backgroundSize: "32px 32px",
+          transform: "perspective(800px) rotateX(60deg) translateZ(0)",
+          animation: "grid3dSpin 4s linear infinite",
+          maskImage: "linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent)",
+        }}
+      />
+      <div className="relative text-center">
+        <div className="text-xs uppercase tracking-[0.2em] text-zinc-300">3d grid</div>
+        <div className="mt-1 text-lg font-semibold text-white">Background</div>
+      </div>
+    </div>
+  );
+}
+
 /* tiny preview helpers (avoid duplicating imports - re-export hooks here lazily) */
 import { useEffect as _ue, useState as _us } from "react";
 function useStateOnce<T>(init: T): [T, (v: T | ((prev: T) => T)) => void] {
@@ -3658,6 +3956,21 @@ export const EXTRA_PREVIEW_FNS: Record<string, (v: CV) => JSX.Element> = {
   "bg-mesh-soft": PBgMeshSoft,
   "hover-tilt-3d-deep": PHoverTilt3D,
   "text-chrome-shimmer": PTextChromeReflective,
+  "motion-letter-wobble": PMotionLetterWobble,
+  "motion-text-stretch-wave": PMotionTextStretchWave,
+  "motion-glitch-rgb": PMotionGlitchRgb,
+  "motion-star-spin": PMotionStarSpin,
+  "motion-confetti-burst": PMotionConfettiBurst,
+  "motion-dot-rain": PMotionDotRain,
+  "motion-toggle-flip-3d": PMotionToggleFlip3D,
+  "motion-icon-wiggle": PMotionIconWiggle,
+  "hover-magnetic-cta": PHoverMagnetic,
+  "hover-underline-draw": PHoverUnderlineDraw,
+  "hover-color-fill-corner": PHoverColorFill,
+  "hover-shadow-grow": PHoverShadowGrow,
+  "text-fire-glow": PTextFireGlow,
+  "text-rotate-each": PTextRotateEach,
+  "bg-grid-3d": PBgGrid3D,
   "icon-lightbulb": PIconLightbulb,
   "icon-gears": PIconGears,
   "icon-rocket": PIconRocket,

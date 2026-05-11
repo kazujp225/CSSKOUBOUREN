@@ -121,6 +121,22 @@ h1, h2, h3, h4, h5 {
 @keyframes cardFlip { 0%,40%,100% { transform: rotateY(0) } 50%,90% { transform: rotateY(180deg) } }
 @keyframes meshDrift { 0%,100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }
 @keyframes chromeShimmer { 0% { background-position: 0% 50% } 100% { background-position: 200% 50% } }
+
+/* batch 3 keyframes */
+@keyframes letterWobble { 0%,100%{transform:rotate(-5deg) translateY(0)} 50%{transform:rotate(5deg) translateY(-3px)} }
+@keyframes letterStretchWave { 0%,100%{transform:scaleY(.8)} 50%{transform:scaleY(1.4)} }
+@keyframes glitchRgb { 0%,100% { text-shadow: -2px 0 #ff00c1, 2px 0 #00fff9; transform: translate(0); } 25% { text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9; transform: translate(1px, -1px); } 50% { text-shadow: -3px 0 #ff00c1, 3px 0 #00fff9; transform: translate(-1px, 1px); } 75% { text-shadow: 1px 0 #ff00c1, -1px 0 #00fff9; transform: translate(2px, 0); } }
+@keyframes starSpinGrow { 0%,100%{transform:rotate(0) scale(1)} 50%{transform:rotate(180deg) scale(1.25)} }
+@keyframes confettiFly { 0%{transform:translate(0,0) rotate(0); opacity:1} 100%{transform:translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity:0} }
+@keyframes dotRainFall { 0%{transform:translateY(-110%); opacity:0} 15%{opacity:1} 85%{opacity:1} 100%{transform:translateY(180%); opacity:0} }
+@keyframes progressPulseEdge { 0%{box-shadow:0 0 0 0 currentColor} 70%{box-shadow:0 0 0 8px transparent} 100%{box-shadow:0 0 0 0 transparent} }
+@keyframes underlineDraw { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); transform-origin: left; } }
+@keyframes colorFillCorner { from { clip-path: polygon(0 0, 0 0, 0 0, 0 0); } to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); } }
+@keyframes fireGlowText { 0%,100%{ text-shadow: 0 0 4px #ffb84d, 0 0 14px #ff8c1a, 0 0 28px #ff5500; } 50%{ text-shadow: 0 0 6px #ffd28a, 0 0 22px #ffa44d, 0 0 40px #ff6a1a; } }
+@keyframes letterRotatePerLetter { 0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(12deg)} }
+@keyframes grid3dSpin { from { transform: perspective(800px) rotateX(60deg) translateZ(0) translateY(0); } to { transform: perspective(800px) rotateX(60deg) translateZ(0) translateY(40px); } }
+@keyframes toggleFlip3D { 0%,100%{transform:rotateY(0)} 50%{transform:rotateY(180deg)} }
+@keyframes iconWiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-15deg)} 50%{transform:rotate(0)} 75%{transform:rotate(15deg)} }
 @keyframes scrambleSwap { 0%,100%{opacity:0} 5%,12%{opacity:1} }
 @keyframes tarotFlow { from { transform: translateX(0) } to { transform: translateX(-50%) } }
 

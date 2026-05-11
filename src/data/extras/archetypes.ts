@@ -5800,6 +5800,570 @@ const textChromeReflective: ExtraArchetype<CV> = {
 };
 
 /* ============================================================
+   MOTION 第3バッチ (8 new)
+   ============================================================ */
+
+const motionLetterWobble: ExtraArchetype<CV> = {
+  id: "motion-letter-wobble",
+  baseTitle: "文字 揺らぎ（個別ローテート）",
+  category: "motion",
+  baseMood: ["BtoC", "ポップ"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "BtoC見出し / イベントタイトル / お祝いメッセージ。",
+  effect: "各文字が独立した周期で左右に揺れる、楽しい動き。",
+  suitableFor: ["BtoC LP", "イベント告知", "キッズ向け"],
+  badUsage: "BtoBの硬い文脈では子どもっぽい。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="wobble">PLAY</h2>`,
+    css: `.wobble { display:inline-flex; font-weight:800; font-size:56px; color:${color.hex}; }
+.wobble span { display:inline-block; animation: letterWobble 1.6s ease-in-out infinite; }
+.wobble span:nth-child(2){ animation-delay:.15s }
+.wobble span:nth-child(3){ animation-delay:.30s }
+.wobble span:nth-child(4){ animation-delay:.45s }
+@keyframes letterWobble { 0%,100%{transform:rotate(-5deg) translateY(0)} 50%{transform:rotate(5deg) translateY(-3px)} }`,
+    tailwind: `<h2 className="inline-flex text-6xl font-extrabold" style={{ color:"${color.hex}" }}>
+  {"PLAY".split("").map((c,i) => (
+    <span key={i} className="inline-block" style={{ animation:\`letterWobble 1.6s ease-in-out \${i*0.15}s infinite\` }}>{c}</span>
+  ))}
+</h2>`,
+    react: `export function LetterWobble({ text = "PLAY" }: { text?: string }) {
+  return (
+    <h2 className="inline-flex text-6xl font-extrabold" style={{ color: "${color.hex}" }}>
+      {text.split("").map((c, i) => (
+        <span key={i} className="inline-block" style={{ animation: \`letterWobble 1.6s ease-in-out \${i * 0.15}s infinite\` }}>{c}</span>
+      ))}
+    </h2>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `見出しの各文字を <span> に分け、rotate(-5deg→5deg) + translateY(0→-3px) を 1.6秒 ease-in-out で揺らす。各文字の delay を 0.15秒ずつずらす。色 ${color.tw}-500。`,
+};
+
+const motionTextStretchWave: ExtraArchetype<CV> = {
+  id: "motion-text-stretch-wave",
+  baseTitle: "文字 縦伸縮ウェーブ",
+  category: "motion",
+  baseMood: ["ポップ", "BtoC"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "BtoC見出し / 音楽系プロダクトのタイトル / ゲーム。",
+  effect: "各文字が縦に伸び縮みする、波のような動き。",
+  suitableFor: ["音楽プラットフォーム", "BtoC LP", "ゲーム"],
+  badUsage: "BtoBの落ち着いた業種では浮く。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="stretch-wave">WAVE</h2>`,
+    css: `.stretch-wave { display:inline-flex; font-weight:900; font-size:64px; color:${color.hex}; gap:2px; }
+.stretch-wave span { display:inline-block; transform-origin:bottom; animation: letterStretchWave 1.4s ease-in-out infinite; }
+.stretch-wave span:nth-child(2){ animation-delay:.1s }
+.stretch-wave span:nth-child(3){ animation-delay:.2s }
+.stretch-wave span:nth-child(4){ animation-delay:.3s }
+@keyframes letterStretchWave { 0%,100%{transform:scaleY(.8)} 50%{transform:scaleY(1.4)} }`,
+    tailwind: `<h2 className="inline-flex gap-0.5 text-7xl font-black" style={{ color:"${color.hex}" }}>
+  {"WAVE".split("").map((c,i) => (
+    <span key={i} className="inline-block origin-bottom"
+      style={{ animation:\`letterStretchWave 1.4s ease-in-out \${i*0.1}s infinite\` }}>{c}</span>
+  ))}
+</h2>`,
+    react: `export function TextStretchWave({ text = "WAVE" }: { text?: string }) {
+  return (
+    <h2 className="inline-flex gap-0.5 text-7xl font-black" style={{ color: "${color.hex}" }}>
+      {text.split("").map((c, i) => (
+        <span key={i} className="inline-block origin-bottom"
+          style={{ animation: \`letterStretchWave 1.4s ease-in-out \${i * 0.1}s infinite\` }}>{c}</span>
+      ))}
+    </h2>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `見出しの各文字が縦伸縮するウェーブ演出。transform-origin: bottom で scaleY を .8 ↔ 1.4 に 1.4秒で動かし、各文字を 0.1秒ずつずらして波を作る。色 ${color.tw}-500。`,
+};
+
+const motionGlitchRgb: ExtraArchetype<CV> = {
+  id: "motion-glitch-rgb",
+  baseTitle: "RGBグリッチテキスト",
+  category: "motion",
+  baseMood: ["サイバー", "テック"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "サイバーパンク・ゲーム・ハッカー風UI。",
+  effect: "シアンとマゼンタの text-shadow をずらしながらブレを発生させる、強いグリッチ感。",
+  suitableFor: ["ゲーム", "eSports", "セキュリティ系"],
+  badUsage: "BtoB業務系では浮く。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="glitch-rgb">GLITCH</h2>`,
+    css: `.glitch-rgb { font-weight:900; font-size:56px; color:${color.hex}; animation: glitchRgb 1.4s steps(5) infinite; }
+@keyframes glitchRgb { 0%,100% { text-shadow: -2px 0 #ff00c1, 2px 0 #00fff9; transform: translate(0); } 25% { text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9; transform: translate(1px, -1px); } 50% { text-shadow: -3px 0 #ff00c1, 3px 0 #00fff9; transform: translate(-1px, 1px); } 75% { text-shadow: 1px 0 #ff00c1, -1px 0 #00fff9; transform: translate(2px, 0); } }`,
+    tailwind: `<h2 className="text-6xl font-black" style={{ color:"${color.hex}", animation:"glitchRgb 1.4s steps(5) infinite" }}>GLITCH</h2>`,
+    react: `export function GlitchRgb({ children = "GLITCH" }) {
+  return <h2 className="text-6xl font-black" style={{ color:"${color.hex}", animation:"glitchRgb 1.4s steps(5) infinite" }}>{children}</h2>;
+}`,
+  }),
+  prompt: ({ color }) =>
+    `RGBグリッチテキスト。color ${color.tw}-500、text-shadow を #ff00c1 と #00fff9 で2px ずらして、4段階の steps(5) で 1.4秒で位置が微妙に揺れる。`,
+};
+
+const motionStarSpin: ExtraArchetype<CV> = {
+  id: "motion-star-spin",
+  baseTitle: "星 回転＋拡大",
+  category: "motion",
+  baseMood: ["AI", "プレミアム"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "AI生成、プレミアム機能、お気に入りON、評価★。",
+  effect: "星アイコンが回転しながら拡大→縮小を繰り返す。",
+  suitableFor: ["AIプロダクト", "プレミアム", "レビュー"],
+  badUsage: "リスト内で複数同時に回すと目障り。1箇所限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<span class="star-spin">★</span>`,
+    css: `.star-spin { display:inline-block; font-size:64px; color:${color.hex}; animation: starSpinGrow 2.4s ease-in-out infinite; }
+@keyframes starSpinGrow { 0%,100%{transform:rotate(0) scale(1)} 50%{transform:rotate(180deg) scale(1.25)} }`,
+    tailwind: `<span className="inline-block text-6xl" style={{ color:"${color.hex}", animation:"starSpinGrow 2.4s ease-in-out infinite" }}>★</span>`,
+    react: `export function StarSpin() {
+  return <span className="inline-block text-6xl" style={{ color:"${color.hex}", animation:"starSpinGrow 2.4s ease-in-out infinite" }}>★</span>;
+}`,
+  }),
+  prompt: ({ color }) =>
+    `星 ★ を ${color.tw}-500 で表示し、rotate(0→180deg) + scale(1→1.25) を 2.4秒 ease-in-out infinite で回転＋拡大させる。`,
+};
+
+const motionConfettiBurst: ExtraArchetype<CV> = {
+  id: "motion-confetti-burst",
+  baseTitle: "紙吹雪バースト",
+  category: "motion",
+  baseMood: ["祝福", "ポップ"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "完了演出 / 達成バッジ / レベルアップ / 登録完了。",
+  effect: "中心から複数の小さな粒が放射状に飛んでフェードアウト。",
+  suitableFor: ["オンボーディング完了", "ゲーム", "ECチェックアウト完了"],
+  badUsage: "頻繁に出すと安っぽい。重要な達成のみ。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="confetti-burst">
+  <span style="--cx: 60px; --cy:-40px; --cr: 80deg"></span>
+  <span style="--cx:-60px; --cy:-30px; --cr:-60deg"></span>
+  <span style="--cx: 70px; --cy: 40px; --cr:140deg"></span>
+  <span style="--cx:-50px; --cy: 50px; --cr:-100deg"></span>
+  <span style="--cx:  0px; --cy:-70px; --cr: 30deg"></span>
+</div>`,
+    css: `.confetti-burst { position:relative; width:80px; height:80px; }
+.confetti-burst span { position:absolute; left:50%; top:50%; width:8px; height:8px; background:${color.hex}; border-radius:2px; animation: confettiFly 1.4s ease-out forwards; }
+@keyframes confettiFly { 0%{transform:translate(0,0) rotate(0); opacity:1} 100%{transform:translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity:0} }`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function ConfettiBurst() {
+  const [k, setK] = useState(0);
+  const particles = [
+    { cx:"60px", cy:"-40px", cr:"80deg" },
+    { cx:"-60px", cy:"-30px", cr:"-60deg" },
+    { cx:"70px", cy:"40px", cr:"140deg" },
+    { cx:"-50px", cy:"50px", cr:"-100deg" },
+    { cx:"0px", cy:"-70px", cr:"30deg" },
+    { cx:"-70px", cy:"-10px", cr:"-30deg" },
+    { cx:"40px", cy:"-60px", cr:"60deg" },
+    { cx:"30px", cy:"50px", cr:"-90deg" },
+  ];
+  return (
+    <button onClick={() => setK(v=>v+1)} className="relative h-20 w-20 cursor-pointer bg-transparent" key={k}>
+      {particles.map((p, i) => (
+        <span key={i} className="absolute left-1/2 top-1/2 h-2 w-2 rounded-sm"
+          style={{ background:"${color.hex}", animation:"confettiFly 1.4s ease-out forwards", ['--cx' as any]:p.cx, ['--cy' as any]:p.cy, ['--cr' as any]:p.cr }} />
+      ))}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `紙吹雪バースト。中心 50%/50% から 8つの ${color.tw}-500 の小さい粒を CSS variable --cx/--cy/--cr で各方向に飛ばす。translate と rotate を併用、opacity 1 → 0 でフェード。1.4秒 ease-out。`,
+};
+
+const motionDotRain: ExtraArchetype<CV> = {
+  id: "motion-dot-rain",
+  baseTitle: "ドット雨",
+  category: "motion",
+  baseMood: ["AI", "テック"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "AI処理中・データロード・マトリックス風背景。",
+  effect: "複数のドットが時間差で上から降る。テック感のあるアンビエント装飾。",
+  suitableFor: ["AIプロダクト", "ダッシュボード装飾", "ロード画面"],
+  badUsage: "メインコンテンツの邪魔になるくらい派手にしない。装飾レベルで。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="dot-rain">
+  <span style="--col:0"></span><span style="--col:1"></span><span style="--col:2"></span>
+  <span style="--col:3"></span><span style="--col:4"></span><span style="--col:5"></span>
+</div>`,
+    css: `.dot-rain { position:relative; width:160px; height:120px; overflow:hidden; }
+.dot-rain span { position:absolute; top:0; width:6px; height:6px; border-radius:9999px; background:${color.hex}; left: calc(var(--col) * 28px); animation: dotRainFall 2s linear infinite; animation-delay: calc(var(--col) * .25s); }
+@keyframes dotRainFall { 0%{transform:translateY(-110%); opacity:0} 15%{opacity:1} 85%{opacity:1} 100%{transform:translateY(180%); opacity:0} }`,
+    tailwind: `// React版を参照`,
+    react: `export function DotRain({ count = 6 }: { count?: number }) {
+  return (
+    <div className="relative h-32 w-40 overflow-hidden">
+      {Array.from({ length: count }).map((_, i) => (
+        <span key={i} className="absolute top-0 h-1.5 w-1.5 rounded-full"
+          style={{
+            background:"${color.hex}",
+            left: \`\${i * 28}px\`,
+            animation: \`dotRainFall 2s linear \${i * 0.25}s infinite\`,
+          }} />
+      ))}
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ドット雨を実装。6個のドット (${color.tw}-500, 6px) が左から 28px間隔で並び、translateY(-110% → 180%) で 2秒ずつ流れ落ちる。各列の delay を 0.25秒ずらして雨のリズムを作る。`,
+};
+
+const motionToggleFlip3D: ExtraArchetype<CV> = {
+  id: "motion-toggle-flip-3d",
+  baseTitle: "トグル 3Dフリップ",
+  category: "motion",
+  baseMood: ["アプリ", "テック"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "ON/OFF切替の派手なフィードバック / ヒーロー装飾。",
+  effect: "正方形が Y軸 180度回転し続け、表裏の色が切り替わる。",
+  suitableFor: ["アプリ設定", "ヒーロー装飾", "オンボーディング"],
+  badUsage: "実際のトグルUIとして使うと操作と無関係に動いて混乱。装飾用に限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="toggle-flip-3d"></div>`,
+    css: `.toggle-flip-3d { width:72px; height:72px; background:linear-gradient(135deg, ${color.hex}, #0a0a0a); border-radius:14px; animation: toggleFlip3D 3.2s ease-in-out infinite; transform-style:preserve-3d; perspective:600px; }
+@keyframes toggleFlip3D { 0%,100%{transform:rotateY(0)} 50%{transform:rotateY(180deg)} }`,
+    tailwind: `<div className="h-[72px] w-[72px] rounded-2xl"
+  style={{
+    background: "linear-gradient(135deg, ${color.hex}, #0a0a0a)",
+    animation: "toggleFlip3D 3.2s ease-in-out infinite",
+    transformStyle: "preserve-3d", perspective: 600,
+  }} />`,
+    react: `export function ToggleFlip3D() {
+  return (
+    <div className="h-[72px] w-[72px] rounded-2xl"
+      style={{
+        background: "linear-gradient(135deg, ${color.hex}, #0a0a0a)",
+        animation: "toggleFlip3D 3.2s ease-in-out infinite",
+        transformStyle: "preserve-3d", perspective: 600,
+      }} />
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `${color.tw}-500 → 黒のグラデを敷いた72px角丸正方形を rotateY(0 → 180deg) で 3.2秒 ease-in-out で繰り返し回転。perspective: 600px、transform-style: preserve-3d。`,
+};
+
+const motionIconWiggle: ExtraArchetype<CV> = {
+  id: "motion-icon-wiggle",
+  baseTitle: "アイコン ウィグル（揺れ）",
+  category: "motion",
+  baseMood: ["フレンドリー", "BtoC"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "通知ベル / エラーアイコン / ホバー時のアテンション喚起。",
+  effect: "アイコンが左右に小刻みに揺れる。注意を引きたい時の最小演出。",
+  suitableFor: ["通知バッジ", "エラーアイコン", "ゲーミフィケーション"],
+  badUsage: "常時揺らすとうるさい。trigger（hover / event）で限定的に。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<span class="icon-wiggle">🔔</span>`,
+    css: `.icon-wiggle { display:inline-block; font-size:48px; color:${color.hex}; animation: iconWiggle 1.2s ease-in-out infinite; transform-origin: 50% 0%; }
+@keyframes iconWiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-15deg)} 50%{transform:rotate(0)} 75%{transform:rotate(15deg)} }`,
+    tailwind: `<span className="inline-block text-5xl origin-top" style={{ color:"${color.hex}", animation:"iconWiggle 1.2s ease-in-out infinite" }}>🔔</span>`,
+    react: `export function IconWiggle({ icon = "🔔" }) {
+  return <span className="inline-block text-5xl origin-top" style={{ color:"${color.hex}", animation:"iconWiggle 1.2s ease-in-out infinite" }}>{icon}</span>;
+}`,
+  }),
+  prompt: ({ color }) =>
+    `アイコン（🔔 等）が左右に rotate(-15deg → 15deg) で揺れる演出。transform-origin: top center、1.2秒 ease-in-out 無限ループ。色 ${color.tw}-500。`,
+};
+
+/* ============================================================
+   HOVER 第2バッチ (4 new)
+   ============================================================ */
+
+const hoverMagnetic: ExtraArchetype<CV> = {
+  id: "hover-magnetic-cta",
+  baseTitle: "マグネティック CTA（マウス追従）",
+  category: "hover",
+  baseMood: ["モダン", "プロダクト"],
+  baseTags: ["React"],
+  difficulty: "hard",
+  useCase: "FV主CTA / プレミアム機能のリンク / インタラクティブなボタン。",
+  effect: "マウスがボタンに近づくと、ボタン自体がカーソルに引き寄せられて移動する。",
+  suitableFor: ["AI/SaaS LP", "プレミアムプロダクト", "ポートフォリオ"],
+  badUsage: "リストや高密度UIでは隣のボタンが意図せず動いて操作を阻害する。1か所限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="magnetic">Get Started</button>`,
+    css: `/* React版を参照 - useState + mousemove で実装 */`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useRef, useState } from "react";
+export function MagneticCTA({ children = "Get Started", strength = 0.3 }: { children?: React.ReactNode; strength?: number }) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const [t, setT] = useState({ x: 0, y: 0 });
+  return (
+    <button ref={ref}
+      onMouseMove={(e) => {
+        const r = ref.current!.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        setT({ x: (e.clientX - cx) * strength, y: (e.clientY - cy) * strength });
+      }}
+      onMouseLeave={() => setT({ x: 0, y: 0 })}
+      className="rounded-full px-8 py-4 font-semibold text-white shadow-lg transition-transform"
+      style={{
+        background: "${color.hex}",
+        transform: \`translate(\${t.x}px, \${t.y}px)\`,
+      }}>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `マグネティック CTA を実装。useRef + onMouseMove で、ボタン中心からマウス位置までの差分 × 0.3 を translate に適用。onMouseLeave で 0 に戻す。色 ${color.tw}-500、pill 形状、transition-transform で滑らかに。`,
+};
+
+const hoverUnderlineDraw: ExtraArchetype<CV> = {
+  id: "hover-underline-draw",
+  baseTitle: "ホバー 下線描画（左→右）",
+  category: "hover",
+  baseMood: ["ミニマル", "BtoB"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "ナビリンク / フッターリンク / 記事内の重要リンク。",
+  effect: "ホバーで下線が左から右に滑らかに伸びる。",
+  suitableFor: ["BtoBコーポレート", "メディア", "ナビ"],
+  badUsage: "色を派手にしすぎない。本文と同色か少し濃く。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<a class="ud" href="#">採用情報</a>`,
+    css: `.ud { position:relative; color:#0a0a0a; font-weight:600; }
+.ud::after { content:""; position:absolute; left:0; bottom:-3px; height:2px; width:100%; background:${color.hex}; transform: scaleX(0); transform-origin: left; transition: transform .35s ease; }
+.ud:hover::after { transform: scaleX(1); }`,
+    tailwind: `<a href="#" className="relative font-semibold text-zinc-900 after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100" style={{ ['--c' as string]: '${color.hex}' }}>
+  <span>採用情報</span>
+  <span aria-hidden className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100" style={{ background: '${color.hex}' }} />
+</a>`,
+    react: `export function HoverUnderlineDraw({ children = "採用情報" }) {
+  return (
+    <a href="#" className="group relative inline-block font-semibold text-zinc-900">
+      {children}
+      <span aria-hidden className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+        style={{ background: "${color.hex}" }} />
+    </a>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ホバーで下線が左→右に描かれるリンク演出。下線は ${color.tw}-500、scaleX(0 → 1) を transform-origin: left で 0.35秒 ease。`,
+};
+
+const hoverColorFill: ExtraArchetype<CV> = {
+  id: "hover-color-fill-corner",
+  baseTitle: "ホバー 角から色塗り",
+  category: "hover",
+  baseMood: ["モダン", "BtoC"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "ボタン / カード / リストアイテムへの注目フィードバック。",
+  effect: "ホバーで色面が左上の角から斜めに展開して全体を塗りつぶす。",
+  suitableFor: ["BtoCナビ", "ギャラリーフィルタ", "メニュータイル"],
+  badUsage: "テキストが背景色と同化すると読めない。塗り後の文字色も切替。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="cfc"><span>Hover me</span></button>`,
+    css: `.cfc { position:relative; padding:14px 28px; border-radius:12px; color:#0a0a0a; font-weight:600; overflow:hidden; isolation:isolate; background:#fff; border:1px solid #e7e7eb; transition:color .35s ease; }
+.cfc::before { content:""; position:absolute; inset:0; background:${color.hex}; clip-path:polygon(0 0, 0 0, 0 0, 0 0); transition: clip-path .45s ease; z-index:-1; }
+.cfc:hover { color:#fff; }
+.cfc:hover::before { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }`,
+    tailwind: `<button className="group relative isolate overflow-hidden rounded-xl border border-zinc-200 bg-white px-7 py-3.5 font-semibold text-zinc-900 transition-colors duration-300 hover:text-white">
+  <span className="relative z-10">Hover me</span>
+  <span aria-hidden className="absolute inset-0 -z-10 transition-[clip-path] duration-500 [clip-path:polygon(0_0,0_0,0_0,0_0)] group-hover:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]"
+    style={{ background:"${color.hex}" }} />
+</button>`,
+    react: `export function HoverColorFill({ children = "Hover me" }) {
+  return (
+    <button className="group relative isolate overflow-hidden rounded-xl border border-zinc-200 bg-white px-7 py-3.5 font-semibold text-zinc-900 transition-colors duration-300 hover:text-white">
+      <span className="relative z-10">{children}</span>
+      <span aria-hidden className="absolute inset-0 -z-10 transition-[clip-path] duration-500 [clip-path:polygon(0_0,0_0,0_0,0_0)] group-hover:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]"
+        style={{ background: "${color.hex}" }} />
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `角から色塗りホバー。before の clip-path を polygon(0 0,0 0,0 0,0 0) → polygon(0 0,100% 0,100% 100%,0 100%) に transition で展開、ホバーで文字色が白に。色 ${color.tw}-500。`,
+};
+
+const hoverShadowGrow: ExtraArchetype<CV> = {
+  id: "hover-shadow-grow",
+  baseTitle: "ホバー シャドウ拡大",
+  category: "hover",
+  baseMood: ["上品", "BtoB"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "カード / フィーチャー / 価格プラン / プロダクトサムネ。",
+  effect: "ホバー時に影が大きく深くなり、要素が前に浮き出る。",
+  suitableFor: ["BtoB", "EC商品", "ポートフォリオ"],
+  badUsage: "密度の高いリストでは目立ちすぎて全部前に出る。間隔を空ける。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="sg-card">…</div>`,
+    css: `.sg-card { padding:24px; border-radius:16px; background:#fff; border:1px solid #e7e7eb; box-shadow:0 1px 2px rgba(0,0,0,.05); transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+.sg-card:hover { transform: translateY(-4px); box-shadow: 0 28px 50px -16px ${color.hex}55; border-color:${color.hex}55; }`,
+    tailwind: `<div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_50px_-16px_${color.hex}55] hover:border-${color.tw}-300">
+  <h3 className="font-semibold text-zinc-900">タイトル</h3>
+  <p className="mt-1 text-sm text-zinc-600">説明文。</p>
+</div>`,
+    react: `export function HoverShadowGrow({ title = "タイトル", body = "説明文。" }) {
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_50px_-16px_${color.hex}55] hover:border-${color.tw}-300">
+      <h3 className="font-semibold text-zinc-900">{title}</h3>
+      <p className="mt-1 text-sm text-zinc-600">{body}</p>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `カードのホバー時に -4px 浮上 + 深い ${color.tw}-500/33 のシャドウ + border が ${color.tw}-300 に変色。transition は 0.35秒。`,
+};
+
+/* ============================================================
+   TEXT (2 new)
+   ============================================================ */
+
+const textFireGlow: ExtraArchetype<CV> = {
+  id: "text-fire-glow",
+  baseTitle: "ファイアグロー文字",
+  category: "text",
+  baseMood: ["ポップ", "勢い"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "セール / 限定告知 / ゲームのタイトル。",
+  effect: "オレンジ・赤の text-shadow を多層に重ねて炎のような発光を演出。",
+  suitableFor: ["セールLP", "イベント", "ゲーム"],
+  badUsage: "暗い背景でのみ映える。明るい背景では effect が消える。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="fire-glow">SALE</h2>`,
+    css: `.fire-glow { font-weight:900; font-size:72px; color:#fff8e7; animation: fireGlowText 1.8s ease-in-out infinite; }
+@keyframes fireGlowText { 0%,100%{ text-shadow: 0 0 4px #ffb84d, 0 0 14px #ff8c1a, 0 0 28px #ff5500; } 50%{ text-shadow: 0 0 6px #ffd28a, 0 0 22px #ffa44d, 0 0 40px #ff6a1a; } }`,
+    tailwind: `<h2 className="text-7xl font-black" style={{ color:"#fff8e7", animation:"fireGlowText 1.8s ease-in-out infinite" }}>SALE</h2>`,
+    react: `export function FireGlowText({ children = "SALE" }) {
+  return <h2 className="text-7xl font-black" style={{ color:"#fff8e7", animation:"fireGlowText 1.8s ease-in-out infinite" }}>{children}</h2>;
+}`,
+  }),
+  prompt: ({ color }) =>
+    `炎のような発光テキストを実装。文字色は #fff8e7、text-shadow を黄→オレンジ→赤の3段で 4px / 14px / 28px に重ね、keyframe で 1.8秒で揺らす。暗背景前提。`,
+};
+
+const textRotateEach: ExtraArchetype<CV> = {
+  id: "text-rotate-each",
+  baseTitle: "1文字ずつ回転（持続）",
+  category: "text",
+  baseMood: ["ポップ", "BtoC"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "BtoC見出し / ロゴアニメ / お祝いメッセージ。",
+  effect: "各文字が -12deg ↔ 12deg で揺れる、賑やかな動き。",
+  suitableFor: ["BtoC LP", "キッズ向け", "イベント"],
+  badUsage: "BtoB業務系には合わない。短い見出し限定。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<h2 class="rot-each">HELLO</h2>`,
+    css: `.rot-each { display:inline-flex; font-weight:900; font-size:64px; color:${color.hex}; gap:4px; }
+.rot-each span { display:inline-block; animation: letterRotatePerLetter 1.6s ease-in-out infinite; }
+.rot-each span:nth-child(2){ animation-delay:.12s }
+.rot-each span:nth-child(3){ animation-delay:.24s }
+.rot-each span:nth-child(4){ animation-delay:.36s }
+.rot-each span:nth-child(5){ animation-delay:.48s }
+@keyframes letterRotatePerLetter { 0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(12deg)} }`,
+    tailwind: `<h2 className="inline-flex gap-1 text-7xl font-black" style={{ color:"${color.hex}" }}>
+  {"HELLO".split("").map((c,i) => (
+    <span key={i} className="inline-block" style={{ animation:\`letterRotatePerLetter 1.6s ease-in-out \${i*0.12}s infinite\` }}>{c}</span>
+  ))}
+</h2>`,
+    react: `export function TextRotateEach({ text = "HELLO" }: { text?: string }) {
+  return (
+    <h2 className="inline-flex gap-1 text-7xl font-black" style={{ color: "${color.hex}" }}>
+      {text.split("").map((c, i) => (
+        <span key={i} className="inline-block" style={{ animation: \`letterRotatePerLetter 1.6s ease-in-out \${i * 0.12}s infinite\` }}>{c}</span>
+      ))}
+    </h2>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `見出しの各文字が rotate(-12deg → 12deg) で 1.6秒 ease-in-out 揺れる。各文字 0.12秒ずつ delay をずらす。色 ${color.tw}-500、font-black。`,
+};
+
+/* ============================================================
+   BACKGROUND (1 new)
+   ============================================================ */
+
+const bgGrid3D: ExtraArchetype<CV> = {
+  id: "bg-grid-3d",
+  baseTitle: "3D無限グリッド（パースペクティブ）",
+  category: "background",
+  baseMood: ["テック", "AI"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "AI/SaaS の Hero 背景、未来的なプロダクトサイト。",
+  effect: "床に敷かれたグリッドが奥に延びて見える 3D ビュー。線が手前→奥にゆっくり流れる。",
+  suitableFor: ["AI LP", "テック系", "ゲーミング"],
+  badUsage: "上に乗せるテキストが小さいと alignment が崩れて見える。配置は中央上部に。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<section class="grid-3d">…</section>`,
+    css: `.grid-3d { position:relative; overflow:hidden; background:#0a0a14; }
+.grid-3d::before { content:""; position:absolute; left:-20%; right:-20%; top:50%; bottom:-50%; background-image: linear-gradient(${color.hex}33 1px, transparent 1px), linear-gradient(90deg, ${color.hex}33 1px, transparent 1px); background-size: 40px 40px; transform: perspective(800px) rotateX(60deg) translateZ(0); animation: grid3dSpin 4s linear infinite; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent); }
+@keyframes grid3dSpin { from { transform: perspective(800px) rotateX(60deg) translateZ(0) translateY(0); } to { transform: perspective(800px) rotateX(60deg) translateZ(0) translateY(40px); } }`,
+    tailwind: `<section className="relative min-h-[400px] overflow-hidden bg-[#0a0a14]">
+  <div aria-hidden className="absolute -left-[20%] -right-[20%] top-1/2 -bottom-1/2"
+    style={{
+      backgroundImage: \`linear-gradient(${color.hex}33 1px, transparent 1px), linear-gradient(90deg, ${color.hex}33 1px, transparent 1px)\`,
+      backgroundSize: "40px 40px",
+      transform: "perspective(800px) rotateX(60deg) translateZ(0)",
+      animation: "grid3dSpin 4s linear infinite",
+      maskImage: "linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent)",
+      WebkitMaskImage: "linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent)",
+    }} />
+  …
+</section>`,
+    react: `export function Grid3DBg({ children }: { children?: React.ReactNode }) {
+  return (
+    <section className="relative min-h-[400px] overflow-hidden bg-[#0a0a14]">
+      <div aria-hidden className="absolute -left-[20%] -right-[20%] top-1/2 -bottom-1/2"
+        style={{
+          backgroundImage: \`linear-gradient(${color.hex}33 1px, transparent 1px), linear-gradient(90deg, ${color.hex}33 1px, transparent 1px)\`,
+          backgroundSize: "40px 40px",
+          transform: "perspective(800px) rotateX(60deg) translateZ(0)",
+          animation: "grid3dSpin 4s linear infinite",
+          maskImage: "linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent)",
+        }} />
+      <div className="relative">{children}</div>
+    </section>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `3D 無限グリッド背景。bg は黒 #0a0a14、その上に 40px ピッチの2層 linear-gradient (${color.hex}33) を perspective(800px) rotateX(60deg) で床方向に倒し、translateY(0 → 40px) を 4秒 linear で流す。上下に mask-image でフェード。`,
+};
+
+/* ============================================================
    集約
    ============================================================ */
 
@@ -5921,6 +6485,25 @@ export const EXTRA_ARCHETYPES: ExtraArchetype<any>[] = [
   bgMeshSoft,
   hoverTilt3D,
   textChromeReflective,
+  // Batch 3: motion
+  motionLetterWobble,
+  motionTextStretchWave,
+  motionGlitchRgb,
+  motionStarSpin,
+  motionConfettiBurst,
+  motionDotRain,
+  motionToggleFlip3D,
+  motionIconWiggle,
+  // Batch 3: hover
+  hoverMagnetic,
+  hoverUnderlineDraw,
+  hoverColorFill,
+  hoverShadowGrow,
+  // Batch 3: text
+  textFireGlow,
+  textRotateEach,
+  // Batch 3: bg
+  bgGrid3D,
   // Icon
   iconLightbulb,
   iconGears,
