@@ -4095,6 +4095,173 @@ export function PDataKeyValueList({ color }: CV) {
   );
 }
 
+/* ============================================================
+   FORM 拡張 previews
+   ============================================================ */
+
+export function PFormDatePicker({ color }: CV) {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const first = new Date(year, month, 1).getDay();
+  const days = new Date(year, month + 1, 0).getDate();
+  const cells = Array.from({ length: first + days }, (_, i) => (i < first ? null : i - first + 1));
+  const selectedDay = today.getDate();
+  return (
+    <Stage theme="soft">
+      <div className="w-full max-w-[260px] rounded-xl border border-zinc-200 bg-white p-3 shadow-sm">
+        <div className="flex items-center justify-between">
+          <span className="text-zinc-400">‹</span>
+          <span className="text-xs font-semibold text-zinc-900">
+            {year}年 {month + 1}月
+          </span>
+          <span className="text-zinc-400">›</span>
+        </div>
+        <div className="mt-2 grid grid-cols-7 gap-0.5 text-center text-[9px] font-semibold text-zinc-400">
+          {["日", "月", "火", "水", "木", "金", "土"].map((w) => (
+            <span key={w}>{w}</span>
+          ))}
+        </div>
+        <div className="mt-0.5 grid grid-cols-7 gap-0.5">
+          {cells.map((day, i) => {
+            if (!day) return <span key={i} className="h-6" />;
+            const isSel = day === selectedDay;
+            return (
+              <span
+                key={i}
+                className="flex h-6 items-center justify-center rounded-full text-[10px]"
+                style={{
+                  background: isSel ? color.hex : "transparent",
+                  color: isSel ? "#fff" : "#3f3f46",
+                  fontWeight: isSel ? 700 : 500,
+                }}
+              >
+                {day}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
+export function PFormFileUpload({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <div
+        className="flex h-32 w-full max-w-xs cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed bg-white p-4 text-center"
+        style={{ borderColor: "#d4d4d8" }}
+      >
+        <div className="text-2xl">📁</div>
+        <div className="mt-1.5 text-xs font-semibold text-zinc-900">
+          ドラッグ&ドロップ または{" "}
+          <span style={{ color: color.hex }}>クリックして選択</span>
+        </div>
+        <div className="mt-0.5 text-[10px] text-zinc-500">PNG / JPG / PDF (最大 10MB)</div>
+      </div>
+    </Stage>
+  );
+}
+
+export function PFormRangeSlider({ color }: CV) {
+  const value = 60;
+  return (
+    <Stage theme="soft">
+      <div className="w-56">
+        <div className="mb-1.5 flex items-center justify-between text-[10px]">
+          <span className="text-zinc-500">音量</span>
+          <span className="font-mono font-semibold text-zinc-900">{value}</span>
+        </div>
+        <div className="relative h-1.5 w-full rounded-full" style={{ background: "#e7e7eb" }}>
+          <div
+            className="absolute left-0 top-0 h-full rounded-full"
+            style={{ width: `${value}%`, background: color.hex }}
+          />
+          <div
+            className="absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border-[3px] bg-white shadow"
+            style={{ left: `calc(${value}% - 8px)`, borderColor: color.hex }}
+          />
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
+export function PFormTagInput({ color }: CV) {
+  const tags = ["React", "Tailwind"];
+  return (
+    <Stage theme="soft">
+      <div
+        className="flex w-full max-w-xs flex-wrap items-center gap-1 rounded-xl border bg-white px-2 py-1.5"
+        style={{ borderColor: color.hex, boxShadow: `0 0 0 4px ${color.hex}1a` }}
+      >
+        {tags.map((t) => (
+          <span
+            key={t}
+            className="inline-flex items-center gap-0.5 rounded-full py-0.5 pl-2 pr-0.5 text-[10px] font-semibold"
+            style={{ background: color.hex + "1a", color: color.hex }}
+          >
+            {t}
+            <span className="rounded-full px-1 opacity-60">×</span>
+          </span>
+        ))}
+        <span className="ml-1 flex-1 text-[10px] text-zinc-400">タグを追加 (Enter)</span>
+      </div>
+    </Stage>
+  );
+}
+
+export function PFormOtpInput({ color }: CV) {
+  const vals = ["1", "2", "3", "", "", ""];
+  return (
+    <Stage theme="soft">
+      <div className="flex gap-1.5">
+        {vals.map((v, i) => (
+          <div
+            key={i}
+            className="flex h-10 w-8 items-center justify-center rounded-md border-2 bg-white font-mono text-base font-bold text-zinc-900"
+            style={{
+              borderColor: v ? color.hex : "#e7e7eb",
+              boxShadow: v ? `0 0 0 3px ${color.hex}1a` : undefined,
+            }}
+          >
+            {v}
+          </div>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+export function PFormPasswordStrength({ color }: CV) {
+  const score = 3; // demo: strong
+  const fillColor = color.hex;
+  const label = ["弱い", "弱い", "ふつう", "強い", "とても強い"][score];
+  return (
+    <Stage theme="soft">
+      <div className="w-56">
+        <label className="block text-[10px] font-semibold text-zinc-700">パスワード</label>
+        <div className="mt-1 w-full rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-900">
+          ••••••••••
+        </div>
+        <div className="mt-1.5 flex gap-1">
+          {[1, 2, 3, 4].map((n) => (
+            <span
+              key={n}
+              className="h-1 flex-1 rounded-full"
+              style={{ background: n <= score ? fillColor : "#e7e7eb" }}
+            />
+          ))}
+        </div>
+        <div className="mt-0.5 text-[10px] font-semibold" style={{ color: fillColor }}>
+          {label}
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
 /* tiny preview helpers (avoid duplicating imports - re-export hooks here lazily) */
 import { useEffect as _ue, useState as _us } from "react";
 function useStateOnce<T>(init: T): [T, (v: T | ((prev: T) => T)) => void] {
@@ -4238,6 +4405,12 @@ export const EXTRA_PREVIEW_FNS: Record<string, (v: CV) => JSX.Element> = {
   "data-stepper": PDataStepper,
   "data-status-pill": PDataStatusPill,
   "data-key-value-list": PDataKeyValueList,
+  "form-date-picker": PFormDatePicker,
+  "form-file-upload": PFormFileUpload,
+  "form-range-slider": PFormRangeSlider,
+  "form-tag-input": PFormTagInput,
+  "form-otp-input": PFormOtpInput,
+  "form-password-strength": PFormPasswordStrength,
   "icon-lightbulb": PIconLightbulb,
   "icon-gears": PIconGears,
   "icon-rocket": PIconRocket,

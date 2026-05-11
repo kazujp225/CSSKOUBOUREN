@@ -6878,6 +6878,322 @@ const dataKeyValueList: ExtraArchetype<CV> = {
 };
 
 /* ============================================================
+   FORM 拡張バッチ (6 new primitives)
+   ============================================================ */
+
+const formDatePicker: ExtraArchetype<CV> = {
+  id: "form-date-picker",
+  baseTitle: "日付ピッカー（カレンダー）",
+  category: "form",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["Tailwind", "React"],
+  difficulty: "medium",
+  useCase: "予約フォーム / 期間指定 / 締切日選択。",
+  effect: "クリックで月カレンダー展開、日付クリックで選択。今日と選択日のハイライト。",
+  suitableFor: ["予約サイト", "管理画面", "EC配送日選択"],
+  badUsage: "ネイティブ <input type=date> で十分な場合はそちらを優先（モバイルUX）。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="dp">…</div>`,
+    css: `/* React版を参照 */`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function DatePicker() {
+  const [d, setD] = useState(new Date());
+  const year = d.getFullYear(), month = d.getMonth();
+  const first = new Date(year, month, 1).getDay();
+  const days = new Date(year, month + 1, 0).getDate();
+  const cells = Array.from({ length: first + days }, (_, i) => i < first ? null : i - first + 1);
+  return (
+    <div className="w-72 rounded-xl border border-zinc-200 bg-white p-4 shadow-soft">
+      <div className="flex items-center justify-between">
+        <button className="rounded-full p-1 text-zinc-500 hover:bg-zinc-100">‹</button>
+        <span className="text-sm font-semibold text-zinc-900">{year}年 {month + 1}月</span>
+        <button className="rounded-full p-1 text-zinc-500 hover:bg-zinc-100">›</button>
+      </div>
+      <div className="mt-3 grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-zinc-400">
+        {["日","月","火","水","木","金","土"].map(w => <span key={w}>{w}</span>)}
+      </div>
+      <div className="mt-1 grid grid-cols-7 gap-1">
+        {cells.map((day, i) => {
+          if (!day) return <span key={i} />;
+          const isSel = day === d.getDate();
+          return (
+            <button key={i} onClick={() => setD(new Date(year, month, day))}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-xs transition"
+              style={{
+                background: isSel ? "${color.hex}" : "transparent",
+                color: isSel ? "#fff" : "#3f3f46",
+                fontWeight: isSel ? 700 : 500,
+              }}>
+              {day}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `日付ピッカー。月表示の grid-cols-7 カレンダー、ヘッダーに月送り、選択日は ${color.tw}-500 塗りの丸、未選択日は zinc-700。useState で選択管理。`,
+};
+
+const formFileUpload: ExtraArchetype<CV> = {
+  id: "form-file-upload",
+  baseTitle: "ファイルアップロード（ドラッグ&ドロップ）",
+  category: "form",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["Tailwind", "React"],
+  difficulty: "medium",
+  useCase: "添付ファイル送信、画像アップロード、CSV/JSONインポート。",
+  effect: "点線枠のドロップゾーン + クリックでファイル選択。dragover で枠強調。",
+  suitableFor: ["管理画面のインポート", "ECの商品画像追加", "サポートチャットの添付"],
+  badUsage: "巨大ファイル対応の進捗UI（progress bar）を別途用意する必要がある。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<label class="upload">…</label>`,
+    css: `/* React版を参照 */`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function FileUpload({ onFiles }: { onFiles?: (files: FileList) => void }) {
+  const [over, setOver] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  return (
+    <label
+      onDragOver={(e) => { e.preventDefault(); setOver(true); }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(e) => {
+        e.preventDefault(); setOver(false);
+        const f = Array.from(e.dataTransfer.files);
+        setFiles(f); onFiles?.(e.dataTransfer.files);
+      }}
+      className="flex h-44 w-full max-w-md cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed bg-white p-6 text-center transition"
+      style={{ borderColor: over ? "${color.hex}" : "#d4d4d8", background: over ? "${color.hex}0a" : "#fff" }}
+    >
+      <input type="file" multiple className="hidden"
+        onChange={(e) => { setFiles(Array.from(e.target.files ?? [])); if (e.target.files) onFiles?.(e.target.files); }} />
+      <div className="text-3xl">📁</div>
+      <div className="mt-2 text-sm font-semibold text-zinc-900">ドラッグ&ドロップ または <span style={{ color: "${color.hex}" }}>クリックして選択</span></div>
+      <div className="mt-0.5 text-xs text-zinc-500">PNG / JPG / PDF (最大 10MB)</div>
+      {files.length > 0 && (
+        <div className="mt-3 text-xs text-zinc-600">選択: {files.length} ファイル</div>
+      )}
+    </label>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ファイルアップロードゾーンを実装。border-2 dashed の zinc-300、dragover時に ${color.tw}-500 に変色 + 背景 ${color.tw}-500/5。中央に絵文字 + "ドラッグ&ドロップ または クリックして選択" + 制限テキスト。`,
+};
+
+const formRangeSlider: ExtraArchetype<CV> = {
+  id: "form-range-slider",
+  baseTitle: "レンジスライダー（カスタム）",
+  category: "form",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["CSS", "React"],
+  difficulty: "medium",
+  useCase: "音量 / 明るさ / 価格範囲 / 評価スコア入力。",
+  effect: "track の上で thumb が左右にスライド、左側が色付き track で現在値を可視化。",
+  suitableFor: ["設定画面", "EC価格フィルタ", "メディアプレイヤー"],
+  badUsage: "数値の正確入力が必要なら number input と併用。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<input type="range" class="r" min="0" max="100" value="60" />`,
+    css: `.r { -webkit-appearance:none; appearance:none; width:240px; height:6px; border-radius:9999px; background: linear-gradient(to right, ${color.hex} 60%, #e7e7eb 60%); outline:none; }
+.r::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:9999px; background:#fff; border:3px solid ${color.hex}; box-shadow:0 2px 6px rgba(0,0,0,.15); cursor:pointer; transition:transform .15s; }
+.r::-webkit-slider-thumb:hover { transform:scale(1.15); }
+.r::-moz-range-thumb { width:20px; height:20px; border-radius:9999px; background:#fff; border:3px solid ${color.hex}; }`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function RangeSlider({ min = 0, max = 100, defaultValue = 60 }: { min?: number; max?: number; defaultValue?: number }) {
+  const [v, setV] = useState(defaultValue);
+  const pct = ((v - min) / (max - min)) * 100;
+  return (
+    <div className="w-64">
+      <div className="mb-2 flex items-center justify-between text-xs">
+        <span className="text-zinc-500">音量</span>
+        <span className="font-mono font-semibold text-zinc-900">{v}</span>
+      </div>
+      <input
+        type="range" min={min} max={max} value={v}
+        onChange={(e) => setV(Number(e.target.value))}
+        className="h-1.5 w-full appearance-none rounded-full outline-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow"
+        style={{
+          background: \`linear-gradient(to right, ${color.hex} \${pct}%, #e7e7eb \${pct}%)\`,
+          ['--c' as any]: "${color.hex}",
+        } as React.CSSProperties}
+      />
+      <style jsx global>{\`input[type="range"][style*="${color.hex}"]::-webkit-slider-thumb { border-color: ${color.hex}; }\`}</style>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `カスタムレンジスライダー。track 高さ6px、左側が ${color.tw}-500 で右側 zinc-200 の linear-gradient で値を可視化。thumb は20px丸の白に ${color.tw}-500 border 3px、ホバーで scale 1.15。useState で値管理。`,
+};
+
+const formTagInput: ExtraArchetype<CV> = {
+  id: "form-tag-input",
+  baseTitle: "タグ入力（チップス）",
+  category: "form",
+  baseMood: ["BtoB", "アプリ"],
+  baseTags: ["React"],
+  difficulty: "medium",
+  useCase: "ブログ記事のタグ、CCメール宛先、検索フィルター、技術スタック選択。",
+  effect: "Enterで現在の入力がタグ化、既存タグは×で削除可能。",
+  suitableFor: ["CMS記事編集", "メーラー", "プロフィール編集"],
+  badUsage: "重複追加と空文字はガード。最大件数も決めておく。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="tag-input">…</div>`,
+    css: `/* React版を参照 */`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useState } from "react";
+export function TagInput({ initial = ["React", "Tailwind"] }: { initial?: string[] }) {
+  const [tags, setTags] = useState(initial);
+  const [input, setInput] = useState("");
+  const add = () => {
+    const v = input.trim();
+    if (!v || tags.includes(v)) return;
+    setTags([...tags, v]); setInput("");
+  };
+  return (
+    <div className="flex w-full max-w-md flex-wrap items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-2.5 py-2 focus-within:border-${color.tw}-500 focus-within:ring-4 focus-within:ring-${color.tw}-500/20">
+      {tags.map((t) => (
+        <span key={t} className="inline-flex items-center gap-1 rounded-full py-0.5 pl-2.5 pr-1 text-xs font-semibold"
+          style={{ background: "${color.hex}1a", color: "${color.hex}" }}>
+          {t}
+          <button onClick={() => setTags(tags.filter(x => x !== t))}
+            className="rounded-full px-1.5 text-current opacity-60 transition hover:opacity-100">×</button>
+        </span>
+      ))}
+      <input value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } if (e.key === "Backspace" && !input) setTags(tags.slice(0,-1)); }}
+        placeholder="タグを追加 (Enter)"
+        className="min-w-[120px] flex-1 bg-transparent text-sm outline-none placeholder:text-zinc-400" />
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `タグ入力コンポーネント。flex wrap で既存タグ chips (${color.tw}-500/10 bg + ${color.tw}-500 text、× で削除) と input を並べる。Enter でタグ化、Backspace で末尾削除、重複ガード。useState 管理。focus-within でリング表示。`,
+};
+
+const formOtpInput: ExtraArchetype<CV> = {
+  id: "form-otp-input",
+  baseTitle: "OTP入力（6桁ボックス）",
+  category: "form",
+  baseMood: ["BtoB", "セキュリティ"],
+  baseTags: ["React"],
+  difficulty: "medium",
+  useCase: "2FA認証、SMS確認コード、メール認証コード。",
+  effect: "1桁ずつ6個の入力ボックス。1桁打つと次のフォーカスへ自動移動、Backspaceで前へ。",
+  suitableFor: ["ログイン2FA", "サインアップ確認", "本人確認"],
+  badUsage: "ペーストにも対応すること（6桁を1個のフィールドに貼っても分配）。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="otp">…</div>`,
+    css: `/* React版を参照 */`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useRef, useState } from "react";
+export function OtpInput({ length = 6 }: { length?: number }) {
+  const [vals, setVals] = useState(Array.from({ length }, () => ""));
+  const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const onChange = (i: number, v: string) => {
+    const ch = v.replace(/[^0-9]/g, "").slice(0, 1);
+    const next = [...vals]; next[i] = ch; setVals(next);
+    if (ch && i < length - 1) refs.current[i + 1]?.focus();
+  };
+  const onPaste = (e: React.ClipboardEvent) => {
+    const t = e.clipboardData.getData("text").replace(/[^0-9]/g, "").slice(0, length);
+    if (!t) return;
+    const next = Array.from({ length }, (_, i) => t[i] ?? "");
+    setVals(next);
+    refs.current[Math.min(t.length, length - 1)]?.focus();
+    e.preventDefault();
+  };
+  return (
+    <div className="flex gap-2" onPaste={onPaste}>
+      {vals.map((v, i) => (
+        <input key={i} ref={(el) => { refs.current[i] = el; }} value={v} maxLength={1}
+          onChange={(e) => onChange(i, e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Backspace" && !v && i > 0) refs.current[i - 1]?.focus(); }}
+          inputMode="numeric"
+          className="h-12 w-10 rounded-lg border-2 bg-white text-center font-mono text-xl font-bold text-zinc-900 outline-none transition"
+          style={{
+            borderColor: v ? "${color.hex}" : "#e7e7eb",
+            boxShadow: v ? \`0 0 0 4px ${color.hex}1a\` : "none",
+          }}
+        />
+      ))}
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `OTP入力 6桁ボックス。各セル 40x48、border-2、入力済み時に ${color.tw}-500 border + ring 4px ${color.tw}-500/10。1文字入力で次のセルに自動フォーカス、Backspaceで前へ。ペースト時は文字列を6分割して埋める。`,
+};
+
+const formPasswordStrength: ExtraArchetype<CV> = {
+  id: "form-password-strength",
+  baseTitle: "パスワード強度メーター",
+  category: "form",
+  baseMood: ["BtoB", "セキュリティ"],
+  baseTags: ["React"],
+  difficulty: "medium",
+  useCase: "サインアップ・パスワード変更時の強度フィードバック。",
+  effect: "入力に応じて 4 段階のセグメントメーターが色変化（弱 → 強）、テキストラベルも更新。",
+  suitableFor: ["認証フォーム", "セキュリティ重視のSaaS"],
+  badUsage: "強度判定ロジックは適度に。長さだけで判定すると弱い。複雑度（大文字/数字/記号）を加味。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="ps">…</div>`,
+    css: `/* React版を参照 */`,
+    tailwind: `// React版を参照`,
+    react: `"use client";
+import { useMemo, useState } from "react";
+function score(pw: string): 0 | 1 | 2 | 3 | 4 {
+  let s = 0;
+  if (pw.length >= 8) s++;
+  if (/[A-Z]/.test(pw)) s++;
+  if (/[0-9]/.test(pw)) s++;
+  if (/[^A-Za-z0-9]/.test(pw)) s++;
+  return s as 0|1|2|3|4;
+}
+export function PasswordStrength() {
+  const [pw, setPw] = useState("");
+  const s = useMemo(() => score(pw), [pw]);
+  const labels = ["弱い", "弱い", "ふつう", "強い", "とても強い"];
+  const fillColor = s >= 3 ? "${color.hex}" : s === 2 ? "#f59e0b" : "#ef4444";
+  return (
+    <div className="w-72">
+      <label className="block text-xs font-semibold text-zinc-700">パスワード</label>
+      <input type="password" value={pw} onChange={(e) => setPw(e.target.value)}
+        className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-${color.tw}-500 focus:ring-4 focus:ring-${color.tw}-500/20" />
+      <div className="mt-2 flex gap-1">
+        {[1,2,3,4].map((n) => (
+          <span key={n} className="h-1 flex-1 rounded-full"
+            style={{ background: n <= s ? fillColor : "#e7e7eb", transition: "background .2s" }} />
+        ))}
+      </div>
+      {pw && <div className="mt-1 text-[11px] font-semibold" style={{ color: fillColor }}>{labels[s]}</div>}
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `パスワード強度メーター。入力ごとに長さ・大文字・数字・記号を判定（0-4点）。下に 4 セグメントのバー、点数分だけ色付き（弱=red, 中=amber, 強=${color.tw}-500）。ラベルテキストも切替（弱い/ふつう/強い/とても強い）。`,
+};
+
+/* ============================================================
    集約
    ============================================================ */
 
@@ -7030,6 +7346,13 @@ export const EXTRA_ARCHETYPES: ExtraArchetype<any>[] = [
   dataStepper,
   dataStatusPill,
   dataKeyValueList,
+  // Batch 5: form primitives
+  formDatePicker,
+  formFileUpload,
+  formRangeSlider,
+  formTagInput,
+  formOtpInput,
+  formPasswordStrength,
   // Icon
   iconLightbulb,
   iconGears,
