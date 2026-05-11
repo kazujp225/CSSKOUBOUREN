@@ -19,9 +19,9 @@ export type SpeedKey =
 
 export const COLORS: ColorKey[] = ["violet", "blue", "rose", "amber", "emerald"];
 // Loading registry uses these arrays to expand variants.
-// Keep tiny to avoid loading dominating the dictionary.
-export const SIZES: SizeKey[] = ["md"];
-export const SPEEDS: SpeedKey[] = ["slow", "normal"];
+// Path C (hybrid): moderate volume now, archetype diversity in subsequent turns.
+export const SIZES: SizeKey[] = ["sm", "md", "lg", "xl"];
+export const SPEEDS: SpeedKey[] = ["slow", "normal", "fast", "vfast"];
 
 export const COLOR_META: Record<ColorKey, { hex: string; tw: string; jp: string; soft: string }> = {
   violet: { hex: "#7c5cff", tw: "violet", jp: "紫", soft: "#ede9ff" },

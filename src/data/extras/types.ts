@@ -34,10 +34,40 @@ export function makeExtraId(archId: string, variantKey: string) {
   return `ex-${archId}-${variantKey}`;
 }
 
-export function parseExtraId(id: string): { archId: string; variantKey: string } | null {
+// Extras volume expansion axes (Path C). Adds variant dimensions to multiply
+// the ID space without forcing per-archetype code-generator changes.
+export const EXTRA_SIZES = ["sm", "md", "lg"] as const;
+export const EXTRA_STYLES = ["solid", "soft", "outline"] as const;
+export type ExtraSize = typeof EXTRA_SIZES[number];
+export type ExtraStyle = typeof EXTRA_STYLES[number];
+
+export function makeExtraIdSized(archId: string, color: string, size: ExtraSize, style: ExtraStyle) {
+  return `ex-${archId}-${color}-${size}-${style}`;
+}
+
+export function parseExtraId(
+  id: string
+): { archId: string; variantKey: string; size?: ExtraSize; style?: ExtraStyle } | null {
   if (!id.startsWith("ex-")) return null;
   const rest = id.slice(3);
-  // archId can contain hyphens; variantKey is the last hyphen-separated chunk
+  const parts = rest.split("-");
+
+  // Try new format: {archId}-{color}-{size}-{style} (at least 4 segments)
+  if (parts.length >= 4) {
+    const style = parts[parts.length - 1] as ExtraStyle;
+    const size = parts[parts.length - 2] as ExtraSize;
+    const color = parts[parts.length - 3];
+    if (
+      EXTRA_STYLES.includes(style as ExtraStyle) &&
+      EXTRA_SIZES.includes(size as ExtraSize) &&
+      COLORS.includes(color as ColorKey)
+    ) {
+      const archId = parts.slice(0, parts.length - 3).join("-");
+      return { archId, variantKey: color, size, style };
+    }
+  }
+
+  // Legacy fallback: {archId}-{variantKey}
   const lastDash = rest.lastIndexOf("-");
   if (lastDash <= 0) return null;
   return { archId: rest.slice(0, lastDash), variantKey: rest.slice(lastDash + 1) };
