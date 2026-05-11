@@ -4262,6 +4262,262 @@ export function PFormPasswordStrength({ color }: CV) {
   );
 }
 
+/* ============================================================
+   可愛い系 CTA previews
+   ============================================================ */
+
+export function PCtaSticker({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="inline-block cursor-pointer rounded-2xl px-7 py-3.5 font-extrabold text-white transition duration-200 [transform:rotate(-2deg)] hover:[transform:rotate(0deg)_translate(-2px,-2px)] active:[transform:rotate(0deg)_translate(2px,2px)]"
+        style={{
+          background: color.hex,
+          boxShadow: "4px 4px 0 #0a0a0a",
+        }}
+      >
+        いますぐ参加！
+      </span>
+    </Stage>
+  );
+}
+
+export function PCtaSquishPress({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="inline-block cursor-pointer rounded-full px-8 py-4 font-extrabold text-white transition duration-150 active:[transform:translateY(4px)_scaleY(.88)_scaleX(1.05)]"
+        style={{
+          background: color.hex,
+          boxShadow: `0 6px 0 ${color.hex}99`,
+        }}
+      >
+        タップ！
+      </span>
+    </Stage>
+  );
+}
+
+export function PCtaPastelGradient({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="inline-block cursor-pointer rounded-full px-7 py-3.5 font-bold text-white transition duration-300 hover:-translate-y-0.5"
+        style={{
+          background: `linear-gradient(135deg, #fbcfe8, ${color.hex}b3, #fde68a)`,
+          boxShadow: `0 10px 24px -8px ${color.hex}66`,
+          textShadow: "0 1px 1px rgba(0,0,0,.1)",
+        }}
+      >
+        ふんわり始める
+      </span>
+    </Stage>
+  );
+}
+
+export function PCtaEmojiPrefix({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="group inline-flex cursor-pointer items-center gap-2 rounded-full px-6 py-3 font-bold text-white transition hover:-translate-y-0.5"
+        style={{ background: color.hex }}
+      >
+        <span className="inline-block group-hover:[animation:emojiWaggle_.6s_ease-in-out]">🌸</span>
+        会員になる
+      </span>
+    </Stage>
+  );
+}
+
+export function PCtaJellyWobble({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="inline-block cursor-pointer rounded-2xl px-7 py-3.5 font-extrabold text-white hover:[animation:jellyWobble_.6s_ease-in-out]"
+        style={{
+          background: color.hex,
+          boxShadow: `0 8px 20px -6px ${color.hex}88`,
+        }}
+      >
+        JUICY！
+      </span>
+    </Stage>
+  );
+}
+
+export function PCtaCloudBlob({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="inline-block cursor-pointer px-8 py-4 font-bold text-white hover:[animation-duration:3s]"
+        style={{
+          background: color.hex,
+          borderRadius: "42% 58% 70% 30% / 45% 45% 55% 55%",
+          boxShadow: `0 12px 24px -8px ${color.hex}66`,
+          animation: "cloudFloat 6s ease-in-out infinite",
+        }}
+      >
+        ふわっと
+      </span>
+    </Stage>
+  );
+}
+
+export function PCtaStampOutline({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="inline-block cursor-pointer rounded-lg border-[3px] border-double bg-transparent px-6 py-3 font-extrabold tracking-wider transition duration-300 [transform:rotate(-3deg)] hover:[transform:rotate(0deg)]"
+        style={{ borderColor: color.hex, color: color.hex }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = color.hex;
+          e.currentTarget.style.color = "#fff";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "transparent";
+          e.currentTarget.style.color = color.hex;
+        }}
+      >
+        登録する
+      </span>
+    </Stage>
+  );
+}
+
+export function PCtaRibbon({ color }: CV) {
+  return (
+    <Stage>
+      <span
+        role="button"
+        className="relative mt-3.5 inline-block cursor-pointer rounded-2xl px-9 pb-3.5 pt-4 font-extrabold text-white"
+        style={{
+          background: color.hex,
+          boxShadow: `0 8px 18px -6px ${color.hex}88`,
+        }}
+      >
+        <span
+          className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest text-zinc-900"
+          style={{
+            background: "#fde047",
+            borderRadius: 4,
+            boxShadow: "0 2px 0 #ca8a04",
+            animation: "ribbonFloat 2.4s ease-in-out infinite",
+            clipPath: "polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%)",
+          }}
+        >
+          LIMITED
+        </span>
+        受け取る
+      </span>
+    </Stage>
+  );
+}
+
+/* ============================================================
+   可愛い系 Feedback previews
+   ============================================================ */
+
+export function PFeedbackBubble({ color }: CV) {
+  return (
+    <Stage>
+      <div
+        className="relative inline-block rounded-2xl px-4 py-3 text-sm font-bold text-white"
+        style={{
+          background: color.hex,
+          animation: "bubblePopIn .55s cubic-bezier(.6,.05,.18,1.4)",
+        }}
+      >
+        こんにちは！
+        <span
+          aria-hidden
+          className="absolute -bottom-2 left-6 h-0 w-0"
+          style={{
+            borderWidth: "8px",
+            borderStyle: "solid",
+            borderColor: "transparent",
+            borderTopColor: color.hex,
+            borderBottomWidth: 0,
+          }}
+        />
+      </div>
+    </Stage>
+  );
+}
+
+export function PFeedbackStickerToast({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <div
+        className="inline-flex max-w-sm items-center gap-3 rounded-2xl bg-white px-4 py-3"
+        style={{
+          border: `3px solid ${color.hex}`,
+          boxShadow: `4px 4px 0 #0a0a0a, 0 12px 24px -10px ${color.hex}66`,
+          animation: "stickerIdle 3s ease-in-out infinite",
+        }}
+      >
+        <span className="text-2xl">🎉</span>
+        <div>
+          <strong className="block font-extrabold text-zinc-900">達成しました！</strong>
+          <p className="mt-0.5 text-xs text-zinc-600">+50ポイント</p>
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
+export function PFeedbackEmojiToast({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <div
+        className="group inline-flex max-w-sm items-center gap-3 rounded-2xl border px-4 py-3"
+        style={{
+          background: color.hex + "10",
+          borderColor: color.hex + "33",
+          animation: "ribbonFloat 3.6s ease-in-out infinite",
+        }}
+      >
+        <span className="text-2xl group-hover:[animation:emojiWaggle_.6s_ease-in-out]">💡</span>
+        <p className="text-xs font-semibold text-zinc-900">ヒント: タグで絞り込めます</p>
+      </div>
+    </Stage>
+  );
+}
+
+export function PFeedbackCelebrateBurst({ color }: CV) {
+  return (
+    <Stage theme="soft">
+      <div
+        className="relative isolate inline-flex flex-col items-center rounded-2xl border-2 bg-white px-6 py-5"
+        style={{
+          borderColor: color.hex,
+          boxShadow: `0 18px 36px -16px ${color.hex}99`,
+        }}
+      >
+        {[0, 0.6].map((d, i) => (
+          <span
+            key={i}
+            aria-hidden
+            className="absolute -inset-1 -z-10 rounded-2xl border-2 opacity-0"
+            style={{
+              borderColor: color.hex,
+              animation: `celebrateRing 1.8s ease-out ${d}s infinite`,
+            }}
+          />
+        ))}
+        <span className="text-3xl">🏆</span>
+        <strong className="mt-1 text-sm font-extrabold text-zinc-900">レベルアップ！</strong>
+      </div>
+    </Stage>
+  );
+}
+
 /* tiny preview helpers (avoid duplicating imports - re-export hooks here lazily) */
 import { useEffect as _ue, useState as _us } from "react";
 function useStateOnce<T>(init: T): [T, (v: T | ((prev: T) => T)) => void] {
@@ -4411,6 +4667,18 @@ export const EXTRA_PREVIEW_FNS: Record<string, (v: CV) => JSX.Element> = {
   "form-tag-input": PFormTagInput,
   "form-otp-input": PFormOtpInput,
   "form-password-strength": PFormPasswordStrength,
+  "cta-sticker": PCtaSticker,
+  "cta-squish-press": PCtaSquishPress,
+  "cta-pastel-gradient": PCtaPastelGradient,
+  "cta-emoji-prefix": PCtaEmojiPrefix,
+  "cta-jelly-wobble": PCtaJellyWobble,
+  "cta-cloud-blob": PCtaCloudBlob,
+  "cta-stamp-outline": PCtaStampOutline,
+  "cta-ribbon": PCtaRibbon,
+  "feedback-speech-bubble": PFeedbackBubble,
+  "feedback-sticker-toast": PFeedbackStickerToast,
+  "feedback-emoji-toast": PFeedbackEmojiToast,
+  "feedback-celebrate-burst": PFeedbackCelebrateBurst,
   "icon-lightbulb": PIconLightbulb,
   "icon-gears": PIconGears,
   "icon-rocket": PIconRocket,

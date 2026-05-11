@@ -7194,6 +7194,509 @@ export function PasswordStrength() {
 };
 
 /* ============================================================
+   CTA 可愛い系（kawaii / pop）バッチ
+   ============================================================ */
+
+const ctaSticker: ExtraArchetype<CV> = {
+  id: "cta-sticker",
+  baseTitle: "ステッカー風ボタン（傾き＋ハード影）",
+  category: "cta",
+  baseMood: ["BtoC", "ポップ", "可愛い"],
+  baseTags: ["CSS", "Tailwind"],
+  difficulty: "easy",
+  useCase: "BtoC LP の主CTA、キャンペーン、キッズ向け、ハンドメイド系ブランド。",
+  effect: "わずかに傾き + ぼかしの無いハード影でステッカー感。ホバーで真っ直ぐ + 浮上。",
+  suitableFor: ["BtoC LP", "クラフト系ブランド", "イベント告知"],
+  badUsage: "BtoB硬めな業種では浮く。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="sticker-cta">いますぐ参加！</button>`,
+    css: `.sticker-cta { display:inline-block; padding:14px 28px; border-radius:14px; background:${color.hex}; color:#fff; font-weight:800; font-size:15px; box-shadow:4px 4px 0 #0a0a0a; transform:rotate(-2deg); transition:transform .25s ease, box-shadow .25s ease; cursor:pointer; border:0; }
+.sticker-cta:hover { transform:rotate(0) translate(-2px,-2px); box-shadow:6px 6px 0 #0a0a0a; }
+.sticker-cta:active { transform:rotate(0) translate(2px,2px); box-shadow:1px 1px 0 #0a0a0a; }`,
+    tailwind: `<button className="inline-block cursor-pointer rounded-2xl px-7 py-3.5 font-extrabold text-white transition duration-200
+  [transform:rotate(-2deg)] hover:[transform:rotate(0deg)_translate(-2px,-2px)] active:[transform:rotate(0deg)_translate(2px,2px)]
+  shadow-[4px_4px_0_#0a0a0a] hover:shadow-[6px_6px_0_#0a0a0a] active:shadow-[1px_1px_0_#0a0a0a]"
+  style={{ background:"${color.hex}" }}>
+  いますぐ参加！
+</button>`,
+    react: `export function StickerCTA({ children = "いますぐ参加！" }) {
+  return (
+    <button className="inline-block cursor-pointer rounded-2xl px-7 py-3.5 font-extrabold text-white transition duration-200
+      [transform:rotate(-2deg)] hover:[transform:rotate(0deg)_translate(-2px,-2px)] active:[transform:rotate(0deg)_translate(2px,2px)]
+      shadow-[4px_4px_0_#0a0a0a] hover:shadow-[6px_6px_0_#0a0a0a] active:shadow-[1px_1px_0_#0a0a0a]"
+      style={{ background:"${color.hex}" }}>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ステッカー風 CTA を実装。${color.tw}-500 の rounded-2xl ボタン、初期 rotate(-2deg) + 黒のハード影 4px 4px。ホバーで rotate(0) + translate(-2,-2) + 影 6px に拡大。アクティブで translate(2,2) + 影 1px に縮小。`,
+};
+
+const ctaSquishPress: ExtraArchetype<CV> = {
+  id: "cta-squish-press",
+  baseTitle: "スクイッシュ押下ボタン",
+  category: "cta",
+  baseMood: ["BtoC", "ポップ", "可愛い"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "アプリ内アクション、ゲーム、BtoC LP の遊び心あるCTA。",
+  effect: "押すと縦に潰れて、離すと跳ね返る。プニッとした触感。",
+  suitableFor: ["BtoC アプリ", "ゲーム", "キッズ向け"],
+  badUsage: "シリアスな業種では幼くなる。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="squish">タップ！</button>`,
+    css: `.squish { padding:16px 32px; border-radius:9999px; background:${color.hex}; color:#fff; font-weight:800; font-size:16px; border:0; cursor:pointer; box-shadow:0 6px 0 ${color.hex}99; transition:transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .15s; }
+.squish:active { transform:translateY(4px) scaleY(.88) scaleX(1.05); box-shadow:0 2px 0 ${color.hex}99; }`,
+    tailwind: `<button className="cursor-pointer rounded-full px-8 py-4 font-extrabold text-white transition active:[transform:translateY(4px)_scaleY(.88)_scaleX(1.05)]"
+  style={{ background:"${color.hex}", boxShadow:"0 6px 0 ${color.hex}99" }}>タップ！</button>`,
+    react: `export function SquishCTA({ children = "タップ！" }) {
+  return (
+    <button className="cursor-pointer rounded-full px-8 py-4 font-extrabold text-white transition duration-150 [transition-timing-function:cubic-bezier(.34,1.56,.64,1)]
+      active:[transform:translateY(4px)_scaleY(.88)_scaleX(1.05)] active:shadow-[0_2px_0_${color.hex}99]"
+      style={{ background:"${color.hex}", boxShadow:"0 6px 0 ${color.hex}99" }}>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `押し込み感のあるスクイッシュボタン。${color.tw}-500 の pill、下方向に 6px の同色暗め影、active で translateY(4px) + scaleY(.88) scaleX(1.05) + 影を 2px に。bouncy easing。`,
+};
+
+const ctaPastelGradient: ExtraArchetype<CV> = {
+  id: "cta-pastel-gradient",
+  baseTitle: "パステルグラデーション CTA",
+  category: "cta",
+  baseMood: ["BtoC", "可愛い", "やさしい"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "ライフスタイル系LP、コスメ、ベビー用品、フェミニン系。",
+  effect: "やわらかなパステル多色グラデ + ふんわりした影。",
+  suitableFor: ["コスメ/美容", "ベビー", "ライフスタイル"],
+  badUsage: "BtoBや男性向け硬派業種では浮く。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="pastel">ふんわり始める</button>`,
+    css: `.pastel { padding:14px 28px; border-radius:9999px; color:#fff; font-weight:700; font-size:15px; border:0; cursor:pointer; background:linear-gradient(135deg, #fbcfe8, ${color.hex}b3, #fde68a); box-shadow:0 10px 24px -8px ${color.hex}66; transition:transform .25s ease, box-shadow .25s ease; text-shadow:0 1px 1px rgba(0,0,0,.1); }
+.pastel:hover { transform:translateY(-2px); box-shadow:0 16px 32px -10px ${color.hex}88; }`,
+    tailwind: `<button className="cursor-pointer rounded-full px-7 py-3.5 font-bold text-white transition duration-300 hover:-translate-y-0.5"
+  style={{
+    background:"linear-gradient(135deg, #fbcfe8, ${color.hex}b3, #fde68a)",
+    boxShadow:"0 10px 24px -8px ${color.hex}66",
+    textShadow:"0 1px 1px rgba(0,0,0,.1)",
+  }}>
+  ふんわり始める
+</button>`,
+    react: `export function PastelCTA({ children = "ふんわり始める" }) {
+  return (
+    <button className="cursor-pointer rounded-full px-7 py-3.5 font-bold text-white transition duration-300 hover:-translate-y-0.5"
+      style={{
+        background:"linear-gradient(135deg, #fbcfe8, ${color.hex}b3, #fde68a)",
+        boxShadow:"0 10px 24px -8px ${color.hex}66",
+        textShadow:"0 1px 1px rgba(0,0,0,.1)",
+      }}>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `パステルグラデ pill ボタン。pink-300 → ${color.tw}-300 → amber-200 の 135度グラデ、ふんわりした下方向 ${color.hex}66 のbox-shadow、ホバーで -2px 浮上 + 影が広がる。`,
+};
+
+const ctaEmojiPrefix: ExtraArchetype<CV> = {
+  id: "cta-emoji-prefix",
+  baseTitle: "絵文字付きボタン（先頭に揺れる絵文字）",
+  category: "cta",
+  baseMood: ["BtoC", "可愛い", "フレンドリー"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "BtoC LP、メールマガジン登録、コミュニティ参加。",
+  effect: "ボタン先頭に絵文字。ホバーすると絵文字だけが小さく揺れる。",
+  suitableFor: ["BtoC", "コミュニティ", "ニュースレター"],
+  badUsage: "絵文字が文字化けする環境を考慮（fallback 不要なら無視）。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="emo-cta"><span class="emo">🌸</span>会員になる</button>`,
+    css: `.emo-cta { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:9999px; background:${color.hex}; color:#fff; font-weight:700; font-size:15px; border:0; cursor:pointer; transition:transform .2s; }
+.emo-cta:hover { transform:translateY(-1px); }
+.emo-cta .emo { display:inline-block; transition:transform .2s; }
+.emo-cta:hover .emo { animation: emojiWaggle .6s ease-in-out; }`,
+    tailwind: `<button className="group inline-flex cursor-pointer items-center gap-2 rounded-full px-6 py-3 font-bold text-white transition hover:-translate-y-0.5"
+  style={{ background:"${color.hex}" }}>
+  <span className="inline-block group-hover:[animation:emojiWaggle_.6s_ease-in-out]">🌸</span>
+  会員になる
+</button>`,
+    react: `export function EmojiCTA({ emoji = "🌸", children = "会員になる" }) {
+  return (
+    <button className="group inline-flex cursor-pointer items-center gap-2 rounded-full px-6 py-3 font-bold text-white transition hover:-translate-y-0.5"
+      style={{ background: "${color.hex}" }}>
+      <span className="inline-block group-hover:[animation:emojiWaggle_.6s_ease-in-out]">{emoji}</span>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `絵文字付きCTA。${color.tw}-500 の pill、左に絵文字、ホバーで絵文字だけが emojiWaggle (rotate -12deg + scale 1.1) で 0.6秒揺れる。`,
+};
+
+const ctaJellyWobble: ExtraArchetype<CV> = {
+  id: "cta-jelly-wobble",
+  baseTitle: "ぷるぷる Jelly ボタン",
+  category: "cta",
+  baseMood: ["BtoC", "可愛い", "ゲーム"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "ゲーム / アプリのリワード CTA、子ども向けサービス。",
+  effect: "ホバーで ボタン全体が プルプル と弾性的に揺れる（scale を縦横で逆相）。",
+  suitableFor: ["ゲーム", "キッズ向けアプリ", "ステッカーショップ"],
+  badUsage: "業務系では絶対に使わない。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="jelly">JUICY！</button>`,
+    css: `.jelly { padding:14px 28px; border-radius:18px; background:${color.hex}; color:#fff; font-weight:800; font-size:15px; border:0; cursor:pointer; box-shadow:0 8px 20px -6px ${color.hex}88; }
+.jelly:hover { animation: jellyWobble .6s ease-in-out; }`,
+    tailwind: `<button className="cursor-pointer rounded-2xl px-7 py-3.5 font-extrabold text-white hover:[animation:jellyWobble_.6s_ease-in-out]"
+  style={{ background:"${color.hex}", boxShadow:"0 8px 20px -6px ${color.hex}88" }}>
+  JUICY！
+</button>`,
+    react: `export function JellyCTA({ children = "JUICY！" }) {
+  return (
+    <button className="cursor-pointer rounded-2xl px-7 py-3.5 font-extrabold text-white hover:[animation:jellyWobble_.6s_ease-in-out]"
+      style={{ background:"${color.hex}", boxShadow:"0 8px 20px -6px ${color.hex}88" }}>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ぷるぷる Jelly ボタン。${color.tw}-500 の rounded-2xl、ホバーで scale(1.08, .94)→scale(.94, 1.08)→scale(1.04, .97)→scale(1) と縦横で逆相に振動する jellyWobble keyframe を 0.6秒。`,
+};
+
+const ctaCloudBlob: ExtraArchetype<CV> = {
+  id: "cta-cloud-blob",
+  baseTitle: "雲ブロブボタン（不規則 border-radius）",
+  category: "cta",
+  baseMood: ["BtoC", "可愛い", "夢かわ"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "夢かわ系LP、ファッションブランド、ふんわりした業種。",
+  effect: "border-radius を 4軸独立で動かして雲のような有機形に。形状自体がアニメで揺れる。",
+  suitableFor: ["夢かわ系", "ファッション/小物", "クラフト"],
+  badUsage: "BtoBには絶対NG。タップ範囲が見えにくいので主要操作には不向き。装飾CTA向き。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="cloud-cta">ふわっと</button>`,
+    css: `.cloud-cta { padding:18px 32px; background:${color.hex}; color:#fff; font-weight:700; font-size:15px; border:0; cursor:pointer; border-radius:42% 58% 70% 30% / 45% 45% 55% 55%; box-shadow:0 12px 24px -8px ${color.hex}66; animation: cloudFloat 6s ease-in-out infinite; }
+.cloud-cta:hover { animation-duration: 3s; }`,
+    tailwind: `<button className="cursor-pointer px-8 py-4 font-bold text-white hover:[animation-duration:3s]"
+  style={{
+    background:"${color.hex}",
+    borderRadius:"42% 58% 70% 30% / 45% 45% 55% 55%",
+    boxShadow:"0 12px 24px -8px ${color.hex}66",
+    animation:"cloudFloat 6s ease-in-out infinite",
+  }}>
+  ふわっと
+</button>`,
+    react: `export function CloudCTA({ children = "ふわっと" }) {
+  return (
+    <button className="cursor-pointer px-8 py-4 font-bold text-white hover:[animation-duration:3s]"
+      style={{
+        background: "${color.hex}",
+        borderRadius: "42% 58% 70% 30% / 45% 45% 55% 55%",
+        boxShadow: "0 12px 24px -8px ${color.hex}66",
+        animation: "cloudFloat 6s ease-in-out infinite",
+      }}>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `雲ブロブ CTA。${color.tw}-500 背景、border-radius を 4軸独立 (42% 58% 70% 30% / 45% 45% 55% 55%) で雲形に。cloudFloat keyframe で 4軸の値を別パターンに変えて 6秒で雲の形状を呼吸させる。`,
+};
+
+const ctaStampOutline: ExtraArchetype<CV> = {
+  id: "cta-stamp-outline",
+  baseTitle: "スタンプ風アウトラインボタン",
+  category: "cta",
+  baseMood: ["レトロ", "可愛い", "クラフト"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "クラフト/雑貨/ハンドメイド系ブランド、レトロな雰囲気のLP。",
+  effect: "ダブルダッシュ系アウトライン + ちょっと傾き。ハンコのような手作り感。",
+  suitableFor: ["雑貨/クラフト", "個人ブランド", "イベント"],
+  badUsage: "ハイテク系/業務には合わない。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="stamp">登録する</button>`,
+    css: `.stamp { padding:12px 24px; background:transparent; color:${color.hex}; font-weight:800; font-size:14px; letter-spacing:.08em; border:3px double ${color.hex}; border-radius:8px; cursor:pointer; transform:rotate(-3deg); transition:transform .3s, background .3s, color .3s; }
+.stamp:hover { transform:rotate(0); background:${color.hex}; color:#fff; }`,
+    tailwind: `<button className="cursor-pointer rounded-lg border-[3px] border-double bg-transparent px-6 py-3 font-extrabold tracking-wider transition duration-300 [transform:rotate(-3deg)] hover:[transform:rotate(0deg)] hover:text-white"
+  style={{ borderColor:"${color.hex}", color:"${color.hex}" }}
+  onMouseEnter={(e)=>e.currentTarget.style.background="${color.hex}"}
+  onMouseLeave={(e)=>e.currentTarget.style.background="transparent"}>
+  登録する
+</button>`,
+    react: `export function StampCTA({ children = "登録する" }) {
+  return (
+    <button className="cursor-pointer rounded-lg border-[3px] border-double bg-transparent px-6 py-3 font-extrabold tracking-wider transition duration-300 [transform:rotate(-3deg)] hover:[transform:rotate(0deg)] hover:text-white"
+      style={{ borderColor: "${color.hex}", color: "${color.hex}" }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = "${color.hex}")}
+      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `スタンプ風アウトライン CTA。border 3px double ${color.tw}-500、初期 rotate(-3deg)、ホバーで rotate(0) + 塗り切替（背景 ${color.tw}-500 + 白文字）。letter-spacing .08em で堅め。`,
+};
+
+const ctaRibbon: ExtraArchetype<CV> = {
+  id: "cta-ribbon",
+  baseTitle: "リボン付きボタン",
+  category: "cta",
+  baseMood: ["BtoC", "可愛い", "ギフト"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "プレゼント・キャンペーン・期間限定オファー・コラボ告知。",
+  effect: "ボタンの上に「LIMITED」リボンが浮遊。ホバーでリボンが少し揺れる。",
+  suitableFor: ["EC キャンペーン", "ギフト系", "イベント"],
+  badUsage: "通常のCTA に使うと「期間限定じゃないのに限定っぽい」誤読を招く。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<button class="ribbon-cta">
+  <span class="ribbon">LIMITED</span>
+  受け取る
+</button>`,
+    css: `.ribbon-cta { position:relative; padding:18px 36px 14px; border-radius:14px; background:${color.hex}; color:#fff; font-weight:800; font-size:15px; border:0; cursor:pointer; box-shadow:0 8px 18px -6px ${color.hex}88; margin-top:14px; }
+.ribbon-cta .ribbon { position:absolute; left:50%; top:-12px; transform:translateX(-50%); padding:4px 14px; background:#fde047; color:#0a0a0a; font-size:10px; font-weight:900; letter-spacing:.12em; border-radius:4px; box-shadow:0 2px 0 #ca8a04; animation: ribbonFloat 2.4s ease-in-out infinite; clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%); padding-left:18px; padding-right:18px; }`,
+    tailwind: `<button className="relative cursor-pointer rounded-2xl px-9 pb-3.5 pt-4.5 font-extrabold text-white"
+  style={{ background:"${color.hex}", boxShadow:"0 8px 18px -6px ${color.hex}88", marginTop:14 }}>
+  <span className="absolute left-1/2 -top-3 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest text-zinc-900"
+    style={{
+      background:"#fde047", borderRadius:4, boxShadow:"0 2px 0 #ca8a04",
+      animation:"ribbonFloat 2.4s ease-in-out infinite",
+      clipPath:"polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%)",
+    }}>LIMITED</span>
+  受け取る
+</button>`,
+    react: `export function RibbonCTA({ children = "受け取る", label = "LIMITED" }) {
+  return (
+    <button className="relative mt-3.5 cursor-pointer rounded-2xl px-9 pb-3.5 pt-4 font-extrabold text-white"
+      style={{ background: "${color.hex}", boxShadow:"0 8px 18px -6px ${color.hex}88" }}>
+      <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest text-zinc-900"
+        style={{
+          background:"#fde047", borderRadius:4, boxShadow:"0 2px 0 #ca8a04",
+          animation:"ribbonFloat 2.4s ease-in-out infinite",
+          clipPath:"polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%)",
+        }}>{label}</span>
+      {children}
+    </button>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `リボン付きCTA。${color.tw}-500 の rounded-2xl ボタンに、上に黄色のリボンタグ（clip-path で両端をとがらせる、黒文字、letter-spacing widest）を絶対配置。ribbonFloat で 2.4秒 ふわふわ。`,
+};
+
+/* ============================================================
+   FEEDBACK 可愛い系バッチ
+   ============================================================ */
+
+const feedbackBubble: ExtraArchetype<CV> = {
+  id: "feedback-speech-bubble",
+  baseTitle: "吹き出し通知",
+  category: "feedback",
+  baseMood: ["BtoC", "可愛い"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "キャラクターからのコメント、軽い通知、チュートリアルの一言。",
+  effect: "下方向のとんがり付き吹き出し。pop-in アニメで現れる。",
+  suitableFor: ["チャットUI", "BtoC オンボーディング", "キャラクター演出"],
+  badUsage: "重要な警告やエラーには軽すぎる。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="bubble">こんにちは！</div>`,
+    css: `.bubble { position:relative; display:inline-block; padding:12px 18px; background:${color.hex}; color:#fff; border-radius:14px; font-weight:700; font-size:14px; animation: bubblePopIn .55s cubic-bezier(.6,.05,.18,1.4); }
+.bubble::after { content:""; position:absolute; left:24px; bottom:-8px; width:0; height:0; border:8px solid transparent; border-top-color:${color.hex}; border-bottom:0; }`,
+    tailwind: `<div className="relative inline-block rounded-2xl px-4 py-3 text-sm font-bold text-white [animation:bubblePopIn_.55s_cubic-bezier(.6,.05,.18,1.4)]
+  after:absolute after:bottom-[-8px] after:left-6 after:h-0 after:w-0 after:border-8 after:border-transparent after:border-b-0"
+  style={{ background:"${color.hex}", ['--c' as string]:"${color.hex}" }}
+>
+  <style>{\`.relative.inline-block::after { border-top-color: ${color.hex}; }\`}</style>
+  こんにちは！
+</div>`,
+    react: `export function SpeechBubble({ children = "こんにちは！" }) {
+  return (
+    <div className="relative inline-block rounded-2xl px-4 py-3 text-sm font-bold text-white"
+      style={{ background:"${color.hex}", animation:"bubblePopIn .55s cubic-bezier(.6,.05,.18,1.4)" }}>
+      {children}
+      <span aria-hidden className="absolute -bottom-2 left-6 h-0 w-0"
+        style={{
+          borderWidth:"8px",
+          borderStyle:"solid",
+          borderColor:"transparent",
+          borderTopColor:"${color.hex}",
+          borderBottomWidth:0,
+        }} />
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `吹き出し型の通知を実装。${color.tw}-500 の角丸 rect に、下方向のとんがり（border-* で三角を作る）を after で付ける。bubblePopIn keyframe (scale.4→1.08→.96→1) で .55秒で pop-in。`,
+};
+
+const feedbackStickerToast: ExtraArchetype<CV> = {
+  id: "feedback-sticker-toast",
+  baseTitle: "ステッカー風トースト",
+  category: "feedback",
+  baseMood: ["BtoC", "可愛い", "ポップ"],
+  baseTags: ["CSS"],
+  difficulty: "easy",
+  useCase: "BtoC アプリの完了通知、ゲーミフィケーション、ステッカーショップ。",
+  effect: "ステッカーのように傾きと硬い影、idle で軽く揺れて存在感を出す。",
+  suitableFor: ["BtoC アプリ", "ゲーム", "EC コマース"],
+  badUsage: "業務通知では遊びすぎ。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="sticker-toast">
+  <span class="icon">🎉</span>
+  <div><strong>達成しました！</strong><p>+50ポイント</p></div>
+</div>`,
+    css: `.sticker-toast { display:inline-flex; align-items:center; gap:12px; padding:12px 16px 12px 14px; background:#fff; border-radius:14px; box-shadow:4px 4px 0 #0a0a0a, 0 12px 24px -10px ${color.hex}66; animation: stickerIdle 3s ease-in-out infinite; max-width:320px; border:3px solid ${color.hex}; }
+.sticker-toast .icon { font-size:28px; flex-shrink:0; }
+.sticker-toast strong { font-weight:800; color:#0a0a0a; display:block; }
+.sticker-toast p { color:#52525b; font-size:12px; margin-top:2px; }`,
+    tailwind: `<div className="inline-flex max-w-sm items-center gap-3 rounded-2xl bg-white px-4 py-3 [animation:stickerIdle_3s_ease-in-out_infinite]"
+  style={{
+    border:"3px solid ${color.hex}",
+    boxShadow:"4px 4px 0 #0a0a0a, 0 12px 24px -10px ${color.hex}66",
+  }}>
+  <span className="text-3xl">🎉</span>
+  <div>
+    <strong className="block font-extrabold text-zinc-900">達成しました！</strong>
+    <p className="mt-0.5 text-xs text-zinc-600">+50ポイント</p>
+  </div>
+</div>`,
+    react: `export function StickerToast({ icon = "🎉", title = "達成しました！", body = "+50ポイント" }) {
+  return (
+    <div className="inline-flex max-w-sm items-center gap-3 rounded-2xl bg-white px-4 py-3 [animation:stickerIdle_3s_ease-in-out_infinite]"
+      style={{ border:"3px solid ${color.hex}", boxShadow:"4px 4px 0 #0a0a0a, 0 12px 24px -10px ${color.hex}66" }}>
+      <span className="text-3xl">{icon}</span>
+      <div>
+        <strong className="block font-extrabold text-zinc-900">{title}</strong>
+        <p className="mt-0.5 text-xs text-zinc-600">{body}</p>
+      </div>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `ステッカー風トースト。白背景に ${color.tw}-500 の太い border 3px、黒のハード影 4px 4px + 同色グロー shadow。stickerIdle keyframe (rotate -2°↔2°) を 3秒でゆらゆら。左に絵文字、右にタイトル+本文。`,
+};
+
+const feedbackEmojiToast: ExtraArchetype<CV> = {
+  id: "feedback-emoji-toast",
+  baseTitle: "絵文字先頭トースト",
+  category: "feedback",
+  baseMood: ["BtoC", "可愛い", "フレンドリー"],
+  baseTags: ["Tailwind"],
+  difficulty: "easy",
+  useCase: "軽い情報通知、Tips、AIアシスタントのコメント。",
+  effect: "巨大な絵文字 + 短文、絵文字がホバーで揺れる。控えめに上下浮遊。",
+  suitableFor: ["BtoC アプリ", "AIアシスタント", "オンボーディング"],
+  badUsage: "重大なエラーには軽すぎる。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="emo-toast">
+  <span class="emo">💡</span>
+  <p>ヒント: タグで絞り込めます</p>
+</div>`,
+    css: `.emo-toast { display:inline-flex; align-items:center; gap:14px; padding:12px 18px; background:${color.hex}10; border:1px solid ${color.hex}33; border-radius:14px; max-width:340px; animation: ribbonFloat 3.6s ease-in-out infinite; }
+.emo-toast .emo { font-size:30px; transition:transform .2s; }
+.emo-toast:hover .emo { animation: emojiWaggle .6s ease-in-out; }
+.emo-toast p { color:#0a0a0a; font-size:13px; font-weight:600; }`,
+    tailwind: `<div className="group inline-flex max-w-sm items-center gap-3.5 rounded-2xl border px-4.5 py-3 [animation:ribbonFloat_3.6s_ease-in-out_infinite]"
+  style={{ background:"${color.hex}10", borderColor:"${color.hex}33" }}>
+  <span className="text-3xl group-hover:[animation:emojiWaggle_.6s_ease-in-out]">💡</span>
+  <p className="text-sm font-semibold text-zinc-900">ヒント: タグで絞り込めます</p>
+</div>`,
+    react: `export function EmojiToast({ emoji = "💡", message = "ヒント: タグで絞り込めます" }) {
+  return (
+    <div className="group inline-flex max-w-sm items-center gap-3.5 rounded-2xl border px-4 py-3 [animation:ribbonFloat_3.6s_ease-in-out_infinite]"
+      style={{ background:"${color.hex}10", borderColor:"${color.hex}33" }}>
+      <span className="text-3xl group-hover:[animation:emojiWaggle_.6s_ease-in-out]">{emoji}</span>
+      <p className="text-sm font-semibold text-zinc-900">{message}</p>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `絵文字先頭トースト。bg ${color.tw}-500/10 + border ${color.tw}-500/33、絵文字30px + 短文。ribbonFloat (translateY -3px) を 3.6秒で穏やかに浮遊、ホバーで絵文字だけ emojiWaggle で揺れる。`,
+};
+
+const feedbackCelebrateBurst: ExtraArchetype<CV> = {
+  id: "feedback-celebrate-burst",
+  baseTitle: "祝福バースト通知",
+  category: "feedback",
+  baseMood: ["祝福", "ポップ"],
+  baseTags: ["CSS"],
+  difficulty: "medium",
+  useCase: "達成バッジ、レベルアップ、登録完了、初回購入のお祝い。",
+  effect: "通知の周囲から円形にリングが広がる + 中心に絵文字 + メッセージ。",
+  suitableFor: ["ゲーミフィケーション", "オンボーディング完了", "EC初回購入"],
+  badUsage: "通常通知に使うと安っぽい。1回限りの達成のみ。",
+  variants: cv(),
+  code: ({ color }) => ({
+    html: `<div class="celebrate">
+  <span class="ring"></span>
+  <span class="ring r2"></span>
+  <div class="content">
+    <span class="emo">🏆</span>
+    <strong>レベルアップ！</strong>
+  </div>
+</div>`,
+    css: `.celebrate { position:relative; display:inline-flex; flex-direction:column; align-items:center; padding:24px 32px; background:#fff; border-radius:18px; box-shadow:0 18px 36px -16px ${color.hex}99; border:2px solid ${color.hex}; isolation:isolate; }
+.celebrate .ring { position:absolute; inset:-4px; border-radius:inherit; border:2px solid ${color.hex}; opacity:0; animation: celebrateRing 1.8s ease-out infinite; z-index:-1; }
+.celebrate .ring.r2 { animation-delay:.6s; }
+.celebrate .emo { display:block; font-size:42px; }
+.celebrate strong { display:block; margin-top:6px; font-weight:800; font-size:16px; color:#0a0a0a; }`,
+    tailwind: `<div className="relative isolate inline-flex flex-col items-center rounded-2xl border-2 bg-white px-8 py-6"
+  style={{ borderColor:"${color.hex}", boxShadow:"0 18px 36px -16px ${color.hex}99" }}>
+  {[0, .6].map((d, i) => (
+    <span key={i} aria-hidden className="absolute -inset-1 -z-10 rounded-2xl border-2 opacity-0"
+      style={{ borderColor:"${color.hex}", animation:\`celebrateRing 1.8s ease-out \${d}s infinite\` }} />
+  ))}
+  <span className="text-4xl">🏆</span>
+  <strong className="mt-1.5 text-base font-extrabold text-zinc-900">レベルアップ！</strong>
+</div>`,
+    react: `export function CelebrateBurst({ emoji = "🏆", message = "レベルアップ！" }) {
+  return (
+    <div className="relative isolate inline-flex flex-col items-center rounded-2xl border-2 bg-white px-8 py-6"
+      style={{ borderColor:"${color.hex}", boxShadow:"0 18px 36px -16px ${color.hex}99" }}>
+      {[0, 0.6].map((d, i) => (
+        <span key={i} aria-hidden className="absolute -inset-1 -z-10 rounded-2xl border-2 opacity-0"
+          style={{ borderColor:"${color.hex}", animation:\`celebrateRing 1.8s ease-out \${d}s infinite\` }} />
+      ))}
+      <span className="text-4xl">{emoji}</span>
+      <strong className="mt-1.5 text-base font-extrabold text-zinc-900">{message}</strong>
+    </div>
+  );
+}`,
+  }),
+  prompt: ({ color }) =>
+    `祝福バースト通知。白背景に ${color.tw}-500 の border-2、外側に同じ形のリングを 2つ absolute で重ね、celebrateRing keyframe（scale .6→1.8 + opacity .6→0）を 1.8秒 ease-out、delay 0/0.6秒 で連続的に広がる。中央に絵文字 + メッセージ。`,
+};
+
+/* ============================================================
    集約
    ============================================================ */
 
@@ -7353,6 +7856,20 @@ export const EXTRA_ARCHETYPES: ExtraArchetype<any>[] = [
   formTagInput,
   formOtpInput,
   formPasswordStrength,
+  // Batch 6: kawaii CTA
+  ctaSticker,
+  ctaSquishPress,
+  ctaPastelGradient,
+  ctaEmojiPrefix,
+  ctaJellyWobble,
+  ctaCloudBlob,
+  ctaStampOutline,
+  ctaRibbon,
+  // Batch 6: kawaii feedback
+  feedbackBubble,
+  feedbackStickerToast,
+  feedbackEmojiToast,
+  feedbackCelebrateBurst,
   // Icon
   iconLightbulb,
   iconGears,

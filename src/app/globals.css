@@ -137,6 +137,17 @@ h1, h2, h3, h4, h5 {
 @keyframes grid3dSpin { from { transform: perspective(800px) rotateX(60deg) translateZ(0) translateY(0); } to { transform: perspective(800px) rotateX(60deg) translateZ(0) translateY(40px); } }
 @keyframes toggleFlip3D { 0%,100%{transform:rotateY(0)} 50%{transform:rotateY(180deg)} }
 @keyframes iconWiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-15deg)} 50%{transform:rotate(0)} 75%{transform:rotate(15deg)} }
+
+/* cute / kawaii keyframes */
+@keyframes stickerIdle { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+@keyframes jellyWobble { 0%,100%{transform:scale(1,1)} 25%{transform:scale(1.08,.94)} 50%{transform:scale(.94,1.08)} 75%{transform:scale(1.04,.97)} }
+@keyframes bubblePopIn { 0%{transform:scale(.4) translateY(20px); opacity:0} 60%{transform:scale(1.08) translateY(0); opacity:1} 80%{transform:scale(.96) translateY(0)} 100%{transform:scale(1) translateY(0); opacity:1} }
+@keyframes squishLoop { 0%,100%{transform:scaleY(1) scaleX(1)} 50%{transform:scaleY(.88) scaleX(1.05)} }
+@keyframes stampOscillate { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+@keyframes celebrateRing { 0%{transform:scale(.6); opacity:.6} 100%{transform:scale(1.8); opacity:0} }
+@keyframes emojiWaggle { 0%,100%{transform:rotate(0) scale(1)} 30%{transform:rotate(-12deg) scale(1.1)} 60%{transform:rotate(8deg) scale(1.05)} }
+@keyframes ribbonFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+@keyframes cloudFloat { 0%,100%{border-radius:42% 58% 70% 30% / 45% 45% 55% 55%} 50%{border-radius:55% 45% 35% 65% / 55% 60% 40% 45%} }
 @keyframes scrambleSwap { 0%,100%{opacity:0} 5%,12%{opacity:1} }
 @keyframes tarotFlow { from { transform: translateX(0) } to { transform: translateX(-50%) } }
 
